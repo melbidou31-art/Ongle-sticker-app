@@ -35,3 +35,21 @@ Ongle → « Ongle direct » → choisir la cliente → cliquer les doigts.
 
 **Limites** : profils stockés sur l'appareil uniquement (localStorage). Les valeurs par défaut d'un nouveau profil
 sont des moyennes approximatives. La forme reste celle choisie dans l'éditeur (pas encore de forme par doigt).
+
+## feat/03-planche-10-doigts-tracage — 15/10/2026
+
+**Ajouté** :
+- **Set 10 doigts en press-on** : onglet *Ongle* → capsule du commerce → « Créer un set 10 doigts ». Une taille par
+  doigt (main gauche / main droite), pré-remplie à partir de la taille du pouce avec l'écart habituel d'un set
+  (pouce, index +4, majeur +3, annulaire +4, auriculaire +7 — approx.), modifiable doigt par doigt.
+- **Navigation en mode traçage** : si le design a un set (press-on) ou une cliente (ongle direct), une barre
+  ◀ doigt ▶ apparaît sous l'en-tête. Chaque doigt s'affiche à sa taille réelle avec le motif mis à l'échelle.
+  Elle reste utilisable quand le design est verrouillé : on enchaîne les 10 capsules sans retourner dans l'éditeur.
+- **Vue « Main entière »** : les 5 ongles d'une main côte à côte à taille réelle (pratique sur tablette).
+
+**Tester** : ouvrir un design → Ongle → Press-on → choisir une marque et une taille → « Créer un set 10 doigts »
+→ Tracer → ◀ ▶ et « Main entière ». En ongle direct : choisir une cliente puis Tracer.
+
+**Limites** : sur un téléphone, la main entière déborde souvent de l'écran (5 ongles ≈ 60–75 mm) — prévue pour
+tablette. Les écarts de tailles par défaut du set sont approximatifs. Déplacer le motif (déverrouillé) depuis un
+doigt le déplace pour tout le set.

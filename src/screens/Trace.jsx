@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import NailView from '../components/NailView.jsx'
 import Grid from '../components/Grid.jsx'
+import { FINGERS, resizeNail } from '../lib/clients.js'
+import { fingerDims, forFinger, hasSet } from '../lib/fingerset.js'
 
 const HOLD_MS = 700 // appui long pour déverrouiller : évite qu'une capsule posée ne débloque l'écran
 
@@ -28,6 +30,15 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
   const [holding, setHolding] = useState(false)
   const timer = useRef(null)
   useWakeLock()
+
+  // Set 10 doigts : navigation doigt par doigt (ou main entière)
+  const set = hasSet(design)
+  const [finger, setFinger] = useState(design.client?.finger ?? 0)
+  const [view, setView] = useState('single')
+  const dims = set ? fingerDims(design, finger) : null
+  const current = set ? forFinger(design, finger) : design
+  const go = (d) =>
+    setFinger((f) => (view === 'hand' ? (f < 5 ? 5 : 0) : (f + d + 10) % 10))
 
   function startHold() {
     setHolding(true)
@@ -79,13 +90,45 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
         </div>
       </header>
 
+      {set && (
+        <div className="finger-nav">
+          <button className="ghost dark" onClick={() => go(-1)} aria-label="Doigt précédent">◀</button>
+          <div className="finger-label">
+            <b>{view === 'hand' ? (finger < 5 ? 'Main gauche' : 'Main droite') : FINGERS[finger]}</b>
+            <span className="muted">
+              {view === 'hand'
+                ? '5 ongles'
+                : `${current.nailW} × ${current.nailH} mm${dims?.size ? ` · taille ${dims.size}` : ''}`}
+            </span>
+          </div>
+          <button className="ghost dark" onClick={() => go(1)} aria-label="Doigt suivant">▶</button>
+          <button className="chip" onClick={() => setView(view === 'hand' ? 'single' : 'hand')}>
+            {view === 'hand' ? '1 doigt' : 'Main entière'}
+          </button>
+        </div>
+      )}
+
       <Grid pxPerMm={pxPerMm} className="trace-stage">
         <div className={`lock-pill ${locked ? '' : 'open'}`}>{locked ? '🔒 DESIGN LOCKED' : '✋ DÉPLACEMENT LIBRE'}</div>
-        <NailView
-          design={design}
-          pxPerMm={pxPerMm}
-          onMove={locked ? undefined : (img) => onChange({ ...design, img })}
-        />
+        {set && view === 'hand' ? (
+          <div className="hand-row">
+            {[0, 1, 2, 3, 4].map((k) => {
+              const f = (finger < 5 ? 0 : 5) + k
+              return <NailView key={f} clipKey={f} design={forFinger(design, f)} pxPerMm={pxPerMm} />
+            })}
+          </div>
+        ) : (
+          <NailView
+            design={current}
+            pxPerMm={pxPerMm}
+            onMove={
+              locked
+                ? undefined
+                : // on déplace la variante du doigt, puis on ramène le placement à la taille de base
+                  (img) => onChange({ ...design, img: resizeNail({ ...current, img }, design.nailW, design.nailH).img })
+            }
+          />
+        )}
         {/* Couche qui avale toutes les touches quand c'est verrouillé */}
         {locked && <div className="touch-shield" onPointerDown={(e) => e.preventDefault()} onTouchStart={(e) => e.preventDefault()} />}
         <div className="ready">READY TO TRACE</div>

@@ -7,7 +7,7 @@ const PAD = 4 // marge autour de l'ongle, en mm
  * Affiche l'ongle à taille réelle (pxPerMm) avec le motif.
  * Si `onMove` est fourni : glisser = déplacer, pincer = agrandir/réduire.
  */
-export default function NailView({ design, pxPerMm, onMove, showOutline = true }) {
+export default function NailView({ design, pxPerMm, onMove, showOutline = true, clipKey = '' }) {
   const { nailW, nailH, shape, img, flip, clip, text, lineart, aspect } = design
   const W = nailW + PAD * 2
   const H = nailH + PAD * 2
@@ -16,7 +16,8 @@ export default function NailView({ design, pxPerMm, onMove, showOutline = true }
   const ih = img.w * aspect
   const cx = PAD + nailW / 2 + img.x
   const cy = PAD + nailH / 2 + img.y
-  const clipId = `clip-${design.id}`
+  // clipKey : plusieurs ongles du même design affichés ensemble (main entière)
+  const clipId = `clip-${design.id}${clipKey}`
 
   const pointers = useRef(new Map())
   const start = useRef(null)

@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { BRANDS, LENGTHS, getMeasures, saveMeasure, tipWidth } from '../lib/tips.js'
-import { resizeNail } from '../lib/clients.js'
+import { FINGERS, resizeNail } from '../lib/clients.js'
+import { defaultTipSet } from '../lib/fingerset.js'
 
 /**
  * Choix d'une capsule du commerce (marque + taille + longueur) qui règle la taille de l'ongle.
@@ -12,20 +13,21 @@ export default function TipPicker({ design, onChange }) {
   const tip = design.tip || { brand: '', size: '', length: 'medium' }
   const brand = BRANDS.find((b) => b.id === tip.brand)
 
-  function apply(next) {
+  function apply(next, extra = {}) {
     const t = { ...tip, ...next }
     const width = t.brand && t.size ? tipWidth(t.brand, t.size, measures) : null
     const w = width ? width.w : design.nailW
     const h = t.brand ? LENGTHS[t.length].mm : design.nailH
     // le motif suit la nouvelle taille de capsule
-    onChange({ tip: t, ...resizeNail(design, w, h) })
+    onChange({ tip: t, ...resizeNail(design, w, h), ...extra })
   }
 
   function chooseBrand(id) {
-    if (!id) return onChange({ tip: null })
+    // les tailles d'un set ne sont pas transposables d'une marque à l'autre
+    if (!id) return onChange({ tip: null, tipSet: null })
     const b = BRANDS.find((x) => x.id === id)
     // taille du milieu par défaut
-    apply({ brand: id, size: b.sizes[Math.floor(b.sizes.length / 2)].label })
+    apply({ brand: id, size: b.sizes[Math.floor(b.sizes.length / 2)].label }, { tipSet: null })
   }
 
   const current = brand && tip.size ? tipWidth(tip.brand, tip.size, measures) : null
@@ -87,6 +89,40 @@ export default function TipPicker({ design, onChange }) {
             >
               Enregistrer {design.nailW} mm pour la taille {tip.size}
             </button>
+          </div>
+          <div className="measure-box">
+            <span className="eyebrow gold">SET 10 DOIGTS</span>
+            {design.tipSet ? (
+              <>
+                <div className="hands-set">
+                  {[0, 5].map((start) => (
+                    <div key={start} className="set-hand">
+                      <span className="muted">{start ? 'Main droite' : 'Main gauche'}</span>
+                      {FINGERS.slice(start, start + 5).map((f, k) => (
+                        <label key={f} className="set-row">
+                          <span>{f.replace(/ [GD]$/, '')}</span>
+                          <select
+                            value={design.tipSet[start + k]}
+                            onChange={(e) =>
+                              onChange({ tipSet: design.tipSet.map((s, j) => (j === start + k ? e.target.value : s)) })
+                            }
+                          >
+                            {brand.sizes.map((s) => (
+                              <option key={s.label} value={s.label}>{s.label}</option>
+                            ))}
+                          </select>
+                        </label>
+                      ))}
+                    </div>
+                  ))}
+                </div>
+                <p className="muted">En mode traçage, passe d'un doigt à l'autre : chaque capsule prend sa taille.</p>
+              </>
+            ) : (
+              <button className="chip gold" onClick={() => onChange({ tipSet: defaultTipSet(tip.brand, tip.size) })}>
+                Créer un set 10 doigts (pouce = taille {tip.size})
+              </button>
+            )}
           </div>
         </>
       )}

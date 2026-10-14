@@ -151,6 +151,16 @@ input[type='range'] { width: 100%; accent-color: var(--gold); }
   border-radius: 8px; padding: 6px 8px;
 }
 
+/* Set 10 doigts */
+.hands-set { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); width: 100%; }
+.set-hand { display: grid; gap: 4px; }
+.set-row { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
+.set-row select { background: var(--bg); color: #eee9df; border: 1px solid var(--line); border-radius: 8px; padding: 4px 6px; }
+.finger-nav { display: flex; align-items: center; gap: 8px; padding: 10px 16px 0; }
+.finger-nav .ghost { font-size: 18px; padding: 8px 16px; }
+.finger-label { flex: 1; display: grid; text-align: center; }
+.hand-row { display: flex; align-items: center; gap: 2px; }
+
 /* Mode traçage */
 .trace { height: 100%; }
 .trace-head { padding: 14px 16px; display: grid; gap: 10px; background: var(--bg); border-bottom: 1px solid var(--line); }

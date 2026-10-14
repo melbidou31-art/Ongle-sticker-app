@@ -59,6 +59,7 @@ export function newDesign({ original, lineart, aspect }) {
     mode: 'pressOn', // 'pressOn' (capsule) ou 'direct' (ongle naturel de la cliente)
     tip: null, // { brand, size, length } si une capsule du commerce est choisie
     client: null, // { id, finger } en mode ongle direct
+    tipSet: null, // 10 tailles (pouce G → auriculaire D) pour un set press-on
     nailW: 14,
     nailH: 30,
     img: { x: 0, y: 0, w: 12, rot: 0 },
