@@ -71,7 +71,7 @@ export default function App() {
     )
 
   if (screen === 'clients')
-    return <Clients onBack={() => setScreen(clientsBack)} />
+    return <Clients pxPerMm={pxPerMm} onBack={() => setScreen(clientsBack)} />
 
   if (screen === 'editor' && design)
     return (

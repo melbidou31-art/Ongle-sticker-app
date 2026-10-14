@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FINGERS, deleteClient, listClients, newClient, saveClient } from '../lib/clients.js'
+import MeasureTool from '../components/MeasureTool.jsx'
 
 function NumberField({ value, onChange }) {
   return (
@@ -16,9 +17,10 @@ function NumberField({ value, onChange }) {
   )
 }
 
-export default function Clients({ onBack }) {
+export default function Clients({ pxPerMm, onBack }) {
   const [clients, setClients] = useState(listClients)
   const [edit, setEdit] = useState(null)
+  const [measuring, setMeasuring] = useState(null) // index du doigt en cours de mesure
 
   function update(patch) {
     setEdit((c) => ({ ...c, ...patch }))
@@ -45,13 +47,14 @@ export default function Clients({ onBack }) {
         </header>
         <p className="muted pad">
           Mesure chaque ongle naturel au point le plus large (d'une paroi latérale à l'autre, en suivant la courbe),
-          et sa longueur de la cuticule au bord libre souhaité. En millimètres.
+          et sa longueur de la cuticule au bord libre souhaité. En millimètres — ou 📏 pour le mesurer directement
+          sur l'écran (calibre l'écran avant).
         </p>
         <div className="hands">
           {[0, 5].map((start) => (
             <table key={start} className="nails-table">
               <thead>
-                <tr><th>{start ? 'Main droite' : 'Main gauche'}</th><th>Largeur</th><th>Longueur</th></tr>
+                <tr><th>{start ? 'Main droite' : 'Main gauche'}</th><th>Largeur</th><th>Longueur</th><th /></tr>
               </thead>
               <tbody>
                 {edit.nails.slice(start, start + 5).map((n, k) => (
@@ -59,12 +62,27 @@ export default function Clients({ onBack }) {
                     <td>{FINGERS[start + k].replace(/ [GD]$/, '')}</td>
                     <td><NumberField value={n.w} onChange={(w) => setNail(start + k, { w })} /></td>
                     <td><NumberField value={n.h} onChange={(h) => setNail(start + k, { h })} /></td>
+                    <td>
+                      <button className="chip mini" onClick={() => setMeasuring(start + k)} title="Mesurer à l'écran">📏</button>
+                    </td>
                   </tr>
                 ))}
               </tbody>
             </table>
           ))}
         </div>
+        {measuring != null && (
+          <MeasureTool
+            pxPerMm={pxPerMm}
+            title={FINGERS[measuring].toUpperCase()}
+            initial={edit.nails[measuring]}
+            onCancel={() => setMeasuring(null)}
+            onDone={(v) => {
+              setNail(measuring, v)
+              setMeasuring(null)
+            }}
+          />
+        )}
       </div>
     )
 

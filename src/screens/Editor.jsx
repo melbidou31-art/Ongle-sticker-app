@@ -90,7 +90,7 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             {design.mode === 'direct' ? (
               <ClientPicker design={design} onChange={set} onManageClients={onManageClients} />
             ) : (
-              <TipPicker design={design} onChange={set} />
+              <TipPicker design={design} pxPerMm={pxPerMm} onChange={set} />
             )}
             <div className="seg wrap">
               {Object.entries(SHAPES).map(([k, l]) => (

@@ -161,6 +161,21 @@ input[type='range'] { width: 100%; accent-color: var(--gold); }
 .finger-label { flex: 1; display: grid; text-align: center; }
 .hand-row { display: flex; align-items: center; gap: 2px; }
 
+/* Mesure à l'écran */
+.measure-tool { position: fixed; inset: 0; z-index: 20; background: var(--bg); display: flex; flex-direction: column; }
+.measure-value { flex: 1; display: grid; text-align: center; }
+.measure-value b { font-size: 18px; }
+.measure-area { position: relative; flex: 1; overflow: hidden; touch-action: none; }
+.measure-grid { position: absolute; inset: 0; }
+.guide { position: absolute; background: var(--pink); pointer-events: none; }
+.guide.v { top: 0; bottom: 0; width: 2px; transform: translateX(-1px); }
+.guide.h { left: 0; right: 0; height: 2px; transform: translateY(-1px); }
+.handle {
+  position: absolute; width: 34px; height: 34px; border-radius: 50%; transform: translate(-50%, -50%);
+  background: var(--pink); border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); touch-action: none;
+}
+.mini { padding: 2px 8px; font-size: 12px; }
+
 /* Mode traçage */
 .trace { height: 100%; }
 .trace-head { padding: 14px 16px; display: grid; gap: 10px; background: var(--bg); border-bottom: 1px solid var(--line); }

@@ -65,3 +65,16 @@ large). Le contour reste disponible : choisir une forme dans l'onglet *Ongle*, o
 contour, « Aucun » pour le retirer.
 
 **Limites** : les designs déjà créés gardent leur forme d'ongle (pas de migration).
+
+## feat/05-mesure-ongle-ecran — 15/10/2026
+
+**Ajouté** : une **règle à l'écran** (taille réelle grâce au calibrage). On pose l'ongle ou la capsule sur l'écran
+et on fait glisser des repères roses sur ses bords ; la mesure s'affiche au demi-millimètre.
+- Fiche cliente : bouton 📏 sur chaque doigt → mesure largeur + longueur et remplit la ligne.
+- Capsule du commerce : « 📏 Mesurer la capsule » → mesure la largeur, l'enregistre dans « Ma boîte » pour
+  cette taille et l'applique au design.
+
+**Tester** : 👤 Clientes → + Cliente → 📏 sur un doigt → déplacer les repères → Valider.
+
+**Limites** : la précision dépend du calibrage de l'écran (📏 Calibrer l'écran). Un doigt posé à plat masque
+une partie de l'écran : les repères dépassent en haut/bas pour rester visibles.

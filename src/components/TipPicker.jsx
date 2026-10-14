@@ -2,14 +2,16 @@ import { useState } from 'react'
 import { BRANDS, LENGTHS, getMeasures, saveMeasure, tipWidth } from '../lib/tips.js'
 import { FINGERS, resizeNail } from '../lib/clients.js'
 import { defaultTipSet } from '../lib/fingerset.js'
+import MeasureTool from './MeasureTool.jsx'
 
 /**
  * Choix d'une capsule du commerce (marque + taille + longueur) qui règle la taille de l'ongle.
  * « Enregistrer ma mesure » mémorise la largeur actuelle (ajustée sur la vraie capsule posée
  * sur l'écran) pour cette marque et cette taille.
  */
-export default function TipPicker({ design, onChange }) {
+export default function TipPicker({ design, pxPerMm, onChange }) {
   const [measures, setMeasures] = useState(getMeasures)
+  const [measuring, setMeasuring] = useState(false)
   const tip = design.tip || { brand: '', size: '', length: 'medium' }
   const brand = BRANDS.find((b) => b.id === tip.brand)
 
@@ -83,13 +85,31 @@ export default function TipPicker({ design, onChange }) {
               Pour une taille exacte : pose ta vraie capsule taille {tip.size} sur le contour, ajuste « Largeur » ci-dessous
               jusqu'à ce qu'ils se superposent, puis enregistre.
             </p>
-            <button
-              className="chip gold"
-              onClick={() => setMeasures(saveMeasure(tip.brand, tip.size, design.nailW))}
-            >
-              Enregistrer {design.nailW} mm pour la taille {tip.size}
-            </button>
+            <div className="row">
+              <button
+                className="chip gold"
+                onClick={() => setMeasures(saveMeasure(tip.brand, tip.size, design.nailW))}
+              >
+                Enregistrer {design.nailW} mm pour la taille {tip.size}
+              </button>
+              <button className="chip" onClick={() => setMeasuring(true)}>📏 Mesurer la capsule</button>
+            </div>
           </div>
+          {measuring && (
+            <MeasureTool
+              pxPerMm={pxPerMm}
+              title={`${brand.name.toUpperCase()} · TAILLE ${tip.size}`}
+              initial={{ w: design.nailW, h: design.nailH }}
+              withLength={false}
+              onCancel={() => setMeasuring(false)}
+              onDone={({ w }) => {
+                setMeasuring(false)
+                const m = saveMeasure(tip.brand, tip.size, w)
+                setMeasures(m)
+                onChange(resizeNail(design, w, design.nailH))
+              }}
+            />
+          )}
           <div className="measure-box">
             <span className="eyebrow gold">SET 10 DOIGTS</span>
             {design.tipSet ? (
