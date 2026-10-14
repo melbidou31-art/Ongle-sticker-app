@@ -44,10 +44,12 @@ export function newClient(name = 'Nouvelle cliente') {
 export function resizeNail(design, nailW, nailH) {
   const kx = nailW / design.nailW
   const ky = nailH / design.nailH
+  const scale = (img) => ({ ...img, w: img.w * kx, x: img.x * kx, y: img.y * ky })
   return {
     nailW,
     nailH,
-    img: { ...design.img, w: design.img.w * kx, x: design.img.x * kx, y: design.img.y * ky },
+    img: scale(design.img),
+    layers: (design.layers || []).map((l) => ({ ...l, img: scale(l.img) })),
     text: { ...design.text, size: design.text.size * kx, y: design.text.y * ky },
   }
 }

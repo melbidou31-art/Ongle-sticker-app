@@ -56,6 +56,7 @@ export function newDesign({ original, lineart, aspect }) {
     aspect, // hauteur / largeur de l'image
     process: { mode: 'trait', seuil: 50, epaisseur: 0 },
     erase: [], // traits de gomme (coordonnées relatives à l'image), réappliqués au recalcul
+    layers: [], // motifs supplémentaires : { id, name, lineart, original, aspect, img: { x, y, w, rot } }
     shape: 'none', // motif seul sur le quadrillage ; une forme d'ongle est optionnelle
     mode: 'pressOn', // 'pressOn' (capsule) ou 'direct' (ongle naturel de la cliente)
     tip: null, // { brand, size, length } si une capsule du commerce est choisie

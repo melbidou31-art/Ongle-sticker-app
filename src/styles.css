@@ -90,6 +90,10 @@ code { font-family: ui-monospace, 'Cascadia Mono', monospace; }
   background: var(--paper); color: var(--ink); font-size: 12px;
 }
 .motif img { width: 52px; height: 52px; }
+.motif-grid.small { grid-template-columns: repeat(auto-fill, minmax(52px, 1fr)); }
+.motif-grid.small .motif { padding: 6px 2px; }
+.motif-grid.small .motif img { width: 36px; height: 36px; }
+.layers { display: grid; gap: 8px; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
 
 /* Surface quadrillée */
 .grid-surface {

@@ -163,3 +163,20 @@ faisait tout perdre.
 
 **Limites** : le calibrage de l'écran n'est pas inclus (propre à chaque appareil — à refaire). Le fichier peut être
 lourd avec beaucoup de designs (≈ 40 Ko par design). Pas de sauvegarde automatique dans le cloud.
+
+## feat/12-calques-plusieurs-motifs — 15/10/2026
+
+**Ajouté** : **plusieurs motifs sur un même ongle** (ex. Ghostface + roses + nœud). Onglet *Calques* (ex-*Position*) :
+- « + Motif » (bibliothèque intégrée) ou « + Image » (import) ajoute un calque.
+- Puces « Principal / 2. Cœur / … » pour choisir le calque actif : c'est lui qu'on déplace au doigt (glisser /
+  pincer) et que règlent les curseurs Taille et Rotation ; un cadre rose pointillé le signale dans l'éditeur.
+- « Retirer ce calque ».
+- Les calques suivent partout : mise à l'échelle par doigt/capsule, set 10 doigts, traçage (couleur du trait,
+  fond, couleurs d'origine), export SVG/PNG.
+
+**Tester** : ouvrir un design → Calques → + Motif → choisir un cœur → le glisser à côté du motif principal →
+Tracer.
+
+**Limites** : la gomme et les réglages de trait (seuil, épaisseur) ne s'appliquent qu'au motif principal ; le miroir
+s'applique à tous les motifs, chacun sur place. En mode « motif seul », la zone affichée est calée sur le motif
+principal (un calque éloigné peut déborder du cadre à l'export).

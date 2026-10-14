@@ -4,6 +4,7 @@ import Grid from '../components/Grid.jsx'
 import TipPicker from '../components/TipPicker.jsx'
 import ClientPicker from '../components/ClientPicker.jsx'
 import ExportPanel from '../components/ExportPanel.jsx'
+import LayersBar from '../components/LayersBar.jsx'
 import { SHAPES } from '../lib/shapes.js'
 import { downscale, loadImage, toLineArt } from '../lib/lineart.js'
 
@@ -55,7 +56,15 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
 
   const p = design.process
   const setProcess = (patch) => set({ process: { ...p, ...patch } })
-  const setImg = (patch) => set({ img: { ...design.img, ...patch } })
+  // calque sélectionné (null = motif principal) : c'est lui que l'on déplace et règle
+  const [activeLayer, setActiveLayer] = useState(null)
+  const layer = activeLayer && (design.layers || []).find((l) => l.id === activeLayer)
+  const activeImg = layer ? layer.img : design.img
+  const moveActive = (img) =>
+    layer
+      ? set({ layers: design.layers.map((l) => (l.id === layer.id ? { ...l, img } : l)) })
+      : set({ img })
+  const setImg = (patch) => moveActive({ ...activeImg, ...patch })
   const setText = (patch) => set({ text: { ...design.text, ...patch } })
   const colors = { on: false, opacity: 0.4, ...design.colors }
   const setColors = (patch) => set({ colors: { ...colors, ...patch } })
@@ -72,7 +81,7 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
         {eraser.on ? (
           <NailView design={design} pxPerMm={pxPerMm} onErase={eraseHandlers} />
         ) : (
-          <NailView design={design} pxPerMm={pxPerMm} onMove={(img) => set({ img })} />
+          <NailView design={design} pxPerMm={pxPerMm} onMove={moveActive} activeLayer={activeLayer} />
         )}
         <p className="hint">{eraser.on ? '🧽 Gomme : frotte sur le trait à effacer' : 'Glisse pour déplacer · pince pour zoomer'}</p>
       </Grid>
@@ -83,7 +92,7 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
           <code className="design-id">{design.id}</code>
         </div>
         <nav className="tabs">
-          {[['motif', 'Motif'], ['ongle', 'Ongle'], ['position', 'Position'], ['texte', 'Texte'], ['export', 'Export']].map(([k, l]) => (
+          {[['motif', 'Motif'], ['ongle', 'Ongle'], ['position', 'Calques'], ['texte', 'Texte'], ['export', 'Export']].map(([k, l]) => (
             <button key={k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{l}</button>
           ))}
         </nav>
@@ -163,8 +172,9 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
 
         {tab === 'position' && (
           <div className="controls">
-            <Slider label="Taille du motif" unit=" mm" value={design.img.w} min={2} max={60} step={0.5} onChange={(w) => setImg({ w })} />
-            <Slider label="Rotation" unit="°" value={design.img.rot} min={-180} max={180} onChange={(rot) => setImg({ rot })} />
+            <LayersBar design={design} active={activeLayer} onSelect={setActiveLayer} onChange={onChange} />
+            <Slider label={layer ? `Taille de « ${layer.name} »` : 'Taille du motif'} unit=" mm" value={activeImg.w} min={2} max={60} step={0.5} onChange={(w) => setImg({ w })} />
+            <Slider label="Rotation" unit="°" value={activeImg.rot} min={-180} max={180} onChange={(rot) => setImg({ rot })} />
             <div className="row">
               <button className="chip" onClick={() => setImg({ x: 0, y: 0 })}>Recentrer</button>
               <button className={`chip ${design.flip ? 'on' : ''}`} onClick={() => set({ flip: !design.flip })}>Miroir ⇋</button>

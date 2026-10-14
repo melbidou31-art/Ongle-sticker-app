@@ -9,7 +9,7 @@ const PAD = 4 // marge autour de l'ongle, en mm
  * Si `onMove` est fourni : glisser = déplacer, pincer = agrandir/réduire.
  */
 export default function NailView({
-  design, pxPerMm, onMove, onErase, showOutline = true, clipKey = '', colors, lineColor, dark = false,
+  design, pxPerMm, onMove, onErase, showOutline = true, clipKey = '', colors, lineColor, dark = false, activeLayer,
 }) {
   const { nailW, nailH, shape, img, flip, clip, text, lineart, aspect } = design
   // calque couleurs : réglage du design, sauf si l'écran de traçage le force
@@ -27,6 +27,10 @@ export default function NailView({
   const cy = PAD + ah / 2 + img.y
   // clipKey : plusieurs ongles du même design affichés ensemble (main entière)
   const clipId = `clip-${design.id}${clipKey}`
+
+  // calques : motifs supplémentaires ; `activeLayer` (id, ou null = motif principal) est celui qu'on déplace
+  const layers = design.layers || []
+  const moving = (activeLayer && layers.find((l) => l.id === activeLayer)?.img) || img
 
   const pointers = useRef(new Map())
   const start = useRef(null)
@@ -57,9 +61,11 @@ export default function NailView({
       return onErase.start(...toImage(e))
     }
     if (!onMove) return
-    e.currentTarget.setPointerCapture(e.pointerId)
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId)
+    } catch {}
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
-    start.current = { img: { ...img }, pts: new Map(pointers.current) }
+    start.current = { img: { ...moving }, pts: new Map(pointers.current) }
   }
 
   function onPointerMove(e) {
@@ -85,7 +91,7 @@ export default function NailView({
   function onPointerUp(e) {
     erasing.current = false
     pointers.current.delete(e.pointerId)
-    start.current = { img: { ...img }, pts: new Map(pointers.current) }
+    start.current = { img: { ...moving }, pts: new Map(pointers.current) }
   }
 
   return (
@@ -124,28 +130,41 @@ export default function NailView({
         </>
       )}
       <g clipPath={clip && !free ? `url(#${clipId})` : undefined}>
-        <g transform={`translate(${cx} ${cy}) rotate(${img.rot}) scale(${flip ? -1 : 1} 1)`}>
-          {showColors && (
-            // photo d'origine sous le trait ; « multiply » rend son fond blanc transparent sur la grille
-            <image
-              href={design.original}
-              x={-iw / 2}
-              y={-ih / 2}
-              width={iw}
-              height={ih}
-              opacity={design.colors?.opacity ?? 0.4}
-              style={{ mixBlendMode: dark ? 'normal' : 'multiply' }}
-            />
-          )}
-          <image
-            href={lineart}
-            x={-iw / 2}
-            y={-ih / 2}
-            width={iw}
-            height={ih}
-            filter={lineColor ? `url(#${clipId}-ink)` : undefined}
-          />
-        </g>
+        {[{ id: null, img, lineart, original: design.original, aspect }, ...layers].map((m) => {
+          const w = m.img.w
+          const h = m.img.w * m.aspect
+          return (
+            <g
+              key={m.id || 'main'}
+              transform={`translate(${PAD + aw / 2 + m.img.x} ${PAD + ah / 2 + m.img.y}) rotate(${m.img.rot}) scale(${flip ? -1 : 1} 1)`}
+            >
+              {showColors && (
+                // photo d'origine sous le trait ; « multiply » rend son fond blanc transparent sur la grille
+                <image
+                  href={m.original}
+                  x={-w / 2}
+                  y={-h / 2}
+                  width={w}
+                  height={h}
+                  opacity={design.colors?.opacity ?? 0.4}
+                  style={{ mixBlendMode: dark ? 'normal' : 'multiply' }}
+                />
+              )}
+              <image
+                href={m.lineart}
+                x={-w / 2}
+                y={-h / 2}
+                width={w}
+                height={h}
+                filter={lineColor ? `url(#${clipId}-ink)` : undefined}
+              />
+              {onMove && activeLayer !== undefined && (m.id ?? null) === activeLayer && layers.length > 0 && (
+                // cadre du motif sélectionné (éditeur uniquement)
+                <rect x={-w / 2} y={-h / 2} width={w} height={h} fill="none" stroke="#e8a0b4" strokeWidth={0.2} strokeDasharray="1 0.6" />
+              )}
+            </g>
+          )
+        })}
         {text.value && (
           <text
             x={PAD + aw / 2}
