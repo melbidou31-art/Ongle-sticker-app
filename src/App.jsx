@@ -6,6 +6,7 @@ import Calibrate from './screens/Calibrate.jsx'
 import Clients from './screens/Clients.jsx'
 import { defaultPxPerMm, deleteDesign, getSetting, listDesigns, newDesign, saveDesign, setSetting } from './lib/db.js'
 import { downscale, fileToDataURL, loadImage, toLineArt } from './lib/lineart.js'
+import { motifCanvas } from './lib/motifs.js'
 
 export default function App() {
   const [screen, setScreen] = useState('library')
@@ -27,13 +28,14 @@ export default function App() {
     return () => clearTimeout(t)
   }, [design])
 
-  async function importFile(file) {
+  // Crée un design à partir d'un canvas (image importée ou motif de la bibliothèque)
+  async function createFrom(getCanvas, name) {
     setBusy(true)
     try {
-      const canvas = downscale(await loadImage(await fileToDataURL(file)))
+      const canvas = await getCanvas()
       const original = canvas.toDataURL('image/jpeg', 0.9)
       const d = newDesign({ original, lineart: toLineArt(canvas), aspect: canvas.height / canvas.width })
-      d.name = file.name.replace(/\.[^.]+$/, '').slice(0, 40) || d.name
+      d.name = name || d.name
       await saveDesign(d)
       setDesign(d)
       setScreen('editor')
@@ -44,6 +46,11 @@ export default function App() {
       setBusy(false)
     }
   }
+
+  const importFile = (file) =>
+    createFrom(async () => downscale(await loadImage(await fileToDataURL(file))), file.name.replace(/\.[^.]+$/, '').slice(0, 40))
+
+  const importMotif = (m) => createFrom(() => motifCanvas(m), m.name)
 
   function goLibrary() {
     setScreen('library')
@@ -93,6 +100,7 @@ export default function App() {
       designs={designs}
       busy={busy}
       onImport={importFile}
+      onMotif={importMotif}
       onOpen={(d) => {
         setDesign(d)
         setScreen('editor')

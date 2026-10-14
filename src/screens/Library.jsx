@@ -1,7 +1,9 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import { MOTIFS, motifSVG } from '../lib/motifs.js'
 
-export default function Library({ designs, onImport, onOpen, onTrace, onDelete, onCalibrate, onClients, busy }) {
+export default function Library({ designs, onImport, onMotif, onOpen, onTrace, onDelete, onCalibrate, onClients, busy }) {
   const input = useRef(null)
+  const [showMotifs, setShowMotifs] = useState(false)
   return (
     <div className="screen library">
       <header className="lib-head">
@@ -19,9 +21,20 @@ export default function Library({ designs, onImport, onOpen, onTrace, onDelete, 
           <button className="pink big" disabled={busy} onClick={() => input.current.click()}>
             {busy ? 'Traitement…' : '+ Importer une image'}
           </button>
+          <button className="ghost dark" disabled={busy} onClick={() => setShowMotifs((v) => !v)}>✨ Motifs</button>
           <button className="ghost dark" onClick={onCalibrate}>📏 Calibrer l'écran</button>
           <button className="ghost dark" onClick={onClients}>👤 Clientes</button>
         </div>
+        {showMotifs && (
+          <div className="motif-grid">
+            {MOTIFS.map((m) => (
+              <button key={m.id} className="motif" disabled={busy} onClick={() => onMotif(m)} title={m.name}>
+                <img src={'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(motifSVG(m))} alt="" />
+                <span>{m.name}</span>
+              </button>
+            ))}
+          </div>
+        )}
         <input
           ref={input}
           type="file"
@@ -36,7 +49,7 @@ export default function Library({ designs, onImport, onOpen, onTrace, onDelete, 
       </header>
 
       {designs.length === 0 ? (
-        <p className="empty">Aucun design pour l'instant. Importe un dessin ou une photo pour commencer.</p>
+        <p className="empty">Aucun design pour l'instant. Importe un dessin ou une photo, ou pars d'un ✨ motif.</p>
       ) : (
         <ul className="cards">
           {designs.map((d) => (

@@ -105,3 +105,15 @@ cette version ont le calque désactivé par défaut.
 
 **Limites** : sur iPhone, le téléchargement ouvre parfois le fichier dans un nouvel onglet (à enregistrer via
 Partager). Le module d'export est chargé à la demande pour garder l'app légère.
+
+## feat/08-bibliotheque-motifs — 15/10/2026
+
+**Ajouté** : bouton **✨ Motifs** dans la bibliothèque : 14 motifs au trait prêts à tracer (cœur, étoile, lune &
+étoiles, fleur, marguerite, papillon, nœud, éclair, goutte, feuille, flocon, toile d'araignée, ligne French,
+chevrons). Un clic crée un design comme une image importée : on peut ensuite le redimensionner, l'appliquer à
+une capsule ou une cliente, le tracer et l'exporter.
+
+**Tester** : bibliothèque → ✨ Motifs → cliquer un motif → l'éditeur s'ouvre avec le motif seul sur la grille.
+
+**Limites** : motifs simples dessinés à la main (vectoriels, 100 × 100) ; la « Ligne French » donne la courbe du
+sourire (trait plein + repère pointillé) à adapter à la largeur de l'ongle avec « Taille du motif ».

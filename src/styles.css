@@ -79,6 +79,14 @@ code { font-family: ui-monospace, 'Cascadia Mono', monospace; }
 .card-body b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-body code { color: var(--muted); font-size: 11px; }
 
+/* Motifs intégrés */
+.motif-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); }
+.motif {
+  display: grid; gap: 4px; justify-items: center; padding: 8px 4px; border-radius: 12px;
+  background: var(--paper); color: var(--ink); font-size: 12px;
+}
+.motif img { width: 52px; height: 52px; }
+
 /* Surface quadrillée */
 .grid-surface {
   position: relative; flex: 1;
