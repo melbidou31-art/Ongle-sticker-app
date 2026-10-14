@@ -1,0 +1,100 @@
+import { useEffect, useState } from 'react'
+import Library from './screens/Library.jsx'
+import Editor from './screens/Editor.jsx'
+import Trace from './screens/Trace.jsx'
+import Calibrate from './screens/Calibrate.jsx'
+import { defaultPxPerMm, deleteDesign, getSetting, listDesigns, newDesign, saveDesign, setSetting } from './lib/db.js'
+import { downscale, fileToDataURL, loadImage, toLineArt } from './lib/lineart.js'
+
+export default function App() {
+  const [screen, setScreen] = useState('library')
+  const [designs, setDesigns] = useState([])
+  const [design, setDesign] = useState(null)
+  const [busy, setBusy] = useState(false)
+  const [pxPerMm, setPxPerMm] = useState(() => getSetting('pxPerMm', defaultPxPerMm()))
+
+  const refresh = () => listDesigns().then(setDesigns).catch(() => setDesigns([]))
+  useEffect(() => {
+    refresh()
+  }, [])
+
+  // Sauvegarde automatique (anti-rebond) du design en cours
+  useEffect(() => {
+    if (!design) return
+    const t = setTimeout(() => saveDesign(design).catch(console.error), 400)
+    return () => clearTimeout(t)
+  }, [design])
+
+  async function importFile(file) {
+    setBusy(true)
+    try {
+      const canvas = downscale(await loadImage(await fileToDataURL(file)))
+      const original = canvas.toDataURL('image/jpeg', 0.9)
+      const d = newDesign({ original, lineart: toLineArt(canvas), aspect: canvas.height / canvas.width })
+      d.name = file.name.replace(/\.[^.]+$/, '').slice(0, 40) || d.name
+      await saveDesign(d)
+      setDesign(d)
+      setScreen('editor')
+    } catch (e) {
+      alert("Impossible de lire cette image.")
+      console.error(e)
+    } finally {
+      setBusy(false)
+    }
+  }
+
+  function goLibrary() {
+    setScreen('library')
+    // laisse la sauvegarde différée se faire avant de relire la liste
+    if (design) saveDesign(design).finally(refresh)
+    else refresh()
+  }
+
+  if (screen === 'calibrate')
+    return (
+      <Calibrate
+        pxPerMm={pxPerMm}
+        onBack={() => setScreen('library')}
+        onSave={(v) => {
+          setPxPerMm(v)
+          setSetting('pxPerMm', v)
+          setScreen('library')
+        }}
+      />
+    )
+
+  if (screen === 'editor' && design)
+    return (
+      <Editor
+        design={design}
+        pxPerMm={pxPerMm}
+        onChange={setDesign}
+        onTrace={() => setScreen('trace')}
+        onBack={goLibrary}
+      />
+    )
+
+  if (screen === 'trace' && design)
+    return <Trace design={design} pxPerMm={pxPerMm} onChange={setDesign} onExit={() => setScreen('editor')} />
+
+  return (
+    <Library
+      designs={designs}
+      busy={busy}
+      onImport={importFile}
+      onOpen={(d) => {
+        setDesign(d)
+        setScreen('editor')
+      }}
+      onTrace={(d) => {
+        setDesign(d)
+        setScreen('trace')
+      }}
+      onDelete={async (d) => {
+        await deleteDesign(d.id)
+        refresh()
+      }}
+      onCalibrate={() => setScreen('calibrate')}
+    />
+  )
+}
