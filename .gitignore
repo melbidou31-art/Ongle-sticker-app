@@ -2,3 +2,4 @@ node_modules
 dist
 *.local
 *.mp4
+.claude/scheduled_tasks.lock

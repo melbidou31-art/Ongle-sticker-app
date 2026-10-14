@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import NailView from '../components/NailView.jsx'
 import Grid from '../components/Grid.jsx'
+import TipPicker from '../components/TipPicker.jsx'
 import { SHAPES } from '../lib/shapes.js'
 import { downscale, loadImage, toLineArt } from '../lib/lineart.js'
 
@@ -77,6 +78,7 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack }) {
 
         {tab === 'ongle' && (
           <div className="controls">
+            <TipPicker design={design} onChange={set} />
             <div className="seg wrap">
               {Object.entries(SHAPES).map(([k, l]) => (
                 <button key={k} className={design.shape === k ? 'on' : ''} onClick={() => set({ shape: k })}>{l}</button>
