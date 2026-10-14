@@ -115,6 +115,7 @@ export default function App() {
       }}
       onCalibrate={() => setScreen('calibrate')}
       onClients={() => openClients('library')}
+      onRestored={refresh}
     />
   )
 }

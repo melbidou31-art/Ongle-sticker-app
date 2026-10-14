@@ -146,3 +146,20 @@ qu'une photo convertie en contours laisse souvent) avant de tracer.
 
 **Limites** : la gomme efface le trait uniquement (pas le calque couleurs d'origine). Pendant que la gomme est
 activée, le motif ne se déplace plus au doigt (désactiver la gomme pour le repositionner).
+
+## feat/11-sauvegarde-transfert-donnees — 15/10/2026
+
+**Ajouté** : bouton **💾 Sauvegarde** dans la bibliothèque.
+- **⬇ Sauvegarder** : un fichier `ongle-trace-sauvegarde-AAAA-MM-JJ.json` avec tous les designs (images
+  comprises), les fiches clientes, les mesures « Ma boîte » et les réglages d'affichage du traçage.
+- **⬆ Restaurer** : fusionne le fichier avec ce qui est déjà sur l'appareil (même identifiant = remplacé, le reste
+  est conservé). Sert aussi à **transférer** ses designs et clientes du PC vers le téléphone (ou l'inverse).
+- Un fichier qui n'est pas une sauvegarde Ongle Trace est refusé avec un message clair.
+
+**Pourquoi** : tout est stocké uniquement dans le navigateur ; vider les données du site ou changer de téléphone
+faisait tout perdre.
+
+**Tester** : 💾 Sauvegarde → Sauvegarder → supprimer un design → Restaurer avec le fichier → il réapparaît.
+
+**Limites** : le calibrage de l'écran n'est pas inclus (propre à chaque appareil — à refaire). Le fichier peut être
+lourd avec beaucoup de designs (≈ 40 Ko par design). Pas de sauvegarde automatique dans le cloud.

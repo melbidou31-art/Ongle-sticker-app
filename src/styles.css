@@ -79,6 +79,10 @@ code { font-family: ui-monospace, 'Cascadia Mono', monospace; }
 .card-body b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-body code { color: var(--muted); font-size: 11px; }
 
+/* Sauvegarde */
+.backup { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-2); }
+.backup p { margin: 0; }
+
 /* Motifs intégrés */
 .motif-grid { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)); }
 .motif {

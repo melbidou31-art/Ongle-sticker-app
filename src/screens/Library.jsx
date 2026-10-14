@@ -1,9 +1,13 @@
 import { useRef, useState } from 'react'
 import { MOTIFS, motifSVG } from '../lib/motifs.js'
+import BackupPanel from '../components/BackupPanel.jsx'
 
-export default function Library({ designs, onImport, onMotif, onOpen, onTrace, onDelete, onCalibrate, onClients, busy }) {
+export default function Library({
+  designs, onImport, onMotif, onOpen, onTrace, onDelete, onCalibrate, onClients, onRestored, busy,
+}) {
   const input = useRef(null)
   const [showMotifs, setShowMotifs] = useState(false)
+  const [showBackup, setShowBackup] = useState(false)
   return (
     <div className="screen library">
       <header className="lib-head">
@@ -24,7 +28,9 @@ export default function Library({ designs, onImport, onMotif, onOpen, onTrace, o
           <button className="ghost dark" disabled={busy} onClick={() => setShowMotifs((v) => !v)}>✨ Motifs</button>
           <button className="ghost dark" onClick={onCalibrate}>📏 Calibrer l'écran</button>
           <button className="ghost dark" onClick={onClients}>👤 Clientes</button>
+          <button className="ghost dark" onClick={() => setShowBackup((v) => !v)}>💾 Sauvegarde</button>
         </div>
+        {showBackup && <BackupPanel onRestored={onRestored} />}
         {showMotifs && (
           <div className="motif-grid">
             {MOTIFS.map((m) => (
