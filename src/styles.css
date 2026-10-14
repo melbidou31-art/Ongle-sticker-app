@@ -132,6 +132,8 @@ input[type='range'] { width: 100%; accent-color: var(--gold); }
 .check { display: flex; gap: 8px; align-items: center; font-size: 13px; }
 .text-input { background: var(--bg); border: 1px solid var(--line); color: inherit; padding: 10px 12px; border-radius: 10px; }
 
+.eraser { display: grid; gap: 8px; padding: 10px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+
 /* Capsules du commerce */
 .tip-picker { display: grid; gap: 10px; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .field { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }

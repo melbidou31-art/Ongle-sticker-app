@@ -28,7 +28,7 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
     let alive = true
     const t = setTimeout(async () => {
       if (!srcCanvas.current) srcCanvas.current = downscale(await loadImage(design.original))
-      const lineart = toLineArt(srcCanvas.current, design.process)
+      const lineart = toLineArt(srcCanvas.current, design.process, design.erase || [])
       if (alive && lineart !== design.lineart) onChange((d) => ({ ...d, lineart }))
     }, 120)
     return () => {
@@ -36,7 +36,22 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
       clearTimeout(t)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [design.process.mode, design.process.seuil, design.process.epaisseur])
+  }, [design.process.mode, design.process.seuil, design.process.epaisseur, design.erase])
+
+  // Gomme : chaque tracé est mémorisé (annulable) et réappliqué à chaque recalcul du trait
+  const [eraser, setEraser] = useState({ on: false, size: 1.5 }) // size = rayon en mm
+  const strokes = design.erase || []
+  const eraseHandlers = {
+    start: (u, v) =>
+      onChange((d) => ({ ...d, erase: [...(d.erase || []), { r: eraser.size / d.img.w, pts: [[u, v]] }] })),
+    move: (u, v) =>
+      onChange((d) => {
+        const list = d.erase || []
+        const last = list[list.length - 1]
+        if (!last) return d
+        return { ...d, erase: [...list.slice(0, -1), { ...last, pts: [...last.pts, [u, v]] }] }
+      }),
+  }
 
   const p = design.process
   const setProcess = (patch) => set({ process: { ...p, ...patch } })
@@ -54,8 +69,12 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
       </header>
 
       <Grid pxPerMm={pxPerMm} className="editor-stage">
-        <NailView design={design} pxPerMm={pxPerMm} onMove={(img) => set({ img })} />
-        <p className="hint">Glisse pour déplacer · pince pour zoomer</p>
+        {eraser.on ? (
+          <NailView design={design} pxPerMm={pxPerMm} onErase={eraseHandlers} />
+        ) : (
+          <NailView design={design} pxPerMm={pxPerMm} onMove={(img) => set({ img })} />
+        )}
+        <p className="hint">{eraser.on ? '🧽 Gomme : frotte sur le trait à effacer' : 'Glisse pour déplacer · pince pour zoomer'}</p>
       </Grid>
 
       <section className="panel">
@@ -77,6 +96,26 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             </div>
             <Slider label="Seuil" value={p.seuil} min={0} max={100} onChange={(seuil) => setProcess({ seuil })} />
             <Slider label="Épaisseur du trait" value={p.epaisseur} min={0} max={3} onChange={(epaisseur) => setProcess({ epaisseur })} />
+            <div className="eraser">
+              <div className="row">
+                <button className={`chip ${eraser.on ? 'on' : ''}`} onClick={() => setEraser((e) => ({ ...e, on: !e.on }))}>
+                  🧽 Gomme {eraser.on ? 'activée' : ''}
+                </button>
+                <button className="chip" disabled={!strokes.length} onClick={() => set({ erase: strokes.slice(0, -1) })}>
+                  ↶ Annuler
+                </button>
+                <button
+                  className="chip"
+                  disabled={!strokes.length}
+                  onClick={() => confirm('Restaurer tout le trait effacé ?') && set({ erase: [] })}
+                >
+                  Tout restaurer
+                </button>
+              </div>
+              {eraser.on && (
+                <Slider label="Taille de la gomme" unit=" mm" value={eraser.size * 2} min={0.5} max={8} step={0.5} onChange={(v) => setEraser((e) => ({ ...e, size: v / 2 }))} />
+              )}
+            </div>
             <label className="check">
               <input type="checkbox" checked={!!colors.on} onChange={(e) => setColors({ on: e.target.checked })} />
               🎨 Afficher les couleurs d'origine sous le trait

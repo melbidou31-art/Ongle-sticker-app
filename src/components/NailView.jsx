@@ -8,7 +8,9 @@ const PAD = 4 // marge autour de l'ongle, en mm
  * Forme 'none' : le motif seul, directement sur le quadrillage (sans contour d'ongle).
  * Si `onMove` est fourni : glisser = déplacer, pincer = agrandir/réduire.
  */
-export default function NailView({ design, pxPerMm, onMove, showOutline = true, clipKey = '', colors, lineColor, dark = false }) {
+export default function NailView({
+  design, pxPerMm, onMove, onErase, showOutline = true, clipKey = '', colors, lineColor, dark = false,
+}) {
   const { nailW, nailH, shape, img, flip, clip, text, lineart, aspect } = design
   // calque couleurs : réglage du design, sauf si l'écran de traçage le force
   const showColors = colors ?? !!design.colors?.on
@@ -28,8 +30,32 @@ export default function NailView({ design, pxPerMm, onMove, showOutline = true, 
 
   const pointers = useRef(new Map())
   const start = useRef(null)
+  const erasing = useRef(false)
+
+  // Position du pointeur en coordonnées relatives à l'image (0–1), en tenant compte de rotation et miroir
+  function toImage(e) {
+    const svg = e.currentTarget
+    const p = svg.createSVGPoint()
+    p.x = e.clientX
+    p.y = e.clientY
+    const q = p.matrixTransform(svg.getScreenCTM().inverse())
+    const a = (-img.rot * Math.PI) / 180
+    const dx = q.x - cx
+    const dy = q.y - cy
+    let lx = dx * Math.cos(a) - dy * Math.sin(a)
+    const ly = dx * Math.sin(a) + dy * Math.cos(a)
+    if (flip) lx = -lx
+    return [(lx + iw / 2) / iw, (ly + ih / 2) / ih]
+  }
 
   function onPointerDown(e) {
+    if (onErase) {
+      try {
+        e.currentTarget.setPointerCapture(e.pointerId)
+      } catch {}
+      erasing.current = true
+      return onErase.start(...toImage(e))
+    }
     if (!onMove) return
     e.currentTarget.setPointerCapture(e.pointerId)
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
@@ -37,6 +63,7 @@ export default function NailView({ design, pxPerMm, onMove, showOutline = true, 
   }
 
   function onPointerMove(e) {
+    if (onErase) return erasing.current && onErase.move(...toImage(e))
     if (!onMove || !pointers.current.has(e.pointerId)) return
     pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
     const s = start.current
@@ -56,6 +83,7 @@ export default function NailView({ design, pxPerMm, onMove, showOutline = true, 
   }
 
   function onPointerUp(e) {
+    erasing.current = false
     pointers.current.delete(e.pointerId)
     start.current = { img: { ...img }, pts: new Map(pointers.current) }
   }
@@ -66,7 +94,11 @@ export default function NailView({ design, pxPerMm, onMove, showOutline = true, 
       width={W * pxPerMm}
       height={H * pxPerMm}
       viewBox={`0 0 ${W} ${H}`}
-      style={{ touchAction: onMove ? 'none' : 'auto', cursor: onMove ? 'grab' : 'default', overflow: 'visible' }}
+      style={{
+        touchAction: onMove || onErase ? 'none' : 'auto',
+        cursor: onErase ? 'crosshair' : onMove ? 'grab' : 'default',
+        overflow: 'visible',
+      }}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}

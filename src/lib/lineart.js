@@ -90,8 +90,9 @@ function dilate(mask, w, h) {
  * mode 'trait'    : garde les zones sombres (idéal pour un dessin déjà au trait)
  * mode 'contours' : détecte les bords (idéal pour une photo en couleur)
  * seuil 0–100, epaisseur 0–3
+ * erase : traits de gomme [{ r, pts: [[u, v], …] }] en coordonnées relatives à l'image (0–1 ; r en largeur d'image)
  */
-export function toLineArt(canvas, { mode = 'trait', seuil = 50, epaisseur = 0 } = {}) {
+export function toLineArt(canvas, { mode = 'trait', seuil = 50, epaisseur = 0 } = {}, erase = []) {
   const { width: w, height: h } = canvas
   const ctx = canvas.getContext('2d')
   const { data } = ctx.getImageData(0, 0, w, h)
@@ -117,5 +118,20 @@ export function toLineArt(canvas, { mode = 'trait', seuil = 50, epaisseur = 0 } 
     img.data[i * 4 + 3] = mask[i] ? 255 : 0 // noir opaque ou transparent
   }
   octx.putImageData(img, 0, 0)
+
+  // Gomme : efface le trait le long des tracés enregistrés
+  if (erase.length) {
+    octx.globalCompositeOperation = 'destination-out'
+    octx.lineCap = 'round'
+    octx.lineJoin = 'round'
+    for (const s of erase) {
+      octx.lineWidth = s.r * w * 2
+      octx.beginPath()
+      s.pts.forEach(([u, v], i) => (i ? octx.lineTo(u * w, v * h) : octx.moveTo(u * w, v * h)))
+      // un simple clic efface un point
+      if (s.pts.length === 1) octx.lineTo(s.pts[0][0] * w + 0.01, s.pts[0][1] * h)
+      octx.stroke()
+    }
+  }
   return out.toDataURL('image/png')
 }

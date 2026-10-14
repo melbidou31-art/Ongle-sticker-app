@@ -132,3 +132,17 @@ jusqu'aux doigts de la main droite.
 
 **Limites** : sur fond sombre, le calque couleurs n'est plus fusionné (le fond blanc de la photo réapparaît en
 transparence) — le calque couleurs est plus lisible sur fond clair.
+
+## feat/10-gomme-nettoyage-trait — 15/10/2026
+
+**Ajouté** : **🧽 Gomme** dans l'onglet *Motif* pour nettoyer le trait (taches, bouts de fond, détails inutiles
+qu'une photo convertie en contours laisse souvent) avant de tracer.
+- On frotte directement sur le motif dans l'éditeur ; taille de la gomme réglable (0,5 à 8 mm).
+- **↶ Annuler** (dernier coup de gomme) et **Tout restaurer**.
+- Les coups de gomme sont mémorisés en coordonnées relatives à l'image : ils restent au bon endroit si l'on
+  déplace, agrandit, tourne ou met le motif en miroir, et sont réappliqués quand on change le seuil ou l'épaisseur.
+
+**Tester** : ouvrir un design → Motif → 🧽 Gomme → frotter sur une partie du trait → ↶ Annuler.
+
+**Limites** : la gomme efface le trait uniquement (pas le calque couleurs d'origine). Pendant que la gomme est
+activée, le motif ne se déplace plus au doigt (désactiver la gomme pour le repositionner).
