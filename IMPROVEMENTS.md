@@ -91,3 +91,17 @@ la photo à côté.
 
 **Limites** : un fond de photo foncé ou coloré reste visible (seul le blanc disparaît). Les designs créés avant
 cette version ont le calque désactivé par défaut.
+
+## feat/07-export-taille-reelle — 15/10/2026
+
+**Ajouté** : onglet **Export** dans l'éditeur.
+- **SVG en millimètres** : s'imprime exactement à la taille réelle (impression « 100 % / taille réelle »).
+- **PNG 300 dpi** avec la résolution inscrite dans le fichier (chunk pHYs) pour que logiciels d'impression et
+  imprimantes à stickers respectent les dimensions.
+- Options : planche complète 10 doigts (si set ou cliente), couleurs d'origine, contour des ongles, **miroir**
+  pour water decals / papier transfert.
+
+**Tester** : ouvrir un design → Export → Télécharger SVG / PNG 300 dpi → ouvrir le fichier et imprimer à 100 %.
+
+**Limites** : sur iPhone, le téléchargement ouvre parfois le fichier dans un nouvel onglet (à enregistrer via
+Partager). Le module d'export est chargé à la demande pour garder l'app légère.

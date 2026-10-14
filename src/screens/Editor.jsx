@@ -3,6 +3,7 @@ import NailView from '../components/NailView.jsx'
 import Grid from '../components/Grid.jsx'
 import TipPicker from '../components/TipPicker.jsx'
 import ClientPicker from '../components/ClientPicker.jsx'
+import ExportPanel from '../components/ExportPanel.jsx'
 import { SHAPES } from '../lib/shapes.js'
 import { downscale, loadImage, toLineArt } from '../lib/lineart.js'
 
@@ -63,7 +64,7 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
           <code className="design-id">{design.id}</code>
         </div>
         <nav className="tabs">
-          {[['motif', 'Motif'], ['ongle', 'Ongle'], ['position', 'Position'], ['texte', 'Texte']].map(([k, l]) => (
+          {[['motif', 'Motif'], ['ongle', 'Ongle'], ['position', 'Position'], ['texte', 'Texte'], ['export', 'Export']].map(([k, l]) => (
             <button key={k} className={tab === k ? 'on' : ''} onClick={() => setTab(k)}>{l}</button>
           ))}
         </nav>
@@ -131,6 +132,8 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             </div>
           </div>
         )}
+
+        {tab === 'export' && <ExportPanel design={design} />}
 
         {tab === 'texte' && (
           <div className="controls">
