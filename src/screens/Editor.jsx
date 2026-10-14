@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import NailView from '../components/NailView.jsx'
 import Grid from '../components/Grid.jsx'
 import TipPicker from '../components/TipPicker.jsx'
+import ClientPicker from '../components/ClientPicker.jsx'
 import { SHAPES } from '../lib/shapes.js'
 import { downscale, loadImage, toLineArt } from '../lib/lineart.js'
 
@@ -16,7 +17,7 @@ function Slider({ label, value, min, max, step = 1, unit = '', onChange }) {
   )
 }
 
-export default function Editor({ design, pxPerMm, onChange, onTrace, onBack }) {
+export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onManageClients }) {
   const [tab, setTab] = useState('motif')
   const srcCanvas = useRef(null)
   const set = (patch) => onChange({ ...design, ...patch })
@@ -78,7 +79,19 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack }) {
 
         {tab === 'ongle' && (
           <div className="controls">
-            <TipPicker design={design} onChange={set} />
+            <div className="seg">
+              <button className={design.mode !== 'direct' ? 'on' : ''} onClick={() => set({ mode: 'pressOn' })}>
+                Press-on (capsule)
+              </button>
+              <button className={design.mode === 'direct' ? 'on' : ''} onClick={() => set({ mode: 'direct' })}>
+                Ongle direct
+              </button>
+            </div>
+            {design.mode === 'direct' ? (
+              <ClientPicker design={design} onChange={set} onManageClients={onManageClients} />
+            ) : (
+              <TipPicker design={design} onChange={set} />
+            )}
             <div className="seg wrap">
               {Object.entries(SHAPES).map(([k, l]) => (
                 <button key={k} className={design.shape === k ? 'on' : ''} onClick={() => set({ shape: k })}>{l}</button>

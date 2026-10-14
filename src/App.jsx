@@ -3,6 +3,7 @@ import Library from './screens/Library.jsx'
 import Editor from './screens/Editor.jsx'
 import Trace from './screens/Trace.jsx'
 import Calibrate from './screens/Calibrate.jsx'
+import Clients from './screens/Clients.jsx'
 import { defaultPxPerMm, deleteDesign, getSetting, listDesigns, newDesign, saveDesign, setSetting } from './lib/db.js'
 import { downscale, fileToDataURL, loadImage, toLineArt } from './lib/lineart.js'
 
@@ -11,6 +12,7 @@ export default function App() {
   const [designs, setDesigns] = useState([])
   const [design, setDesign] = useState(null)
   const [busy, setBusy] = useState(false)
+  const [clientsBack, setClientsBack] = useState('library')
   const [pxPerMm, setPxPerMm] = useState(() => getSetting('pxPerMm', defaultPxPerMm()))
 
   const refresh = () => listDesigns().then(setDesigns).catch(() => setDesigns([]))
@@ -50,6 +52,11 @@ export default function App() {
     else refresh()
   }
 
+  function openClients(from) {
+    setClientsBack(from)
+    setScreen('clients')
+  }
+
   if (screen === 'calibrate')
     return (
       <Calibrate
@@ -63,6 +70,9 @@ export default function App() {
       />
     )
 
+  if (screen === 'clients')
+    return <Clients onBack={() => setScreen(clientsBack)} />
+
   if (screen === 'editor' && design)
     return (
       <Editor
@@ -71,6 +81,7 @@ export default function App() {
         onChange={setDesign}
         onTrace={() => setScreen('trace')}
         onBack={goLibrary}
+        onManageClients={() => openClients('editor')}
       />
     )
 
@@ -95,6 +106,7 @@ export default function App() {
         refresh()
       }}
       onCalibrate={() => setScreen('calibrate')}
+      onClients={() => openClients('library')}
     />
   )
 }

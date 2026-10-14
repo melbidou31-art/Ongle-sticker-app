@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { BRANDS, LENGTHS, getMeasures, saveMeasure, tipWidth } from '../lib/tips.js'
+import { resizeNail } from '../lib/clients.js'
 
 /**
  * Choix d'une capsule du commerce (marque + taille + longueur) qui règle la taille de l'ongle.
@@ -13,11 +14,11 @@ export default function TipPicker({ design, onChange }) {
 
   function apply(next) {
     const t = { ...tip, ...next }
-    const patch = { tip: t }
     const width = t.brand && t.size ? tipWidth(t.brand, t.size, measures) : null
-    if (width) patch.nailW = width.w
-    if (t.brand) patch.nailH = LENGTHS[t.length].mm
-    onChange(patch)
+    const w = width ? width.w : design.nailW
+    const h = t.brand ? LENGTHS[t.length].mm : design.nailH
+    // le motif suit la nouvelle taille de capsule
+    onChange({ tip: t, ...resizeNail(design, w, h) })
   }
 
   function chooseBrand(id) {

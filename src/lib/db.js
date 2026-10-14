@@ -56,7 +56,9 @@ export function newDesign({ original, lineart, aspect }) {
     aspect, // hauteur / largeur de l'image
     process: { mode: 'trait', seuil: 50, epaisseur: 0 },
     shape: 'coffin',
+    mode: 'pressOn', // 'pressOn' (capsule) ou 'direct' (ongle naturel de la cliente)
     tip: null, // { brand, size, length } si une capsule du commerce est choisie
+    client: null, // { id, finger } en mode ongle direct
     nailW: 14,
     nailH: 30,
     img: { x: 0, y: 0, w: 12, rot: 0 },

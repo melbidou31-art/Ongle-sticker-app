@@ -1,6 +1,6 @@
 import { useRef } from 'react'
 
-export default function Library({ designs, onImport, onOpen, onTrace, onDelete, onCalibrate, busy }) {
+export default function Library({ designs, onImport, onOpen, onTrace, onDelete, onCalibrate, onClients, busy }) {
   const input = useRef(null)
   return (
     <div className="screen library">
@@ -20,6 +20,7 @@ export default function Library({ designs, onImport, onOpen, onTrace, onDelete, 
             {busy ? 'Traitement…' : '+ Importer une image'}
           </button>
           <button className="ghost dark" onClick={onCalibrate}>📏 Calibrer l'écran</button>
+          <button className="ghost dark" onClick={onClients}>👤 Clientes</button>
         </div>
         <input
           ref={input}
