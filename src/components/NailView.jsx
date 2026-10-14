@@ -8,7 +8,7 @@ const PAD = 4 // marge autour de l'ongle, en mm
  * Forme 'none' : le motif seul, directement sur le quadrillage (sans contour d'ongle).
  * Si `onMove` est fourni : glisser = déplacer, pincer = agrandir/réduire.
  */
-export default function NailView({ design, pxPerMm, onMove, showOutline = true, clipKey = '', colors }) {
+export default function NailView({ design, pxPerMm, onMove, showOutline = true, clipKey = '', colors, lineColor, dark = false }) {
   const { nailW, nailH, shape, img, flip, clip, text, lineart, aspect } = design
   // calque couleurs : réglage du design, sauf si l'écran de traçage le force
   const showColors = colors ?? !!design.colors?.on
@@ -72,6 +72,15 @@ export default function NailView({ design, pxPerMm, onMove, showOutline = true, 
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
     >
+      {lineColor && (
+        // recolore le trait noir (garde sa transparence)
+        <defs>
+          <filter id={`${clipId}-ink`}>
+            <feFlood floodColor={lineColor} />
+            <feComposite in2="SourceGraphic" operator="in" />
+          </filter>
+        </defs>
+      )}
       {!free && (
         <>
           <defs>
@@ -79,7 +88,7 @@ export default function NailView({ design, pxPerMm, onMove, showOutline = true, 
               <path d={d} transform={`translate(${PAD} ${PAD})`} />
             </clipPath>
           </defs>
-          <path d={d} transform={`translate(${PAD} ${PAD})`} fill="rgba(255,255,255,0.55)" />
+          <path d={d} transform={`translate(${PAD} ${PAD})`} fill={dark ? 'rgba(255,255,255,0.07)' : 'rgba(255,255,255,0.55)'} />
         </>
       )}
       <g clipPath={clip && !free ? `url(#${clipId})` : undefined}>
@@ -93,10 +102,17 @@ export default function NailView({ design, pxPerMm, onMove, showOutline = true, 
               width={iw}
               height={ih}
               opacity={design.colors?.opacity ?? 0.4}
-              style={{ mixBlendMode: 'multiply' }}
+              style={{ mixBlendMode: dark ? 'normal' : 'multiply' }}
             />
           )}
-          <image href={lineart} x={-iw / 2} y={-ih / 2} width={iw} height={ih} />
+          <image
+            href={lineart}
+            x={-iw / 2}
+            y={-ih / 2}
+            width={iw}
+            height={ih}
+            filter={lineColor ? `url(#${clipId}-ink)` : undefined}
+          />
         </g>
         {text.value && (
           <text
@@ -105,6 +121,7 @@ export default function NailView({ design, pxPerMm, onMove, showOutline = true, 
             fontSize={text.size}
             textAnchor="middle"
             fontFamily="Georgia, serif"
+            fill={lineColor || '#000'}
             transform={flip ? `translate(${2 * (PAD + aw / 2)} 0) scale(-1 1)` : undefined}
           >
             {text.value}

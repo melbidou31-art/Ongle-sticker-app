@@ -3,6 +3,7 @@ import NailView from '../components/NailView.jsx'
 import Grid from '../components/Grid.jsx'
 import { FINGERS, resizeNail } from '../lib/clients.js'
 import { fingerDims, forFinger, hasSet } from '../lib/fingerset.js'
+import { LINE_COLORS, SURFACES, getDisplay, inkColor, saveDisplay } from '../lib/display.js'
 
 const HOLD_MS = 700 // appui long pour déverrouiller : évite qu'une capsule posée ne débloque l'écran
 
@@ -37,8 +38,20 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
   const [view, setView] = useState('single')
   // couleurs d'origine : bascule rapide pendant le traçage (trait seul ↔ trait + couleurs)
   const [showColors, setShowColors] = useState(!!design.colors?.on)
+  // affichage : couleur du trait, fond, miroir de la main droite
+  const [display, setDisplay] = useState(getDisplay)
+  const [showOptions, setShowOptions] = useState(false)
+  const updateDisplay = (patch) => setDisplay((d) => saveDisplay({ ...d, ...patch }))
+  const ink = inkColor(display)
+  const dark = display.surface === 'dark'
+  // variante d'un doigt ; la main droite peut être en miroir pour un set symétrique
+  const variant = (f) => {
+    const v = forFinger(design, f)
+    return display.mirrorRight && f >= 5 ? { ...v, flip: !v.flip } : v
+  }
+
   const dims = set ? fingerDims(design, finger) : null
-  const current = set ? forFinger(design, finger) : design
+  const current = set ? variant(finger) : design
   const go = (d) =>
     setFinger((f) => (view === 'hand' ? (f < 5 ? 5 : 0) : (f + d + 10) % 10))
 
@@ -94,6 +107,13 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
           >
             🎨
           </button>
+          <button
+            className={`ghost dark ${showOptions ? 'on-gold' : ''}`}
+            onClick={() => setShowOptions((v) => !v)}
+            title="Affichage : couleur du trait, fond, miroir"
+          >
+            ⚙
+          </button>
           <button className="ghost dark" onClick={toggleFullscreen}>⛶</button>
           {!locked && <button className="ghost dark" onClick={onExit}>Quitter</button>}
         </div>
@@ -117,18 +137,54 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
         </div>
       )}
 
-      <Grid pxPerMm={pxPerMm} className="trace-stage">
+      {showOptions && (
+        <div className="trace-options">
+          <div className="opt">
+            <span className="muted">Trait</span>
+            {LINE_COLORS.map((c) => (
+              <button
+                key={c.id}
+                className={`swatch ${display.line === c.id ? 'on' : ''}`}
+                style={{ background: c.value || '#000' }}
+                onClick={() => updateDisplay({ line: c.id })}
+                title={c.label}
+                aria-label={`Trait ${c.label}`}
+              />
+            ))}
+          </div>
+          <div className="opt">
+            <span className="muted">Fond</span>
+            {SURFACES.map((s) => (
+              <button key={s.id} className={`chip ${display.surface === s.id ? 'on' : ''}`} onClick={() => updateDisplay({ surface: s.id })}>
+                {s.label}
+              </button>
+            ))}
+          </div>
+          {set && (
+            <label className="check">
+              <input type="checkbox" checked={display.mirrorRight} onChange={(e) => updateDisplay({ mirrorRight: e.target.checked })} />
+              Main droite en miroir
+            </label>
+          )}
+        </div>
+      )}
+
+      <Grid pxPerMm={pxPerMm} className="trace-stage" variant={display.surface}>
         <div className={`lock-pill ${locked ? '' : 'open'}`}>{locked ? '🔒 DESIGN LOCKED' : '✋ DÉPLACEMENT LIBRE'}</div>
         {set && view === 'hand' ? (
           <div className="hand-row">
             {[0, 1, 2, 3, 4].map((k) => {
               const f = (finger < 5 ? 0 : 5) + k
-              return <NailView key={f} clipKey={f} design={forFinger(design, f)} pxPerMm={pxPerMm} colors={showColors} />
+              return (
+                <NailView key={f} clipKey={f} design={variant(f)} pxPerMm={pxPerMm} colors={showColors} lineColor={ink} dark={dark} />
+              )
             })}
           </div>
         ) : (
           <NailView
             colors={showColors}
+            lineColor={ink}
+            dark={dark}
             design={current}
             pxPerMm={pxPerMm}
             onMove={

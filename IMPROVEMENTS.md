@@ -117,3 +117,18 @@ une capsule ou une cliente, le tracer et l'exporter.
 
 **Limites** : motifs simples dessinés à la main (vectoriels, 100 × 100) ; la « Ligne French » donne la courbe du
 sourire (trait plein + repère pointillé) à adapter à la largeur de l'ongle avec « Taille du motif ».
+
+## feat/09-affichage-tracage — 15/10/2026
+
+**Ajouté** : bouton **⚙** en mode traçage (utilisable verrouillé), réglages mémorisés sur l'appareil :
+- **Couleur du trait** : noir, rouge, bleu, blanc — le rouge/bleu se voient mieux à travers une capsule teintée
+  ou un gel de couleur.
+- **Fond** : quadrillé (par défaut), **blanc uni** (lumière maximale, sans grille qui gêne), **sombre** (contraste
+  maximal ; un trait noir devient automatiquement blanc).
+- **Main droite en miroir** (si set 10 doigts ou cliente) : motifs symétriques entre les deux mains.
+
+**Tester** : Tracer un design → ⚙ → changer trait / fond ; avec un set : cocher « Main droite en miroir » puis ▶
+jusqu'aux doigts de la main droite.
+
+**Limites** : sur fond sombre, le calque couleurs n'est plus fusionné (le fond blanc de la photo réapparaît en
+transparence) — le calque couleurs est plus lisible sur fond clair.
