@@ -53,3 +53,15 @@ sont des moyennes approximatives. La forme reste celle choisie dans l'éditeur (
 **Limites** : sur un téléphone, la main entière déborde souvent de l'écran (5 ongles ≈ 60–75 mm) — prévue pour
 tablette. Les écarts de tailles par défaut du set sont approximatifs. Déplacer le motif (déverrouillé) depuis un
 doigt le déplace pour tout le set.
+
+## feat/04-motif-seul-sans-ongle — 15/10/2026 (demande de l'utilisatrice)
+
+**Changé** : une image importée s'affiche désormais **seule, directement sur le quadrillage**, sans contour ni
+découpe d'ongle (nouvelle forme « Aucun (motif seul) », par défaut pour les nouveaux designs, motif à 20 mm de
+large). Le contour reste disponible : choisir une forme dans l'onglet *Ongle*, ou une capsule du commerce
+(→ ballerine) ou une cliente en ongle direct (→ ovale) l'active automatiquement.
+
+**Tester** : importer une image → elle apparaît seule sur la grille ; onglet Ongle → « Ballerine » pour revoir le
+contour, « Aucun » pour le retirer.
+
+**Limites** : les designs déjà créés gardent leur forme d'ongle (pas de migration).

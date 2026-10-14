@@ -97,12 +97,18 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
                 <button key={k} className={design.shape === k ? 'on' : ''} onClick={() => set({ shape: k })}>{l}</button>
               ))}
             </div>
-            <Slider label="Largeur" unit=" mm" value={design.nailW} min={8} max={22} step={0.5} onChange={(nailW) => set({ nailW })} />
-            <Slider label="Longueur" unit=" mm" value={design.nailH} min={10} max={50} step={0.5} onChange={(nailH) => set({ nailH })} />
-            <label className="check">
-              <input type="checkbox" checked={design.clip} onChange={(e) => set({ clip: e.target.checked })} />
-              Couper le motif à la forme de l'ongle
-            </label>
+            {design.shape === 'none' ? (
+              <p className="muted">Motif seul sur le quadrillage. Choisis une forme ou une capsule pour afficher un contour d'ongle.</p>
+            ) : (
+              <>
+                <Slider label="Largeur" unit=" mm" value={design.nailW} min={8} max={22} step={0.5} onChange={(nailW) => set({ nailW })} />
+                <Slider label="Longueur" unit=" mm" value={design.nailH} min={10} max={50} step={0.5} onChange={(nailH) => set({ nailH })} />
+                <label className="check">
+                  <input type="checkbox" checked={design.clip} onChange={(e) => set({ clip: e.target.checked })} />
+                  Couper le motif à la forme de l'ongle
+                </label>
+              </>
+            )}
           </div>
         )}
 

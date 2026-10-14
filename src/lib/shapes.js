@@ -1,6 +1,7 @@
 // Formes d'ongle, en millimètres. Cuticule en haut (y = 0), bord libre en bas (y = h).
 
 export const SHAPES = {
+  none: 'Aucun (motif seul)',
   coffin: 'Ballerine',
   almond: 'Amande',
   stiletto: 'Stiletto',

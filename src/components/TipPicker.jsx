@@ -19,7 +19,7 @@ export default function TipPicker({ design, onChange }) {
     const w = width ? width.w : design.nailW
     const h = t.brand ? LENGTHS[t.length].mm : design.nailH
     // le motif suit la nouvelle taille de capsule
-    onChange({ tip: t, ...resizeNail(design, w, h), ...extra })
+    onChange({ tip: t, ...resizeNail(design, w, h), ...(design.shape === 'none' && { shape: 'coffin' }), ...extra })
   }
 
   function chooseBrand(id) {

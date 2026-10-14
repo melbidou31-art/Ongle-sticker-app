@@ -55,14 +55,14 @@ export function newDesign({ original, lineart, aspect }) {
     lineart,
     aspect, // hauteur / largeur de l'image
     process: { mode: 'trait', seuil: 50, epaisseur: 0 },
-    shape: 'coffin',
+    shape: 'none', // motif seul sur le quadrillage ; une forme d'ongle est optionnelle
     mode: 'pressOn', // 'pressOn' (capsule) ou 'direct' (ongle naturel de la cliente)
     tip: null, // { brand, size, length } si une capsule du commerce est choisie
     client: null, // { id, finger } en mode ongle direct
     tipSet: null, // 10 tailles (pouce G → auriculaire D) pour un set press-on
     nailW: 14,
     nailH: 30,
-    img: { x: 0, y: 0, w: 12, rot: 0 },
+    img: { x: 0, y: 0, w: 20, rot: 0 },
     flip: false,
     clip: true,
     text: { value: '', size: 3, y: 8 },

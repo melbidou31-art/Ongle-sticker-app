@@ -12,7 +12,8 @@ export default function ClientPicker({ design, onChange, onManageClients }) {
     const c = clients.find((x) => x.id === s.id)
     if (!c) return onChange({ client: s })
     const n = c.nails[s.finger]
-    onChange({ client: s, ...resizeNail(design, n.w, n.h) })
+    // un ongle naturel a besoin d'un contour : ovale si le motif était seul
+    onChange({ client: s, ...resizeNail(design, n.w, n.h), ...(design.shape === 'none' && { shape: 'oval' }) })
   }
 
   if (clients.length === 0)
