@@ -35,6 +35,8 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
   const set = hasSet(design)
   const [finger, setFinger] = useState(design.client?.finger ?? 0)
   const [view, setView] = useState('single')
+  // couleurs d'origine : bascule rapide pendant le traçage (trait seul ↔ trait + couleurs)
+  const [showColors, setShowColors] = useState(!!design.colors?.on)
   const dims = set ? fingerDims(design, finger) : null
   const current = set ? forFinger(design, finger) : design
   const go = (d) =>
@@ -85,6 +87,13 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
           ) : (
             <button className="pink" onClick={() => setLocked(true)}>🔒 Lock design</button>
           )}
+          <button
+            className={`ghost dark ${showColors ? 'on-gold' : ''}`}
+            onClick={() => setShowColors((v) => !v)}
+            title="Couleurs d'origine sous le trait"
+          >
+            🎨
+          </button>
           <button className="ghost dark" onClick={toggleFullscreen}>⛶</button>
           {!locked && <button className="ghost dark" onClick={onExit}>Quitter</button>}
         </div>
@@ -114,11 +123,12 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
           <div className="hand-row">
             {[0, 1, 2, 3, 4].map((k) => {
               const f = (finger < 5 ? 0 : 5) + k
-              return <NailView key={f} clipKey={f} design={forFinger(design, f)} pxPerMm={pxPerMm} />
+              return <NailView key={f} clipKey={f} design={forFinger(design, f)} pxPerMm={pxPerMm} colors={showColors} />
             })}
           </div>
         ) : (
           <NailView
+            colors={showColors}
             design={current}
             pxPerMm={pxPerMm}
             onMove={

@@ -41,6 +41,8 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
   const setProcess = (patch) => set({ process: { ...p, ...patch } })
   const setImg = (patch) => set({ img: { ...design.img, ...patch } })
   const setText = (patch) => set({ text: { ...design.text, ...patch } })
+  const colors = { on: false, opacity: 0.4, ...design.colors }
+  const setColors = (patch) => set({ colors: { ...colors, ...patch } })
 
   return (
     <div className="screen editor">
@@ -74,6 +76,13 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             </div>
             <Slider label="Seuil" value={p.seuil} min={0} max={100} onChange={(seuil) => setProcess({ seuil })} />
             <Slider label="Épaisseur du trait" value={p.epaisseur} min={0} max={3} onChange={(epaisseur) => setProcess({ epaisseur })} />
+            <label className="check">
+              <input type="checkbox" checked={!!colors.on} onChange={(e) => setColors({ on: e.target.checked })} />
+              🎨 Afficher les couleurs d'origine sous le trait
+            </label>
+            {colors.on && (
+              <Slider label="Intensité des couleurs" unit=" %" value={Math.round(colors.opacity * 100)} min={10} max={100} step={5} onChange={(v) => setColors({ opacity: v / 100 })} />
+            )}
           </div>
         )}
 

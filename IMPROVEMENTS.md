@@ -78,3 +78,16 @@ et on fait glisser des repères roses sur ses bords ; la mesure s'affiche au dem
 
 **Limites** : la précision dépend du calibrage de l'écran (📏 Calibrer l'écran). Un doigt posé à plat masque
 une partie de l'écran : les repères dépassent en haut/bas pour rester visibles.
+
+## feat/06-calque-couleurs-origine — 15/10/2026
+
+**Ajouté** : **calque des couleurs d'origine** sous le trait, pour savoir quelle couleur peindre où sans regarder
+la photo à côté.
+- Onglet *Motif* : « 🎨 Afficher les couleurs d'origine sous le trait » + curseur d'intensité (10–100 %).
+- Mode traçage : bouton 🎨 pour basculer instantanément trait seul ↔ trait + couleurs (même verrouillé).
+- Le fond blanc de la photo devient transparent (fusion « produit ») : le quadrillage reste visible.
+
+**Tester** : ouvrir un design importé en couleur → Motif → cocher 🎨 → Tracer → bouton 🎨.
+
+**Limites** : un fond de photo foncé ou coloré reste visible (seul le blanc disparaît). Les designs créés avant
+cette version ont le calque désactivé par défaut.

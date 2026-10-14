@@ -8,8 +8,10 @@ const PAD = 4 // marge autour de l'ongle, en mm
  * Forme 'none' : le motif seul, directement sur le quadrillage (sans contour d'ongle).
  * Si `onMove` est fourni : glisser = déplacer, pincer = agrandir/réduire.
  */
-export default function NailView({ design, pxPerMm, onMove, showOutline = true, clipKey = '' }) {
+export default function NailView({ design, pxPerMm, onMove, showOutline = true, clipKey = '', colors }) {
   const { nailW, nailH, shape, img, flip, clip, text, lineart, aspect } = design
+  // calque couleurs : réglage du design, sauf si l'écran de traçage le force
+  const showColors = colors ?? !!design.colors?.on
   const iw = img.w
   const ih = img.w * aspect
   const free = shape === 'none'
@@ -82,6 +84,18 @@ export default function NailView({ design, pxPerMm, onMove, showOutline = true, 
       )}
       <g clipPath={clip && !free ? `url(#${clipId})` : undefined}>
         <g transform={`translate(${cx} ${cy}) rotate(${img.rot}) scale(${flip ? -1 : 1} 1)`}>
+          {showColors && (
+            // photo d'origine sous le trait ; « multiply » rend son fond blanc transparent sur la grille
+            <image
+              href={design.original}
+              x={-iw / 2}
+              y={-ih / 2}
+              width={iw}
+              height={ih}
+              opacity={design.colors?.opacity ?? 0.4}
+              style={{ mixBlendMode: 'multiply' }}
+            />
+          )}
           <image href={lineart} x={-iw / 2} y={-ih / 2} width={iw} height={ih} />
         </g>
         {text.value && (

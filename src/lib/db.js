@@ -65,6 +65,7 @@ export function newDesign({ original, lineart, aspect }) {
     img: { x: 0, y: 0, w: 20, rot: 0 },
     flip: false,
     clip: true,
+    colors: { on: false, opacity: 0.4 }, // calque des couleurs d'origine sous le trait
     text: { value: '', size: 3, y: 8 },
   }
 }

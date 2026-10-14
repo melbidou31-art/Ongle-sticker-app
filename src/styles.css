@@ -175,6 +175,7 @@ input[type='range'] { width: 100%; accent-color: var(--gold); }
   background: var(--pink); border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); touch-action: none;
 }
 .mini { padding: 2px 8px; font-size: 12px; }
+.ghost.dark.on-gold { border-color: var(--gold); background: rgba(201, 169, 110, 0.18); }
 
 /* Mode traçage */
 .trace { height: 100%; }
