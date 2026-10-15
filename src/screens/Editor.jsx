@@ -80,9 +80,14 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
     onChange((d) => ({ ...d, crop: c, img: { ...d.img, w: (d.img.w * c.w) / (d.crop?.w ?? 1) } }))
   }
 
-  // Gomme : chaque tracé est mémorisé (annulable) et réappliqué à chaque recalcul du trait.
+  // Retouches (gomme ou crayon) : chaque tracé est mémorisé (annulable) et réappliqué à chaque recalcul du trait.
   // Les points sont convertis de l'image affichée (recadrée) vers l'image entière.
-  const [eraser, setEraser] = useState({ on: false, size: 1.5 }) // size = rayon en mm
+  // mode 'erase' = gomme, 'draw' = crayon (ajoute du trait) ; size = rayon en mm
+  const [eraser, setEraser] = useState({ on: false, mode: 'erase', size: 1.5 })
+  const pickTool = (mode) =>
+    setEraser((e) =>
+      e.on && e.mode === mode ? { ...e, on: false } : { on: true, mode, size: mode === 'draw' ? 0.25 : 1.5 },
+    )
   const strokes = design.erase || []
   const full = (d, u, v) => {
     const c = d.crop || { x: 0, y: 0, w: 1, h: 1 }
@@ -92,7 +97,10 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
     start: (u, v) =>
       onChange((d) => ({
         ...d,
-        erase: [...(d.erase || []), { r: (eraser.size / d.img.w) * (d.crop?.w ?? 1), pts: [full(d, u, v)] }],
+        erase: [
+          ...(d.erase || []),
+          { mode: eraser.mode, r: (eraser.size / d.img.w) * (d.crop?.w ?? 1), pts: [full(d, u, v)] },
+        ],
       })),
     move: (u, v) =>
       onChange((d) => {
@@ -144,7 +152,13 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
         ) : (
           <NailView design={design} pxPerMm={pxPerMm} onMove={moveActive} activeLayer={activeLayer} guides={guides} />
         )}
-        <p className="hint">{eraser.on ? '🧽 Gomme : frotte sur le trait à effacer' : 'Glisse pour déplacer · pince pour zoomer'}</p>
+        <p className="hint">
+          {!eraser.on
+            ? 'Glisse pour déplacer · pince pour zoomer'
+            : eraser.mode === 'draw'
+              ? '✏ Crayon : dessine pour compléter ou refermer le trait'
+              : '🧽 Gomme : frotte sur le trait à effacer'}
+        </p>
       </Grid>
 
       <section className="panel">
@@ -177,22 +191,33 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
                 <button className={`chip ${hasCrop(design.crop) ? 'on' : ''}`} onClick={() => setCropping(true)}>
                   ✂ Recadrer{hasCrop(design.crop) ? ' (actif)' : ''}
                 </button>
-                <button className={`chip ${eraser.on ? 'on' : ''}`} onClick={() => setEraser((e) => ({ ...e, on: !e.on }))}>
-                  🧽 Gomme {eraser.on ? 'activée' : ''}
+                <button className={`chip ${eraser.on && eraser.mode === 'erase' ? 'on' : ''}`} onClick={() => pickTool('erase')}>
+                  🧽 Gomme
+                </button>
+                <button className={`chip ${eraser.on && eraser.mode === 'draw' ? 'on' : ''}`} onClick={() => pickTool('draw')}>
+                  ✏ Crayon
                 </button>
                 <button className="chip" disabled={!strokes.length} onClick={() => set({ erase: strokes.slice(0, -1) })}>
-                  ↶ Annuler
+                  ↶ Dernière retouche
                 </button>
                 <button
                   className="chip"
                   disabled={!strokes.length}
-                  onClick={() => confirm('Restaurer tout le trait effacé ?') && set({ erase: [] })}
+                  onClick={() => confirm('Retirer toutes les retouches (gomme et crayon) ?') && set({ erase: [] })}
                 >
                   Tout restaurer
                 </button>
               </div>
               {eraser.on && (
-                <Slider label="Taille de la gomme" unit=" mm" value={eraser.size * 2} min={0.5} max={8} step={0.5} onChange={(v) => setEraser((e) => ({ ...e, size: v / 2 }))} />
+                <Slider
+                  label={eraser.mode === 'draw' ? 'Épaisseur du crayon' : 'Taille de la gomme'}
+                  unit=" mm"
+                  value={eraser.size * 2}
+                  min={eraser.mode === 'draw' ? 0.2 : 0.5}
+                  max={eraser.mode === 'draw' ? 3 : 8}
+                  step={eraser.mode === 'draw' ? 0.1 : 0.5}
+                  onChange={(v) => setEraser((e) => ({ ...e, size: v / 2 }))}
+                />
               )}
             </div>
             <label className="check">

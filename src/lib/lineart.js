@@ -120,12 +120,13 @@ export function toLineArt(canvas, { mode = 'trait', seuil = 50, epaisseur = 0 } 
   }
   octx.putImageData(img, 0, 0)
 
-  // Gomme : efface le trait le long des tracés enregistrés
+  // Retouches dans l'ordre : gomme (efface le trait) ou crayon (mode 'draw', ajoute du trait noir)
   if (erase.length) {
-    octx.globalCompositeOperation = 'destination-out'
     octx.lineCap = 'round'
     octx.lineJoin = 'round'
+    octx.strokeStyle = '#000'
     for (const s of erase) {
+      octx.globalCompositeOperation = s.mode === 'draw' ? 'source-over' : 'destination-out'
       octx.lineWidth = s.r * w * 2
       octx.beginPath()
       s.pts.forEach(([u, v], i) => (i ? octx.lineTo(u * w, v * h) : octx.moveTo(u * w, v * h)))

@@ -395,3 +395,17 @@ mode traçage (déplacement déverrouillé) n'y figurent pas.
 
 **Limites** : le suivi s'efface en fermant l'app (pensé pour une séance de pose) ; pas de suivi en vue
 « Main entière ».
+
+## feat/27-crayon-retouche-trait — 15/10/2026
+
+**Ajouté** : **✏ Crayon** à côté de la 🧽 Gomme (onglet *Motif*) pour **ajouter du trait** : refermer un contour
+coupé, compléter un détail perdu à la conversion d'une photo, renforcer une ligne trop fine.
+- Épaisseur réglable (0,2 à 3 mm) ; gomme et crayon s'utilisent dans l'ordre (on peut gommer un trait de crayon).
+- Comme la gomme : retouches stockées par rapport à l'image (suivent déplacement, rotation, miroir, recadrage),
+  réappliquées quand on change le seuil ; « ↶ Dernière retouche » et « Tout restaurer » ; aussi annulables avec ↶.
+- Pris en compte partout : traçage, export, « ⭐ Mes motifs ».
+
+**Tester** : ouvrir un design → Motif → ✏ Crayon → dessiner sur le motif → ↶ Dernière retouche.
+
+**Limites** : trait noir uniforme (pas de pression) ; un trait tracé hors de l'image (dans la marge) n'est pas
+conservé ; s'applique au motif principal, pas aux calques ajoutés.
