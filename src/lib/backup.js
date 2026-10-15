@@ -1,7 +1,9 @@
 // Sauvegarde / restauration de toutes les données de l'app dans un fichier .json.
 // Sert aussi à transférer ses designs et clientes d'un appareil à un autre (PC → téléphone…).
 // Le calibrage de l'écran n'est PAS inclus : il est propre à chaque appareil.
-import { getSetting, listDesigns, listMyMotifs, saveDesign, saveMyMotif, setSetting } from './db.js'
+import {
+  getSetting, listDesigns, listMyMotifs, saveDesign, saveMyMotif, setSetting, updateDesignMeta,
+} from './db.js'
 import { listClients } from './clients.js'
 import { getMeasures, listCustomBrands, saveCustomBrand } from './tips.js'
 import { listCustomShapes, saveCustomShape } from './customShapes.js'
@@ -58,7 +60,8 @@ export async function restoreBackup(text) {
   for (const d of data.designs) {
     // garde-fou : un design doit au minimum avoir un id et ses images
     if (!d?.id || !d.original || !d.lineart) continue
-    await saveDesign(d)
+    // on garde la date de modification d'origine : restaurer ne doit pas mélanger l'ordre « Récents »
+    await (d.updatedAt ? updateDesignMeta(d) : saveDesign(d))
     designs++
   }
 

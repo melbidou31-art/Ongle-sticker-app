@@ -593,3 +593,5 @@ retour ; formes Stiletto / Ballerine.
 Corrections trouvées par les passes de test automatisées (toutes les fonctionnalités, plusieurs fois) :
 - **Recherche de la bibliothèque** : « p2 test » ne trouvait pas « P2-test » (tiret, ponctuation). La recherche
   ignore maintenant la ponctuation et accepte plusieurs mots dans n'importe quel ordre (nom, étiquette, collection).
+- **Restaurer une sauvegarde mélangeait l'ordre « Récents »** (chaque design recevait la date du jour) : les dates de
+  modification d'origine sont maintenant conservées.
