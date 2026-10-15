@@ -164,15 +164,23 @@ code { font-family: ui-monospace, 'Cascadia Mono', monospace; }
   flex: 1; min-width: 0; background: transparent; border: 0; color: inherit;
   font: 600 16px Georgia, serif; text-align: center;
 }
-.editor-stage { min-height: 46vh; }
+/* Éditeur : l'image reste toujours visible en haut, seul le panneau de réglages défile en dessous
+   (sinon, en réglant le French ou le texte en bas du panneau, l'image sortait de l'écran). */
+.screen.editor { height: 100vh; height: 100dvh; overflow: hidden; }
+.editor-stage { flex: 0 0 auto; height: 42vh; height: 42dvh; min-height: 200px; }
 .zoom-bar { position: absolute; top: 8px; right: 8px; z-index: 2; display: flex; gap: 4px; }
 .zoom-bar .chip { background: rgba(28, 26, 24, 0.85); }
 .zoom-bar .chip.on { background: var(--gold); }
 .stage-inner { display: flex; }
 /* zoomé : la zone défile ; « margin: auto » garde le motif centré tant qu'il tient, sans le couper sinon */
-.editor-stage.zoomed { overflow: auto; justify-content: flex-start; align-items: flex-start; max-height: 60vh; }
+.editor-stage.zoomed { overflow: auto; justify-content: flex-start; align-items: flex-start; }
 .editor-stage.zoomed .stage-inner { margin: auto; padding: 40px 16px 32px; }
-.panel { background: var(--bg-2); border-top: 1px solid var(--line); padding: 12px 16px calc(16px + env(safe-area-inset-bottom)); }
+.panel {
+  background: var(--bg-2); border-top: 1px solid var(--line); padding: 12px 16px calc(16px + env(safe-area-inset-bottom));
+  flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain;
+}
+/* les onglets restent en haut du panneau pendant qu'on fait défiler les réglages */
+.panel .tabs { position: sticky; top: -12px; z-index: 3; background: var(--bg-2); margin-top: -12px; padding-top: 12px; }
 .panel-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
 .design-id { font: 600 15px ui-monospace, monospace; color: #eee9df; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .tabs { display: flex; gap: 4px; margin-bottom: 12px; border-bottom: 1px solid var(--line); }

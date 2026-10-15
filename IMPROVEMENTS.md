@@ -479,3 +479,15 @@ Les designs existants sont convertis automatiquement (court → M, moyen → L, 
 
 **Limites** : longueurs approximatives (cuticule → bord libre) ; pour une longueur exacte, régler « Longueur »
 à la main ou utiliser une marque perso (à venir).
+
+## feat/33-panneau-defilant-image-visible — 15/10/2026 (retour de test)
+
+**Corrigé** : en réglant le sourire French (ou le texte, ou tout réglage en bas du panneau), l'image n'était plus
+visible. Désormais **l'image reste fixe en haut de l'éditeur** (≈ 42 % de l'écran) et **seul le panneau de réglages
+défile** en dessous, les onglets restant collés en haut du panneau. On voit donc le résultat en direct en bougeant
+n'importe quel curseur.
+
+**Tester** : sur téléphone, ouvrir un design avec une forme → Ongle → Gabarit French → faire défiler les réglages
+et bouger « Profondeur du sourire » : l'ongle reste visible.
+
+**Limites** : sur un très petit écran, la zone de réglages est plus courte (défiler davantage).
