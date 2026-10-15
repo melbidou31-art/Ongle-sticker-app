@@ -198,6 +198,9 @@ input[type='range'] { width: 100%; accent-color: var(--gold); }
 
 .accents { display: grid; gap: 8px; justify-items: start; padding-bottom: 10px; border-bottom: 1px solid var(--line); }
 .accents p { margin: 0; }
+.length-picker { display: grid; gap: 6px; }
+.length-picker .row { justify-content: space-between; }
+.kid-toggle { font-size: 12px; }
 .seg.lengths button { display: grid; gap: 1px; padding: 6px 4px; min-width: 52px; }
 .seg.lengths small { font-size: 10px; opacity: 0.75; }
 .brand-editor {

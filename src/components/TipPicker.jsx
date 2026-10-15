@@ -1,9 +1,10 @@
 import { useState } from 'react'
 import {
-  LENGTHS, allBrands, deleteCustomBrand, getMeasures, lengthKey, newCustomBrand, saveCustomBrand, saveMeasure,
+  allBrands, deleteCustomBrand, getMeasures, lengthKey, newCustomBrand, saveCustomBrand, saveMeasure,
   tipLength, tipWidth,
 } from '../lib/tips.js'
 import BrandEditor from './BrandEditor.jsx'
+import LengthPicker from './LengthPicker.jsx'
 import { FINGERS, resizeNail } from '../lib/clients.js'
 import { defaultTipSet } from '../lib/fingerset.js'
 import MeasureTool from './MeasureTool.jsx'
@@ -113,15 +114,7 @@ export default function TipPicker({ design, pxPerMm, onChange }) {
               )
             })}
           </div>
-          <span className="muted">Longueur (la même pour les 10 doigts)</span>
-          <div className="seg wrap lengths">
-            {Object.entries(LENGTHS).map(([k, l]) => (
-              <button key={k} className={tip.length === k ? 'on' : ''} onClick={() => apply({ length: k })} title={l.name}>
-                <b>{l.label}</b>
-                <small>{l.name}</small>
-              </button>
-            ))}
-          </div>
+          <LengthPicker value={tip.length} onChange={(length) => apply({ length })} />
           {current && (
             <p className="muted">
               Taille {tip.size} : <b>{design.nailW} mm</b> de large ·{' '}

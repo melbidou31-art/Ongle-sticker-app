@@ -16,13 +16,29 @@ export const LENGTHS = {
   xxl: { label: 'XXL', name: 'Très long', mm: 38 },
 }
 
+// Mode enfant : longueurs affichées directement en millimètres, adaptées aux petits ongles
+export const KID_LENGTHS = {
+  k8: { label: '8 mm', mm: 8 },
+  k10: { label: '10 mm', mm: 10 },
+  k12: { label: '12 mm', mm: 12 },
+  k14: { label: '14 mm', mm: 14 },
+  k16: { label: '16 mm', mm: 16 },
+}
+export const isKidLength = (k) => !!KID_LENGTHS[k]
+const lengthInfo = (k) => LENGTHS[k] || KID_LENGTHS[k]
+
 // anciennes clés (designs enregistrés avant) → nouvelles
 const LEGACY = { short: 'm', medium: 'l', long: 'xl', xlong: 'xxl' }
-export const lengthKey = (k) => (LENGTHS[k] ? k : LEGACY[k] || 'l')
+export const lengthKey = (k) => (lengthInfo(k) ? k : LEGACY[k] || 'l')
+export const lengthLabel = (k) => lengthInfo(lengthKey(k)).label
 
-/** Longueur réelle d'une capsule : longueur commerciale × coefficient de la forme (stiletto plus long…). */
-export const tipLength = (key, shape) =>
-  Math.round(LENGTHS[lengthKey(key)].mm * (SHAPE_LENGTH[shape] ?? 1) * 2) / 2
+/** Longueur réelle d'une capsule : longueur commerciale × coefficient de la forme (stiletto plus long…).
+ *  En mode enfant, la longueur choisie en mm est appliquée telle quelle. */
+export function tipLength(key, shape) {
+  const k = lengthKey(key)
+  if (isKidLength(k)) return KID_LENGTHS[k].mm
+  return Math.round(LENGTHS[k].mm * (SHAPE_LENGTH[shape] ?? 1) * 2) / 2
+}
 
 // Génère une série de tailles : largeur de départ, pas de 1 mm
 const series = (labels, firstW) => labels.map((label, i) => ({ label: String(label), w: firstW - i }))

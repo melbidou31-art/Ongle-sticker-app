@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { FINGERS, deleteClient, listClients, nailsFromSizing, newClient, saveClient } from '../lib/clients.js'
-import { LENGTHS, allBrands } from '../lib/tips.js'
+import { allBrands } from '../lib/tips.js'
+import LengthPicker from '../components/LengthPicker.jsx'
 import { defaultTipSet } from '../lib/fingerset.js'
 import MeasureTool from '../components/MeasureTool.jsx'
 import { allShapes } from '../lib/shapes.js'
@@ -106,15 +107,7 @@ export default function Clients({ pxPerMm, onBack }) {
                 ))}
               </select>
             </label>
-            <span className="muted">Longueur (les 10 doigts)</span>
-            <div className="seg wrap lengths">
-              {Object.entries(LENGTHS).map(([k, l]) => (
-                <button key={k} className={sizing.length === k ? 'on' : ''} onClick={() => setSizing({ length: k })} title={l.name}>
-                  <b>{l.label}</b>
-                  <small>{l.name}</small>
-                </button>
-              ))}
-            </div>
+            <LengthPicker value={sizing.length} onChange={(length) => setSizing({ length })} />
           </div>
         )}
         <div className="hands">

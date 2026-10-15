@@ -534,3 +534,16 @@ voulu) ; le contour n'est pas rendu symétrique automatiquement.
 
 **Limites** : en « marque + numéro », les largeurs sont celles de la marque (approx. pour les marques du commerce
 sauf mesures « Ma boîte », exactes pour les marques perso).
+
+## feat/37-mode-enfant-longueurs-mm — 15/10/2026 (retour de test)
+
+**Ajouté** : **👧 Mode enfant** à côté du choix de longueur (capsules dans l'éditeur, et fiche cliente en « marque +
+numéro »). Activé, les longueurs s'affichent **directement en millimètres** et sont adaptées aux petits ongles :
+8 · 10 · 12 · 14 · 16 mm (appliquées telles quelles, sans coefficient de forme). Désactivé, on revient aux
+longueurs XS–XXL. La longueur reste la même pour les 10 doigts ; les étiquettes de la bibliothèque affichent la
+longueur en mm pour ces designs.
+
+**Tester** : Ongle → Press-on → une marque → cocher « 👧 Mode enfant » → choisir 10 mm.
+
+**Limites** : seules les longueurs changent en mode enfant (les numéros de capsules restent ceux de la marque —
+utiliser une marque perso pour des capsules enfant aux largeurs exactes).
