@@ -78,6 +78,11 @@ code { font-family: ui-monospace, 'Cascadia Mono', monospace; }
 .card-body { display: grid; gap: 4px; align-content: start; min-width: 0; }
 .card-body b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-body code { color: var(--muted); font-size: 11px; }
+.card-title { display: flex; align-items: center; gap: 6px; min-width: 0; }
+.card-title b { flex: 1; min-width: 0; }
+.star { background: none; color: var(--muted); font-size: 18px; line-height: 1; padding: 0 2px; }
+.star.on { color: var(--gold); }
+.filters { display: flex; flex-wrap: wrap; gap: 6px; padding: 10px 16px 0; }
 .tag { color: var(--gold); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .lib-tools { display: flex; gap: 8px; padding: 16px 16px 0; }
 .lib-tools .search { flex: 1; min-width: 0; }

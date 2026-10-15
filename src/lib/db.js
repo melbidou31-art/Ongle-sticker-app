@@ -32,6 +32,8 @@ export const listDesigns = async () =>
   ((await run('readonly', (s) => s.getAll())) || []).sort((a, b) => b.updatedAt - a.updatedAt)
 export const saveDesign = (d) => run('readwrite', (s) => s.put({ ...d, updatedAt: Date.now() }))
 export const deleteDesign = (id) => run('readwrite', (s) => s.delete(id))
+// rangement (favori, collection) : ne change pas la date de modification, donc pas l'ordre « Récents »
+export const updateDesignMeta = (d) => run('readwrite', (s) => s.put(d))
 
 export const listMyMotifs = async () =>
   ((await run('readonly', (s) => s.getAll(), MOTIFS)) || []).sort((a, b) => b.createdAt - a.createdAt)

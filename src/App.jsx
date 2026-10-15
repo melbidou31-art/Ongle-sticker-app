@@ -5,7 +5,9 @@ import Trace from './screens/Trace.jsx'
 import Calibrate from './screens/Calibrate.jsx'
 import Clients from './screens/Clients.jsx'
 import Guide from './screens/Guide.jsx'
-import { defaultPxPerMm, deleteDesign, getSetting, listDesigns, newDesign, saveDesign, setSetting } from './lib/db.js'
+import {
+  defaultPxPerMm, deleteDesign, getSetting, listDesigns, newDesign, saveDesign, setSetting, updateDesignMeta,
+} from './lib/db.js'
 import { downscale, fileToDataURL, loadImage, toLineArt } from './lib/lineart.js'
 import { motifCanvas } from './lib/motifs.js'
 import { myMotifCanvas } from './lib/mymotifs.js'
@@ -119,6 +121,10 @@ export default function App() {
       onTrace={(d) => {
         setDesign(d)
         setScreen('trace')
+      }}
+      onMeta={async (d) => {
+        await updateDesignMeta(d)
+        refresh()
       }}
       onDuplicate={async (d) => {
         // copie indépendante : nouvel identifiant, même contenu

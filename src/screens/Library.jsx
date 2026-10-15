@@ -25,7 +25,7 @@ function designTag(d, clients) {
 
 export default function Library({
   designs, onImport, onMotif, onOpen, onTrace, onDelete, onDuplicate, onCalibrate, onClients, onRestored, onGuide,
-  calibrated, busy,
+  calibrated, onMeta, busy,
 }) {
   const input = useRef(null)
   const [showMotifs, setShowMotifs] = useState(false)
@@ -33,12 +33,31 @@ export default function Library({
   const [query, setQuery] = useState('')
   const [sort, setSort] = useState('recent')
   const clients = useMemo(listClients, [designs])
+  // filtre de rangement : 'all', 'fav' ou le nom d'une collection
+  const [filter, setFilter] = useState('all')
+  const collections = useMemo(
+    () => [...new Set(designs.map((d) => d.collection).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'fr')),
+    [designs],
+  )
+  const hasFav = designs.some((d) => d.favorite)
+  // si la collection filtrée disparaît (dernier design retiré), on revient à « Tous »
+  const activeFilter = filter === 'all' || (filter === 'fav' && hasFav) || collections.includes(filter) ? filter : 'all'
 
   const shown = useMemo(() => {
     const q = norm(query.trim())
-    const list = q ? designs.filter((d) => norm(d.name).includes(q) || norm(designTag(d, clients)).includes(q)) : designs
+    let list = designs
+    if (activeFilter === 'fav') list = list.filter((d) => d.favorite)
+    else if (activeFilter !== 'all') list = list.filter((d) => d.collection === activeFilter)
+    if (q) list = list.filter((d) => norm(d.name).includes(q) || norm(designTag(d, clients)).includes(q) || norm(d.collection).includes(q))
     return sort === 'name' ? [...list].sort((a, b) => a.name.localeCompare(b.name, 'fr')) : list
-  }, [designs, query, sort, clients])
+  }, [designs, query, sort, clients, activeFilter])
+
+  function askCollection(d) {
+    const hint = collections.length ? `\nCollections existantes : ${collections.join(', ')}` : ''
+    const name = prompt(`Collection de « ${d.name} » (vide = aucune)${hint}`, d.collection || '')
+    if (name === null) return
+    onMeta({ ...d, collection: name.trim().slice(0, 30) || null })
+  }
   return (
     <div className="screen library">
       <header className="lib-head">
@@ -102,10 +121,22 @@ export default function Library({
         </div>
       )}
 
+      {(hasFav || collections.length > 0) && (
+        <div className="filters">
+          <button className={`chip mini ${activeFilter === 'all' ? 'on' : ''}`} onClick={() => setFilter('all')}>Tous</button>
+          {hasFav && (
+            <button className={`chip mini ${activeFilter === 'fav' ? 'on' : ''}`} onClick={() => setFilter('fav')}>★ Favoris</button>
+          )}
+          {collections.map((c) => (
+            <button key={c} className={`chip mini ${activeFilter === c ? 'on' : ''}`} onClick={() => setFilter(c)}>📁 {c}</button>
+          ))}
+        </div>
+      )}
+
       {designs.length === 0 ? (
         <p className="empty">Aucun design pour l'instant. Importe un dessin ou une photo, ou pars d'un ✨ motif.</p>
       ) : shown.length === 0 ? (
-        <p className="empty">Aucun design ne correspond à « {query} ».</p>
+        <p className="empty">{query ? `Aucun design ne correspond à « ${query} ».` : 'Aucun design ici.'}</p>
       ) : (
         <ul className="cards">
           {shown.map((d) => (
@@ -114,12 +145,26 @@ export default function Library({
                 <img src={d.lineart} alt="" />
               </button>
               <div className="card-body">
-                <b>{d.name}</b>
-                <span className="tag">{designTag(d, clients)}</span>
+                <div className="card-title">
+                  <b>{d.name}</b>
+                  <button
+                    className={`star ${d.favorite ? 'on' : ''}`}
+                    onClick={() => onMeta({ ...d, favorite: !d.favorite })}
+                    aria-label={d.favorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                    title={d.favorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+                  >
+                    {d.favorite ? '★' : '☆'}
+                  </button>
+                </div>
+                <span className="tag">
+                  {d.collection ? `📁 ${d.collection} · ` : ''}
+                  {designTag(d, clients)}
+                </span>
                 <div className="row">
                   <button className="chip" onClick={() => onOpen(d)}>Éditer</button>
                   <button className="chip gold" onClick={() => onTrace(d)}>Tracer</button>
                   <button className="chip" onClick={() => onDuplicate(d)} title="Dupliquer">⧉</button>
+                  <button className="chip" onClick={() => askCollection(d)} title="Ranger dans une collection">📁</button>
                   <button
                     className="chip danger"
                     onClick={() => confirm(`Supprimer « ${d.name} » ?`) && onDelete(d)}

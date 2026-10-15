@@ -288,3 +288,18 @@ motif apparaît sous « Mes motifs » → cliquer dessus.
 **Limites** : un motif perso est enregistré comme dessin au trait (noir sur blanc) : changer le seuil ou passer en
 « Photo → contours » ne retrouve pas la photo d'origine (garder le design d'origine pour ça). Recadrer un design
 créé depuis un motif perso masque ses couleurs d'origine. Stockage sur l'appareil (≈ 50–150 Ko par motif).
+
+## feat/20-favoris-collections — 15/10/2026
+
+**Ajouté** dans la bibliothèque :
+- **★ Favoris** : étoile sur chaque carte pour marquer les designs les plus utilisés.
+- **📁 Collections** : ranger un design dans une collection (Halloween, Mariage, Noël, une cliente…) ; la
+  boîte de saisie rappelle les collections existantes ; vide = retirer de la collection.
+- **Filtres** en haut de la liste : Tous · ★ Favoris · 📁 chaque collection (affichés dès qu'il y en a).
+- La recherche porte aussi sur le nom de collection ; l'étiquette de la carte affiche la collection.
+- Ranger ou mettre en favori ne change pas l'ordre « Récents ». Inclus dans la 💾 sauvegarde (champs du design).
+
+**Tester** : ☆ sur une carte → filtre « ★ Favoris » ; 📁 → taper « Halloween » → filtre « 📁 Halloween ».
+
+**Limites** : un design appartient à une seule collection ; pas de renommage groupé d'une collection (changer
+chaque design).
