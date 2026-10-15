@@ -133,7 +133,7 @@ export default function NailView({
         </>
       )}
       <g clipPath={clip && !free ? `url(#${clipId})` : undefined}>
-        {[{ id: null, img, lineart, original: design.cropOriginal || design.original, aspect }, ...layers].map((m) => {
+        {[{ id: null, img, lineart, original: design.cropOriginal || design.colorSrc || design.original, aspect }, ...layers].map((m) => {
           const w = m.img.w
           const h = m.img.w * m.aspect
           return (

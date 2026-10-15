@@ -10,7 +10,7 @@ export default function BackupPanel({ onRestored }) {
     setBusy(true)
     try {
       const n = await downloadBackup()
-      setMsg(`✓ Sauvegarde créée : ${n.designs} design(s), ${n.clients} cliente(s).`)
+      setMsg(`✓ Sauvegarde créée : ${n.designs} design(s), ${n.motifs} motif(s) perso, ${n.clients} cliente(s).`)
     } catch (e) {
       console.error(e)
       setMsg('La sauvegarde a échoué.')
@@ -23,7 +23,7 @@ export default function BackupPanel({ onRestored }) {
     setBusy(true)
     try {
       const n = await restoreBackup(await file.text())
-      setMsg(`✓ Restauré : ${n.designs} design(s), ${n.clients} cliente(s).`)
+      setMsg(`✓ Restauré : ${n.designs} design(s), ${n.motifs} motif(s) perso, ${n.clients} cliente(s).`)
       onRestored()
     } catch (e) {
       setMsg(e.message || 'Restauration impossible.')

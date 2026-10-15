@@ -1,7 +1,7 @@
 // Sauvegarde / restauration de toutes les données de l'app dans un fichier .json.
 // Sert aussi à transférer ses designs et clientes d'un appareil à un autre (PC → téléphone…).
 // Le calibrage de l'écran n'est PAS inclus : il est propre à chaque appareil.
-import { getSetting, listDesigns, saveDesign, setSetting } from './db.js'
+import { getSetting, listDesigns, listMyMotifs, saveDesign, saveMyMotif, setSetting } from './db.js'
 import { listClients } from './clients.js'
 import { getMeasures } from './tips.js'
 
@@ -14,6 +14,7 @@ export async function buildBackup() {
     version: VERSION,
     date: new Date().toISOString(),
     designs: await listDesigns(),
+    myMotifs: await listMyMotifs(),
     clients: listClients(),
     tipMeasures: getMeasures(),
     traceDisplay: getSetting('traceDisplay', null),
@@ -33,7 +34,7 @@ export async function downloadBackup() {
   a.click()
   a.remove()
   setTimeout(() => URL.revokeObjectURL(a.href), 2000)
-  return { designs: data.designs.length, clients: data.clients.length }
+  return { designs: data.designs.length, motifs: data.myMotifs.length, clients: data.clients.length }
 }
 
 /**
@@ -58,6 +59,14 @@ export async function restoreBackup(text) {
     designs++
   }
 
+  // « Mes motifs » (absent des sauvegardes plus anciennes)
+  let motifs = 0
+  for (const m of Array.isArray(data.myMotifs) ? data.myMotifs : []) {
+    if (!m?.id || !m.image) continue
+    await saveMyMotif(m)
+    motifs++
+  }
+
   const clients = Array.isArray(data.clients) ? data.clients.filter((c) => c?.id && Array.isArray(c.nails)) : []
   if (clients.length) {
     const byId = new Map(listClients().map((c) => [c.id, c]))
@@ -72,5 +81,5 @@ export async function restoreBackup(text) {
   }
   if (data.traceDisplay && !getSetting('traceDisplay', null)) setSetting('traceDisplay', data.traceDisplay)
 
-  return { designs, clients: clients.length }
+  return { designs, motifs, clients: clients.length }
 }

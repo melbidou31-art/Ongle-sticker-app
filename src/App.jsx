@@ -8,6 +8,7 @@ import Guide from './screens/Guide.jsx'
 import { defaultPxPerMm, deleteDesign, getSetting, listDesigns, newDesign, saveDesign, setSetting } from './lib/db.js'
 import { downscale, fileToDataURL, loadImage, toLineArt } from './lib/lineart.js'
 import { motifCanvas } from './lib/motifs.js'
+import { myMotifCanvas } from './lib/mymotifs.js'
 
 export default function App() {
   const [screen, setScreen] = useState('library')
@@ -32,12 +33,12 @@ export default function App() {
   }, [design])
 
   // Crée un design à partir d'un canvas (image importée ou motif de la bibliothèque)
-  async function createFrom(getCanvas, name) {
+  async function createFrom(getCanvas, name, extra = {}) {
     setBusy(true)
     try {
       const canvas = await getCanvas()
       const original = canvas.toDataURL('image/jpeg', 0.9)
-      const d = newDesign({ original, lineart: toLineArt(canvas), aspect: canvas.height / canvas.width })
+      const d = { ...newDesign({ original, lineart: toLineArt(canvas), aspect: canvas.height / canvas.width }), ...extra }
       d.name = name || d.name
       await saveDesign(d)
       setDesign(d)
@@ -53,7 +54,11 @@ export default function App() {
   const importFile = (file) =>
     createFrom(async () => downscale(await loadImage(await fileToDataURL(file))), file.name.replace(/\.[^.]+$/, '').slice(0, 40))
 
-  const importMotif = (m) => createFrom(() => motifCanvas(m), m.name)
+  // motif intégré, ou « Mes motifs » (trait déjà nettoyé + photo couleur pour le calque couleurs)
+  const importMotif = ({ kind, motif }) =>
+    kind === 'mine'
+      ? createFrom(() => myMotifCanvas(motif), motif.name, { colorSrc: motif.photo })
+      : createFrom(() => motifCanvas(motif), motif.name)
 
   function goLibrary() {
     setScreen('library')

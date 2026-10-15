@@ -1,6 +1,8 @@
 import { useRef, useState } from 'react'
 import { downscale, fileToDataURL, loadImage, toLineArt } from '../lib/lineart.js'
-import { MOTIFS, motifCanvas, motifSVG } from '../lib/motifs.js'
+import { motifCanvas } from '../lib/motifs.js'
+import { myMotifCanvas } from '../lib/mymotifs.js'
+import MotifPicker from './MotifPicker.jsx'
 
 /** Crée un calque à partir d'un canvas (motif de la bibliothèque ou image importée). */
 function layerFrom(canvas, name) {
@@ -24,10 +26,12 @@ export default function LayersBar({ design, active, onSelect, onChange }) {
   const [busy, setBusy] = useState(false)
   const layers = design.layers || []
 
-  async function add(getCanvas, name) {
+  async function add(getCanvas, name, photo) {
     setBusy(true)
     try {
       const l = layerFrom(await getCanvas(), name)
+      // motif perso : sa photo couleur sert au calque « couleurs d'origine »
+      if (photo) l.original = photo
       onChange((d) => ({ ...d, layers: [...(d.layers || []), l] }))
       onSelect(l.id)
       setPicking(false)
@@ -65,13 +69,15 @@ export default function LayersBar({ design, active, onSelect, onChange }) {
         )}
       </div>
       {picking && (
-        <div className="motif-grid small">
-          {MOTIFS.map((m) => (
-            <button key={m.id} className="motif" disabled={busy} onClick={() => add(() => motifCanvas(m), m.name)} title={m.name}>
-              <img src={'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(motifSVG(m))} alt="" />
-            </button>
-          ))}
-        </div>
+        <MotifPicker
+          small
+          busy={busy}
+          onPick={({ kind, motif }) =>
+            kind === 'mine'
+              ? add(() => myMotifCanvas(motif), motif.name, motif.photo)
+              : add(() => motifCanvas(motif), motif.name)
+          }
+        />
       )}
       <input
         ref={input}

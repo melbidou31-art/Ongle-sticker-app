@@ -10,6 +10,7 @@ import { SHAPES } from '../lib/shapes.js'
 import { cropCanvas, downscale, hasCrop, loadImage, toLineArt } from '../lib/lineart.js'
 import CropTool from '../components/CropTool.jsx'
 import { DEFAULT_FRENCH, FRENCH_STYLES } from '../lib/french.js'
+import { motifFromDesign } from '../lib/mymotifs.js'
 
 function Slider({ label, value, min, max, step = 1, unit = '', onChange }) {
   return (
@@ -51,6 +52,22 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [design.process.mode, design.process.seuil, design.process.epaisseur, design.erase, design.crop])
+
+  // « Mes motifs » : enregistre le trait tel qu'il est (gomme et recadrage compris) pour le réutiliser
+  const [savingMotif, setSavingMotif] = useState(false)
+  const [motifMsg, setMotifMsg] = useState('')
+  async function saveAsMotif() {
+    setSavingMotif(true)
+    try {
+      const m = await motifFromDesign(design)
+      setMotifMsg(`✓ « ${m.name} » ajouté à Mes motifs`)
+    } catch (e) {
+      console.error(e)
+      setMotifMsg("Impossible d'enregistrer ce motif.")
+    } finally {
+      setSavingMotif(false)
+    }
+  }
 
   // Recadrage : la taille du motif à l'écran suit la part d'image conservée
   const [cropping, setCropping] = useState(false)
@@ -139,6 +156,12 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             </div>
             <Slider label="Seuil" value={p.seuil} min={0} max={100} onChange={(seuil) => setProcess({ seuil })} />
             <Slider label="Épaisseur du trait" value={p.epaisseur} min={0} max={3} onChange={(epaisseur) => setProcess({ epaisseur })} />
+            <div className="row">
+              <button className="chip gold" disabled={savingMotif} onClick={saveAsMotif}>
+                ⭐ Enregistrer dans Mes motifs
+              </button>
+              {motifMsg && <span className="muted">{motifMsg}</span>}
+            </div>
             <div className="eraser">
               <div className="row">
                 <button className={`chip ${hasCrop(design.crop) ? 'on' : ''}`} onClick={() => setCropping(true)}>

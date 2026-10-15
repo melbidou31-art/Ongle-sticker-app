@@ -2,21 +2,27 @@
 
 const DB = 'ongle-trace'
 const STORE = 'designs'
+const MOTIFS = 'motifs' // « Mes motifs » : images enregistrées par l'utilisatrice (version 2)
 
 function open() {
   return new Promise((resolve, reject) => {
-    const req = indexedDB.open(DB, 1)
-    req.onupgradeneeded = () => req.result.createObjectStore(STORE, { keyPath: 'id' })
+    const req = indexedDB.open(DB, 2)
+    req.onupgradeneeded = () => {
+      // crée seulement ce qui manque : les designs existants sont conservés
+      const db = req.result
+      if (!db.objectStoreNames.contains(STORE)) db.createObjectStore(STORE, { keyPath: 'id' })
+      if (!db.objectStoreNames.contains(MOTIFS)) db.createObjectStore(MOTIFS, { keyPath: 'id' })
+    }
     req.onsuccess = () => resolve(req.result)
     req.onerror = () => reject(req.error)
   })
 }
 
-async function run(mode, fn) {
+async function run(mode, fn, store = STORE) {
   const db = await open()
   return new Promise((resolve, reject) => {
-    const tx = db.transaction(STORE, mode)
-    const req = fn(tx.objectStore(STORE))
+    const tx = db.transaction(store, mode)
+    const req = fn(tx.objectStore(store))
     tx.oncomplete = () => resolve(req?.result)
     tx.onerror = () => reject(tx.error)
   })
@@ -26,6 +32,11 @@ export const listDesigns = async () =>
   ((await run('readonly', (s) => s.getAll())) || []).sort((a, b) => b.updatedAt - a.updatedAt)
 export const saveDesign = (d) => run('readwrite', (s) => s.put({ ...d, updatedAt: Date.now() }))
 export const deleteDesign = (id) => run('readwrite', (s) => s.delete(id))
+
+export const listMyMotifs = async () =>
+  ((await run('readonly', (s) => s.getAll(), MOTIFS)) || []).sort((a, b) => b.createdAt - a.createdAt)
+export const saveMyMotif = (m) => run('readwrite', (s) => s.put(m), MOTIFS)
+export const deleteMyMotif = (id) => run('readwrite', (s) => s.delete(id), MOTIFS)
 
 // Réglages (calibrage écran) : petits, donc localStorage suffit
 export function getSetting(key, fallback) {

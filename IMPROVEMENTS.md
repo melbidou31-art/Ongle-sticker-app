@@ -269,3 +269,22 @@ réglages → Tracer → ◀ ▶ : la ligne garde la même hauteur sur chaque do
 
 **Limites** : la ligne suit la forme 2D de l'ongle vu de dessus (pas la courbure C). La hauteur est mesurée
 depuis le bout de la capsule/ongle tel que dessiné.
+
+## feat/19-mes-motifs-perso — 15/10/2026 (demande de l'utilisatrice)
+
+**Ajouté** : **⭐ Mes motifs** — enregistrer ses propres images comme motifs, pour les retrouver et les réutiliser
+aussi souvent que nécessaire.
+- Depuis l'éditeur (onglet *Motif*) : **« ⭐ Enregistrer dans Mes motifs »** garde le trait **tel qu'il est
+  affiché** (recadrage et coups de gomme compris) + la photo couleur pour le calque « couleurs d'origine ».
+- Depuis la bibliothèque : ✨ Motifs → **« + Ajouter une image »** pour enregistrer directement une image.
+- ✨ Motifs affiche maintenant **Mes motifs en premier**, puis les motifs intégrés ; un clic crée un nouveau design.
+- Disponible aussi dans l'onglet *Calques* (« + Motif ») pour combiner ses motifs sur un même ongle.
+- ✕ sur une vignette pour retirer un motif perso (les designs déjà créés avec ne sont pas touchés).
+- Inclus dans la **💾 Sauvegarde** (et restaurés avec).
+
+**Tester** : ouvrir un design → Motif → ⭐ Enregistrer dans Mes motifs → revenir à la bibliothèque → ✨ Motifs → le
+motif apparaît sous « Mes motifs » → cliquer dessus.
+
+**Limites** : un motif perso est enregistré comme dessin au trait (noir sur blanc) : changer le seuil ou passer en
+« Photo → contours » ne retrouve pas la photo d'origine (garder le design d'origine pour ça). Recadrer un design
+créé depuis un motif perso masque ses couleurs d'origine. Stockage sur l'appareil (≈ 50–150 Ko par motif).

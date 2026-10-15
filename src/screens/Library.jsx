@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from 'react'
-import { MOTIFS, motifSVG } from '../lib/motifs.js'
 import BackupPanel from '../components/BackupPanel.jsx'
+import MotifPicker from '../components/MotifPicker.jsx'
 import { BRANDS, LENGTHS } from '../lib/tips.js'
 import { listClients } from '../lib/clients.js'
 
@@ -72,16 +72,7 @@ export default function Library({
           </div>
         )}
         {showBackup && <BackupPanel onRestored={onRestored} />}
-        {showMotifs && (
-          <div className="motif-grid">
-            {MOTIFS.map((m) => (
-              <button key={m.id} className="motif" disabled={busy} onClick={() => onMotif(m)} title={m.name}>
-                <img src={'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(motifSVG(m))} alt="" />
-                <span>{m.name}</span>
-              </button>
-            ))}
-          </div>
-        )}
+        {showMotifs && <MotifPicker busy={busy} onPick={onMotif} />}
         <input
           ref={input}
           type="file"
