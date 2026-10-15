@@ -11,6 +11,7 @@ import { cropCanvas, downscale, hasCrop, loadImage, toLineArt } from '../lib/lin
 import CropTool from '../components/CropTool.jsx'
 import { DEFAULT_FRENCH, FRENCH_STYLES } from '../lib/french.js'
 import { motifFromDesign } from '../lib/mymotifs.js'
+import { DEFAULT_TEXT, FONTS } from '../lib/fonts.js'
 
 function Slider({ label, value, min, max, step = 1, unit = '', onChange }) {
   return (
@@ -114,7 +115,11 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
       ? set({ layers: design.layers.map((l) => (l.id === layer.id ? { ...l, img } : l)) })
       : set({ img })
   const setImg = (patch) => moveActive({ ...activeImg, ...patch })
-  const setText = (patch) => set({ text: { ...design.text, ...patch } })
+  const txt = { ...DEFAULT_TEXT, ...design.text }
+  const setText = (patch) => set({ text: { ...txt, ...patch } })
+  // zone de placement du texte : l'ongle, ou le motif seul en mode « sans ongle »
+  const areaW = design.shape === 'none' ? design.img.w : design.nailW
+  const areaH = design.shape === 'none' ? design.img.w * design.aspect : design.nailH
   const french = { ...DEFAULT_FRENCH, ...design.french }
   const setFrench = (patch) => set({ french: { ...french, ...patch } })
   const colors = { on: false, opacity: 0.4, ...design.colors }
@@ -276,10 +281,29 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
 
         {tab === 'texte' && (
           <div className="controls">
-            <p className="muted">Text overlay : ajoute du texte sans modifier l'image.</p>
-            <input className="text-input" placeholder="Ton texte…" value={design.text.value} onChange={(e) => setText({ value: e.target.value })} />
-            <Slider label="Taille" unit=" mm" value={design.text.size} min={1} max={10} step={0.5} onChange={(size) => setText({ size })} />
-            <Slider label="Position verticale" unit=" mm" value={design.text.y} min={0} max={design.nailH} step={0.5} onChange={(y) => setText({ y })} />
+            <p className="muted">Prénom, initiales, date… ajoutés par-dessus le motif, à décalquer comme le reste.</p>
+            <input className="text-input" placeholder="Ton texte…" value={txt.value} onChange={(e) => setText({ value: e.target.value })} />
+            <div className="seg wrap">
+              {Object.entries(FONTS).map(([k, f]) => (
+                <button
+                  key={k}
+                  className={txt.font === k ? 'on' : ''}
+                  style={{ fontFamily: f.family }}
+                  onClick={() => setText({ font: k })}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+            <label className="check">
+              <input type="checkbox" checked={txt.outline} onChange={(e) => setText({ outline: e.target.checked })} />
+              Contour seul (décalquer le bord des lettres, puis remplir)
+            </label>
+            <Slider label="Taille" unit=" mm" value={txt.size} min={1} max={12} step={0.5} onChange={(size) => setText({ size })} />
+            <Slider label="Position verticale" unit=" mm" value={txt.y} min={0} max={areaH} step={0.5} onChange={(y) => setText({ y })} />
+            <Slider label="Position horizontale" unit=" mm" value={txt.x} min={-areaW / 2} max={areaW / 2} step={0.5} onChange={(x) => setText({ x })} />
+            <Slider label="Rotation" unit="°" value={txt.rot} min={-90} max={90} step={1} onChange={(rot) => setText({ rot })} />
+            <Slider label="Espacement des lettres" unit=" mm" value={txt.spacing} min={-0.5} max={3} step={0.1} onChange={(spacing) => setText({ spacing })} />
           </div>
         )}
       </section>

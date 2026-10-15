@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { nailPath } from '../lib/shapes.js'
 import { frenchPaths } from '../lib/french.js'
+import { DEFAULT_TEXT, fontFamily } from '../lib/fonts.js'
 
 const PAD = 4 // marge autour de l'ongle, en mm
 
@@ -168,19 +169,33 @@ export default function NailView({
             </g>
           )
         })}
-        {text.value && (
-          <text
-            x={PAD + aw / 2}
-            y={PAD + text.y}
-            fontSize={text.size}
-            textAnchor="middle"
-            fontFamily="Georgia, serif"
-            fill={lineColor || '#000'}
-            transform={flip ? `translate(${2 * (PAD + aw / 2)} 0) scale(-1 1)` : undefined}
-          >
-            {text.value}
-          </text>
-        )}
+        {text.value && (() => {
+          const t = { ...DEFAULT_TEXT, ...text }
+          const tx = PAD + aw / 2 + t.x
+          const ty = PAD + t.y
+          const ink = lineColor || '#000'
+          // miroir global puis rotation du texte autour de son point d'ancrage
+          const mirror = flip ? `translate(${2 * (PAD + aw / 2)} 0) scale(-1 1) ` : ''
+          return (
+            <text
+              x={tx}
+              y={ty}
+              fontSize={t.size}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              fontFamily={fontFamily(t.font)}
+              letterSpacing={t.spacing}
+              // contour seul : on décalque le bord des lettres, puis on remplit au pinceau
+              fill={t.outline ? 'none' : ink}
+              stroke={t.outline ? ink : undefined}
+              strokeWidth={t.outline ? Math.max(0.12, t.size * 0.04) : undefined}
+              strokeLinejoin="round"
+              transform={`${mirror}rotate(${t.rot} ${tx} ${ty})`}
+            >
+              {t.value}
+            </text>
+          )
+        })()}
       </g>
       {french?.on && !free && (
         // ligne French en vecteur (millimètres), découpée à la forme de l'ongle

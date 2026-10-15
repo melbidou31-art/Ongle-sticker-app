@@ -332,3 +332,22 @@ SVG et PNG 300 dpi restent disponibles.
 **Limites** : la structure du PDF a été vérifiée (index, objets, image JPEG), mais son rendu n'a pas pu être
 contrôlé visuellement dans l'environnement de développement → à confirmer en ouvrant/imprimant un fichier.
 L'image est en JPEG (pas de transparence, fond blanc).
+
+## feat/23-texte-polices-contour — 15/10/2026
+
+**Ajouté** dans l'onglet *Texte* (prénoms, initiales, dates…) :
+- **6 styles de police** : élégante, calligraphie, manuscrite, moderne, bâton, gothique — uniquement des polices
+  déjà présentes sur les appareils (fonctionne hors-ligne ; chaque style a des équivalents iPhone / Android /
+  Windows).
+- **Contour seul** : les lettres sont dessinées en trait, pour décalquer leur bord puis les remplir au pinceau.
+- **Position horizontale**, **rotation** (−90° à +90°) et **espacement des lettres** en plus de la taille et de la
+  hauteur. En mode « motif seul », le placement se fait par rapport au motif.
+- Le texte suit la mise à l'échelle par doigt / capsule (position horizontale comprise), la couleur du trait,
+  le miroir et les exports.
+
+**Tester** : ouvrir un design → Texte → taper un prénom → Calligraphie → cocher Contour seul → régler rotation.
+
+**Limites** : le rendu exact d'un style dépend des polices de l'appareil (Snell Roundhand sur iPhone, Segoe Script
+sur Windows…). Le texte est maintenant centré verticalement sur sa position : un texte existant peut remonter
+d'environ un tiers de sa taille. Dans l'export SVG, la police doit exister sur l'appareil qui imprime (le PDF et
+le PNG, eux, figent le rendu).

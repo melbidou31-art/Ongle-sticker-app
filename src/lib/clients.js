@@ -51,6 +51,6 @@ export function resizeNail(design, nailW, nailH) {
     nailH,
     img: scale(design.img),
     layers: (design.layers || []).map((l) => ({ ...l, img: scale(l.img) })),
-    text: { ...design.text, size: design.text.size * kx, y: design.text.y * ky },
+    text: { ...design.text, size: design.text.size * kx, y: design.text.y * ky, x: (design.text.x || 0) * kx },
   }
 }
