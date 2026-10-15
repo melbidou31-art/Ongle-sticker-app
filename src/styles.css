@@ -88,6 +88,13 @@ code { font-family: ui-monospace, 'Cascadia Mono', monospace; }
 .lib-tools .search { flex: 1; min-width: 0; }
 .sort { background: var(--bg-2); color: #eee9df; border: 1px solid var(--line); border-radius: 10px; padding: 0 10px; }
 
+/* Erreur d'enregistrement (toujours visible, quel que soit l'écran) */
+.save-error {
+  position: fixed; left: 12px; right: 12px; bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 50;
+  display: flex; gap: 10px; align-items: center; padding: 12px 14px; border-radius: var(--radius);
+  background: #5a1420; color: #fff; font-size: 13px; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
 /* Rappel de calibrage */
 .banner {
   display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;

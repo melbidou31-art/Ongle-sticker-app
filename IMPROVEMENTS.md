@@ -351,3 +351,20 @@ L'image est en JPEG (pas de transparence, fond blanc).
 sur Windows…). Le texte est maintenant centré verticalement sur sa position : un texte existant peut remonter
 d'environ un tiers de sa taille. Dans l'export SVG, la police doit exister sur l'appareil qui imprime (le PDF et
 le PNG, eux, figent le rendu).
+
+## feat/24-fiabilite-stockage — 15/10/2026
+
+**Fiabilité** (les données ne vivent que dans le navigateur de l'appareil) :
+- **Stockage protégé** : au démarrage, l'app demande au navigateur de ne pas effacer ses données quand l'appareil
+  manque de place (accordé en général quand l'app est installée sur l'écran d'accueil ou souvent utilisée).
+- **Alerte si un enregistrement échoue** (stockage plein…) : bandeau rouge visible sur tous les écrans, au lieu
+  de perdre le travail en silence ; il disparaît dès qu'un enregistrement réussit.
+- **💾 Sauvegarde** affiche l'espace utilisé et si les données sont protégées (sinon : conseil de sauvegarder /
+  d'installer l'app).
+- **Ouvrir un design sans le modifier ne le fait plus remonter** dans « Récents » (il n'est plus réenregistré).
+
+**Tester** : ouvrir un design puis revenir sans rien changer → l'ordre ne bouge pas ; 💾 Sauvegarde → ligne
+« Espace utilisé ».
+
+**Limites** : la protection dépend du navigateur (Safari iOS l'accorde surtout aux apps installées sur l'écran
+d'accueil) ; la sauvegarde 💾 reste la vraie sécurité.

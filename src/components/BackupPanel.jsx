@@ -1,10 +1,15 @@
-import { useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { downloadBackup, restoreBackup } from '../lib/backup.js'
+import { storageInfo } from '../lib/storage.js'
 
 export default function BackupPanel({ onRestored }) {
   const input = useRef(null)
   const [msg, setMsg] = useState('')
   const [busy, setBusy] = useState(false)
+  const [info, setInfo] = useState(null)
+  useEffect(() => {
+    storageInfo().then(setInfo)
+  }, [msg])
 
   async function save() {
     setBusy(true)
@@ -44,6 +49,18 @@ export default function BackupPanel({ onRestored }) {
         <button className="chip" disabled={busy} onClick={() => input.current.click()}>⬆ Restaurer une sauvegarde</button>
       </div>
       {msg && <p className="muted">{msg}</p>}
+      {info && (
+        <p className="muted">
+          Espace utilisé : <b>{info.usedMb.toFixed(1)} Mo</b>
+          {info.quotaMb > 0 && ` sur ${info.quotaMb > 1024 ? `${(info.quotaMb / 1024).toFixed(1)} Go` : `${info.quotaMb.toFixed(0)} Mo`}`}
+          {' · '}
+          {info.persisted ? (
+            <span className="ok">✓ données protégées contre l'effacement automatique</span>
+          ) : (
+            <span className="approx">données non protégées : le navigateur peut les effacer s'il manque de place — fais des sauvegardes (ou installe l'app sur l'écran d'accueil)</span>
+          )}
+        </p>
+      )}
       <input
         ref={input}
         type="file"
