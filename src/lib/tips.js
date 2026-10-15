@@ -3,6 +3,7 @@
 // APPROXIMATIONS (≈ 1 mm d'écart entre deux tailles, constaté par les utilisatrices).
 // Pour un résultat exact, utiliser « Ma boîte » : on mesure ses propres capsules à l'écran.
 import { getSetting, setSetting } from './db.js'
+import { SHAPE_LENGTH } from './shapes.js'
 
 // Longueurs approximatives cuticule → bord libre, en mm
 export const LENGTHS = {
@@ -11,6 +12,10 @@ export const LENGTHS = {
   long: { label: 'Long', mm: 32 },
   xlong: { label: 'Très long', mm: 38 },
 }
+
+/** Longueur réelle d'une capsule : longueur commerciale × coefficient de la forme (stiletto plus long…). */
+export const tipLength = (lengthKey, shape) =>
+  Math.round((LENGTHS[lengthKey]?.mm ?? LENGTHS.medium.mm) * (SHAPE_LENGTH[shape] ?? 1) * 2) / 2
 
 // Génère une série de tailles : largeur de départ, pas de 1 mm
 const series = (labels, firstW) => labels.map((label, i) => ({ label: String(label), w: firstW - i }))

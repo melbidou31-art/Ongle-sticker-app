@@ -15,6 +15,8 @@ import { DEFAULT_TEXT, FONTS } from '../lib/fonts.js'
 import useHistory from '../lib/useHistory.js'
 import AccentPicker from '../components/AccentPicker.jsx'
 import { hasSet } from '../lib/fingerset.js'
+import { tipLength } from '../lib/tips.js'
+import { resizeNail } from '../lib/clients.js'
 
 function Slider({ label, value, min, max, step = 1, unit = '', onChange }) {
   return (
@@ -131,6 +133,13 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
       ? set({ layers: design.layers.map((l) => (l.id === layer.id ? { ...l, img } : l)) })
       : set({ img })
   const setImg = (patch) => moveActive({ ...activeImg, ...patch })
+  // changer de forme avec une capsule du commerce : la longueur suit la forme (un stiletto « M » est plus long)
+  function changeShape(shape) {
+    if (design.mode !== 'direct' && design.tip?.brand && shape !== 'none')
+      return set({ shape, ...resizeNail(design, design.nailW, tipLength(design.tip.length, shape)) })
+    set({ shape })
+  }
+
   const txt = { ...DEFAULT_TEXT, ...design.text }
   const setText = (patch) => set({ text: { ...txt, ...patch } })
   // zone de placement du texte : l'ongle, ou le motif seul en mode « sans ongle »
@@ -262,7 +271,7 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             {hasSet(design) && <AccentPicker design={design} onChange={set} />}
             <div className="seg wrap">
               {Object.entries(SHAPES).map(([k, l]) => (
-                <button key={k} className={design.shape === k ? 'on' : ''} onClick={() => set({ shape: k })}>{l}</button>
+                <button key={k} className={design.shape === k ? 'on' : ''} onClick={() => changeShape(k)}>{l}</button>
               ))}
             </div>
             {design.shape === 'none' ? (

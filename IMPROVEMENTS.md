@@ -450,3 +450,19 @@ choisir l'autre design → Tracer → Main entière.
 **Limites** : l'ongle accent reprend le motif du design choisi tel qu'il est (on le modifie dans son propre
 design) ; il ne se déplace pas depuis le mode traçage ; si le design choisi est supprimé, le doigt reprend le
 motif du set.
+
+## feat/31-formes-rond-carre-stiletto — 15/10/2026 (retour de test)
+
+**Corrigé / ajouté** :
+- Nouvelle forme **Rond** (bout en demi-cercle) ; l'**Ovale** a maintenant un vrai bout en ellipse, plus allongé.
+- **Carré** à coins nets + nouvelle forme **Carré arrondi** (le carré précédent ressemblait à un carré arrondi).
+- **Stiletto redessiné** : flancs presque droits qui se resserrent dès le premier tiers jusqu'à une pointe fine
+  (l'ancien ressemblait à une amande).
+- **Longueur selon la forme** : à longueur commerciale égale, une capsule stiletto (×1,25) ou amande (×1,12) est
+  plus longue qu'une ballerine, un rond/carré un peu plus court (×0,95). Changer de forme avec une capsule du
+  commerce recalcule la longueur.
+
+**Tester** : Ongle → Press-on → une marque + taille → cliquer Stiletto, Rond, Carré arrondi…
+
+**Limites** : les coefficients de longueur par forme sont approximatifs (pas de données officielles) — mesurer
+ses vraies capsules (Ma boîte, marques perso à venir) pour l'exactitude.

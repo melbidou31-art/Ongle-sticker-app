@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BRANDS, LENGTHS, getMeasures, saveMeasure, tipWidth } from '../lib/tips.js'
+import { BRANDS, LENGTHS, getMeasures, saveMeasure, tipLength, tipWidth } from '../lib/tips.js'
 import { FINGERS, resizeNail } from '../lib/clients.js'
 import { defaultTipSet } from '../lib/fingerset.js'
 import MeasureTool from './MeasureTool.jsx'
@@ -19,9 +19,10 @@ export default function TipPicker({ design, pxPerMm, onChange }) {
     const t = { ...tip, ...next }
     const width = t.brand && t.size ? tipWidth(t.brand, t.size, measures) : null
     const w = width ? width.w : design.nailW
-    const h = t.brand ? LENGTHS[t.length].mm : design.nailH
+    const shape = design.shape === 'none' ? 'coffin' : design.shape
+    const h = t.brand ? tipLength(t.length, shape) : design.nailH
     // le motif suit la nouvelle taille de capsule
-    onChange({ tip: t, ...resizeNail(design, w, h), ...(design.shape === 'none' && { shape: 'coffin' }), ...extra })
+    onChange({ tip: t, ...resizeNail(design, w, h), shape, ...extra })
   }
 
   function chooseBrand(id) {

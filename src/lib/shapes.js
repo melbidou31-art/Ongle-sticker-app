@@ -6,8 +6,14 @@ export const SHAPES = {
   almond: 'Amande',
   stiletto: 'Stiletto',
   oval: 'Ovale',
+  round: 'Rond',
+  squoval: 'Carré arrondi',
   square: 'Carré',
 }
+
+// À longueur commerciale égale (« M »…), les capsules pointues sont plus longues que les carrées.
+// Coefficients approximatifs appliqués à la longueur choisie (cf. IMPROVEMENTS.md).
+export const SHAPE_LENGTH = { stiletto: 1.25, almond: 1.12, coffin: 1, oval: 1, round: 0.95, squoval: 0.95, square: 0.95 }
 
 export function nailPath(shape, w, h) {
   const c = w * 0.32 // profondeur de l'arrondi de la cuticule
@@ -22,13 +28,24 @@ export function nailPath(shape, w, h) {
       return `${top} C ${w} ${h * 0.7}, ${w * 0.64} ${h}, ${w / 2} ${h}
         C ${w * 0.36} ${h}, 0 ${h * 0.7}, 0 ${c} Z`
     case 'stiletto':
-      return `${top} C ${w} ${h * 0.5}, ${w * 0.56} ${h * 0.88}, ${w / 2} ${h}
-        C ${w * 0.44} ${h * 0.88}, 0 ${h * 0.5}, 0 ${c} Z`
+      // flancs presque droits qui se resserrent dès le premier tiers jusqu'à une pointe fine
+      return `${top} C ${w} ${h * 0.32}, ${w * 0.66} ${h * 0.72}, ${w / 2} ${h}
+        C ${w * 0.34} ${h * 0.72}, 0 ${h * 0.32}, 0 ${c} Z`
     case 'oval':
+      // bout en ellipse, plus allongé que le rond
+      return `${top} L ${w} ${h * 0.55} C ${w} ${h * 0.85}, ${w * 0.72} ${h}, ${w / 2} ${h}
+        C ${w * 0.28} ${h}, 0 ${h * 0.85}, 0 ${h * 0.55} Z`
+    case 'round':
+      // bout en demi-cercle
       return `${top} L ${w} ${h - w / 2} A ${w / 2} ${w / 2} 0 0 1 0 ${h - w / 2} Z`
+    case 'squoval': {
+      const r = w / 4
+      return `${top} L ${w} ${h - r} Q ${w} ${h}, ${w - r} ${h} L ${r} ${h} Q 0 ${h}, 0 ${h - r} Z`
+    }
     case 'square':
     default: {
-      const r = Math.min(2, w / 6)
+      // coins nets (très léger adoucissement pour un tracé propre)
+      const r = 0.4
       return `${top} L ${w} ${h - r} Q ${w} ${h}, ${w - r} ${h} L ${r} ${h} Q 0 ${h}, 0 ${h - r} Z`
     }
   }

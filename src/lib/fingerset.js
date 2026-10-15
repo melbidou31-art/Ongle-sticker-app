@@ -1,6 +1,6 @@
 // Set complet de 10 ongles : dimensions de chaque doigt selon le mode du design.
 import { listClients, resizeNail } from './clients.js'
-import { BRANDS, LENGTHS, getMeasures, tipWidth } from './tips.js'
+import { BRANDS, getMeasures, tipLength, tipWidth } from './tips.js'
 
 // Écart de taille habituel d'un set press-on, à partir de la taille du pouce
 // (pouce, index, majeur, annulaire, auriculaire) — approx., à ajuster par cliente
@@ -24,7 +24,7 @@ export function fingerDims(design, finger) {
   const t = design.tip
   if (t?.brand && design.tipSet?.[finger]) {
     const width = tipWidth(t.brand, design.tipSet[finger], getMeasures())
-    return width ? { w: width.w, h: LENGTHS[t.length].mm, size: design.tipSet[finger] } : null
+    return width ? { w: width.w, h: tipLength(t.length, design.shape), size: design.tipSet[finger] } : null
   }
   return null
 }
