@@ -23,6 +23,14 @@ export function saveDisplay(d) {
   return d
 }
 
+// Repères de placement (éditeur + traçage) : axe central et marge de sécurité cuticule / parois
+const GUIDES_KEY = 'guides'
+export const getGuides = () => ({ on: false, margin: 1, ...getSetting(GUIDES_KEY, {}) })
+export function saveGuides(g) {
+  setSetting(GUIDES_KEY, g)
+  return g
+}
+
 /** Couleur effective du trait : sur fond sombre, le noir devient blanc pour rester visible. */
 export function inkColor(d) {
   const c = LINE_COLORS.find((x) => x.id === d.line)?.value ?? null

@@ -3,7 +3,7 @@ import NailView from '../components/NailView.jsx'
 import Grid from '../components/Grid.jsx'
 import { FINGERS, resizeNail } from '../lib/clients.js'
 import { fingerDims, forFinger, hasSet } from '../lib/fingerset.js'
-import { LINE_COLORS, SURFACES, getDisplay, inkColor, saveDisplay } from '../lib/display.js'
+import { LINE_COLORS, SURFACES, getDisplay, getGuides, inkColor, saveDisplay, saveGuides } from '../lib/display.js'
 
 const HOLD_MS = 700 // appui long pour déverrouiller : évite qu'une capsule posée ne débloque l'écran
 
@@ -44,6 +44,8 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
   const updateDisplay = (patch) => setDisplay((d) => saveDisplay({ ...d, ...patch }))
   const ink = inkColor(display)
   const dark = display.surface === 'dark'
+  const [guides, setGuidesState] = useState(getGuides)
+  const toggleGuides = () => setGuidesState((g) => saveGuides({ ...g, on: !g.on }))
   // variante d'un doigt ; la main droite peut être en miroir pour un set symétrique
   const variant = (f) => {
     const v = forFinger(design, f)
@@ -160,6 +162,10 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
               </button>
             ))}
           </div>
+          <label className="check">
+            <input type="checkbox" checked={guides.on} onChange={toggleGuides} />
+            Repères (axe + marge {guides.margin} mm)
+          </label>
           {set && (
             <label className="check">
               <input type="checkbox" checked={display.mirrorRight} onChange={(e) => updateDisplay({ mirrorRight: e.target.checked })} />
@@ -176,7 +182,7 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
             {[0, 1, 2, 3, 4].map((k) => {
               const f = (finger < 5 ? 0 : 5) + k
               return (
-                <NailView key={f} clipKey={f} design={variant(f)} pxPerMm={pxPerMm} colors={showColors} lineColor={ink} dark={dark} />
+                <NailView key={f} clipKey={f} design={variant(f)} pxPerMm={pxPerMm} colors={showColors} lineColor={ink} dark={dark} guides={guides} />
               )
             })}
           </div>
@@ -185,6 +191,7 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
             colors={showColors}
             lineColor={ink}
             dark={dark}
+            guides={guides}
             design={current}
             pxPerMm={pxPerMm}
             onMove={

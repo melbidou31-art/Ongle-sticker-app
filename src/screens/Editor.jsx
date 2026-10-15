@@ -5,6 +5,7 @@ import TipPicker from '../components/TipPicker.jsx'
 import ClientPicker from '../components/ClientPicker.jsx'
 import ExportPanel from '../components/ExportPanel.jsx'
 import LayersBar from '../components/LayersBar.jsx'
+import { getGuides, saveGuides } from '../lib/display.js'
 import { SHAPES } from '../lib/shapes.js'
 import { downscale, loadImage, toLineArt } from '../lib/lineart.js'
 
@@ -56,6 +57,10 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
 
   const p = design.process
   const setProcess = (patch) => set({ process: { ...p, ...patch } })
+  // repères (axe central + marge de sécurité), réglage commun à l'éditeur et au traçage
+  const [guides, setGuidesState] = useState(getGuides)
+  const setGuides = (patch) => setGuidesState((g) => saveGuides({ ...g, ...patch }))
+
   // calque sélectionné (null = motif principal) : c'est lui que l'on déplace et règle
   const [activeLayer, setActiveLayer] = useState(null)
   const layer = activeLayer && (design.layers || []).find((l) => l.id === activeLayer)
@@ -79,9 +84,9 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
 
       <Grid pxPerMm={pxPerMm} className="editor-stage">
         {eraser.on ? (
-          <NailView design={design} pxPerMm={pxPerMm} onErase={eraseHandlers} />
+          <NailView design={design} pxPerMm={pxPerMm} onErase={eraseHandlers} guides={guides} />
         ) : (
-          <NailView design={design} pxPerMm={pxPerMm} onMove={moveActive} activeLayer={activeLayer} />
+          <NailView design={design} pxPerMm={pxPerMm} onMove={moveActive} activeLayer={activeLayer} guides={guides} />
         )}
         <p className="hint">{eraser.on ? '🧽 Gomme : frotte sur le trait à effacer' : 'Glisse pour déplacer · pince pour zoomer'}</p>
       </Grid>
@@ -166,6 +171,13 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
                   Couper le motif à la forme de l'ongle
                 </label>
               </>
+            )}
+            <label className="check">
+              <input type="checkbox" checked={guides.on} onChange={(e) => setGuides({ on: e.target.checked })} />
+              Repères : axe central + marge de sécurité (cuticule / parois)
+            </label>
+            {guides.on && design.shape !== 'none' && (
+              <Slider label="Marge de sécurité" unit=" mm" value={guides.margin} min={0} max={2.5} step={0.25} onChange={(margin) => setGuides({ margin })} />
             )}
           </div>
         )}

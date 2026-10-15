@@ -180,3 +180,17 @@ Tracer.
 **Limites** : la gomme et les réglages de trait (seuil, épaisseur) ne s'appliquent qu'au motif principal ; le miroir
 s'applique à tous les motifs, chacun sur place. En mode « motif seul », la zone affichée est calée sur le motif
 principal (un calque éloigné peut déborder du cadre à l'export).
+
+## feat/13-reperes-axe-marge-securite — 15/10/2026
+
+**Ajouté** : **repères de placement**, dans l'éditeur (onglet *Ongle*) et en traçage (⚙) :
+- **Axe central + mi-hauteur** en pointillés dorés : centrer le motif et garder la symétrie.
+- **Marge de sécurité** (bande rose, 0 à 2,5 mm, 1 mm par défaut) le long de la cuticule et des parois, à
+  l'intérieur de l'ongle : zone à laisser sans produit en pose directe (et repère de bord pour les capsules).
+- Réglage commun à l'éditeur et au traçage, mémorisé sur l'appareil.
+
+**Tester** : ouvrir un design avec une forme d'ongle → Ongle → cocher « Repères » → régler la marge → Tracer
+(⚙ → Repères pour les masquer/afficher).
+
+**Limites** : en mode « motif seul » (sans ongle), seul l'axe central est affiché. Les repères ne sont pas
+exportés (aide visuelle uniquement).

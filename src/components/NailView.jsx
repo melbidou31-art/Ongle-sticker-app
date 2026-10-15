@@ -10,6 +10,7 @@ const PAD = 4 // marge autour de l'ongle, en mm
  */
 export default function NailView({
   design, pxPerMm, onMove, onErase, showOutline = true, clipKey = '', colors, lineColor, dark = false, activeLayer,
+  guides,
 }) {
   const { nailW, nailH, shape, img, flip, clip, text, lineart, aspect } = design
   // calque couleurs : réglage du design, sauf si l'écran de traçage le force
@@ -179,6 +180,30 @@ export default function NailView({
           </text>
         )}
       </g>
+      {guides?.on && (
+        <g pointerEvents="none">
+          {!free && guides.margin > 0 && (
+            // bande « ne pas peindre » le long de la cuticule et des parois (à l'intérieur de l'ongle)
+            // (le découpage est sur le groupe : sur le tracé lui-même, il hériterait de son décalage)
+            <g clipPath={`url(#${clipId})`}>
+              <path
+                d={d}
+                transform={`translate(${PAD} ${PAD})`}
+                fill="none"
+                stroke="rgba(224,0,90,0.22)"
+                strokeWidth={guides.margin * 2}
+              />
+            </g>
+          )}
+          {/* axe central et mi-hauteur, pour centrer et garder la symétrie */}
+          <path
+            d={`M ${PAD + aw / 2} ${PAD - 1} V ${PAD + ah + 1} M ${PAD - 1} ${PAD + ah / 2} H ${PAD + aw + 1}`}
+            stroke={dark ? 'rgba(201,169,110,0.7)' : 'rgba(150,110,40,0.6)'}
+            strokeWidth={0.15}
+            strokeDasharray="1 0.8"
+          />
+        </g>
+      )}
       {showOutline && !free && (
         <path
           d={d}
