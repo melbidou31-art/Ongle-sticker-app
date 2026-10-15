@@ -368,3 +368,16 @@ le PNG, eux, figent le rendu).
 
 **Limites** : la protection dépend du navigateur (Safari iOS l'accorde surtout aux apps installées sur l'écran
 d'accueil) ; la sauvegarde 💾 reste la vraie sécurité.
+
+## feat/25-annuler-retablir — 15/10/2026
+
+**Ajouté** : **↶ Annuler / ↷ Rétablir** dans l'en-tête de l'éditeur, pour toutes les modifications : déplacement
+ou zoom du motif, curseurs, forme, capsule, cliente, calques ajoutés ou retirés, French, texte, recadrage, gomme…
+- Une étape regroupe les changements faits sans pause (un glissé ou un mouvement de curseur = une seule étape).
+- Raccourcis clavier sur ordinateur : **Ctrl+Z** / **Ctrl+Y** (ou Ctrl+Maj+Z), sauf pendant la saisie de texte.
+- Jusqu'à 50 étapes ; les boutons sont grisés quand il n'y a rien à annuler/rétablir.
+
+**Tester** : ouvrir un design → Calques → changer la rotation, puis la taille → ↶ deux fois → ↷.
+
+**Limites** : l'historique se vide en quittant l'éditeur (il n'est pas enregistré) ; les modifications faites en
+mode traçage (déplacement déverrouillé) n'y figurent pas.

@@ -12,6 +12,7 @@ import CropTool from '../components/CropTool.jsx'
 import { DEFAULT_FRENCH, FRENCH_STYLES } from '../lib/french.js'
 import { motifFromDesign } from '../lib/mymotifs.js'
 import { DEFAULT_TEXT, FONTS } from '../lib/fonts.js'
+import useHistory from '../lib/useHistory.js'
 
 function Slider({ label, value, min, max, step = 1, unit = '', onChange }) {
   return (
@@ -28,6 +29,8 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
   const [tab, setTab] = useState('motif')
   const srcCanvas = useRef(null)
   const set = (patch) => onChange({ ...design, ...patch })
+  // ↶ / ↷ : toutes les modifications de l'éditeur (une étape = jusqu'à une courte pause)
+  const history = useHistory(design, onChange)
 
   // Recalcule le trait quand les réglages de traitement changent
   useEffect(() => {
@@ -129,6 +132,8 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
     <div className="screen editor">
       <header className="topbar light">
         <button className="ghost" onClick={onBack}>‹ Designs</button>
+        <button className="ghost icon" disabled={!history.canUndo} onClick={history.undo} title="Annuler (Ctrl+Z)" aria-label="Annuler">↶</button>
+        <button className="ghost icon" disabled={!history.canRedo} onClick={history.redo} title="Rétablir (Ctrl+Y)" aria-label="Rétablir">↷</button>
         <input className="name-input" value={design.name} onChange={(e) => set({ name: e.target.value })} />
         <button className="pink" onClick={onTrace}>Tracer</button>
       </header>

@@ -158,6 +158,8 @@ code { font-family: ui-monospace, 'Cascadia Mono', monospace; }
 /* Éditeur */
 .topbar { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
 .topbar b { flex: 1; text-align: center; }
+.ghost.icon { font-size: 20px; padding: 4px 8px; line-height: 1; }
+.ghost.icon:disabled { opacity: 0.3; }
 .name-input {
   flex: 1; min-width: 0; background: transparent; border: 0; color: inherit;
   font: 600 16px Georgia, serif; text-align: center;
