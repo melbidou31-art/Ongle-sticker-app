@@ -238,3 +238,17 @@ maintenir 🔓 pour revenir.
 
 **Limites** : en vue « Main entière », la barre fine n'affiche pas la navigation (déverrouiller pour changer de
 main).
+
+## feat/17-guide-integre-rappel-calibrage — 15/10/2026
+
+**Ajouté** :
+- **❓ Guide** (bibliothèque) : la marche à suivre en 6 étapes — calibrer, créer un design, press-on, ongle
+  direct, tracer, imprimer/sauvegarder — avec les bons boutons à chaque étape.
+- **Rappel de calibrage** : tant que l'écran de cet appareil n'a jamais été calibré, un bandeau rose le signale
+  dans la bibliothèque (« les tailles en mm sont approximatives ») avec un bouton 📏 Calibrer. Il disparaît
+  dès le premier calibrage.
+
+**Tester** : sur un appareil jamais calibré → bandeau visible → Calibrer → Valider → bandeau disparu ;
+❓ Guide pour lire la marche à suivre.
+
+**Limites** : le guide est un texte fixe (pas de tutoriel interactif).

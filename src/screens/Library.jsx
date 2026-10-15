@@ -24,7 +24,8 @@ function designTag(d, clients) {
 }
 
 export default function Library({
-  designs, onImport, onMotif, onOpen, onTrace, onDelete, onDuplicate, onCalibrate, onClients, onRestored, busy,
+  designs, onImport, onMotif, onOpen, onTrace, onDelete, onDuplicate, onCalibrate, onClients, onRestored, onGuide,
+  calibrated, busy,
 }) {
   const input = useRef(null)
   const [showMotifs, setShowMotifs] = useState(false)
@@ -59,7 +60,17 @@ export default function Library({
           <button className="ghost dark" onClick={onCalibrate}>📏 Calibrer l'écran</button>
           <button className="ghost dark" onClick={onClients}>👤 Clientes</button>
           <button className="ghost dark" onClick={() => setShowBackup((v) => !v)}>💾 Sauvegarde</button>
+          <button className="ghost dark" onClick={onGuide}>❓ Guide</button>
         </div>
+        {!calibrated && (
+          <div className="banner">
+            <span>
+              <b>Écran pas encore calibré</b> — les tailles en mm sont approximatives tant que tu n'as pas calibré cet
+              appareil (30 secondes, avec une carte bancaire).
+            </span>
+            <button className="pink" onClick={onCalibrate}>📏 Calibrer</button>
+          </div>
+        )}
         {showBackup && <BackupPanel onRestored={onRestored} />}
         {showMotifs && (
           <div className="motif-grid">

@@ -4,6 +4,7 @@ import Editor from './screens/Editor.jsx'
 import Trace from './screens/Trace.jsx'
 import Calibrate from './screens/Calibrate.jsx'
 import Clients from './screens/Clients.jsx'
+import Guide from './screens/Guide.jsx'
 import { defaultPxPerMm, deleteDesign, getSetting, listDesigns, newDesign, saveDesign, setSetting } from './lib/db.js'
 import { downscale, fileToDataURL, loadImage, toLineArt } from './lib/lineart.js'
 import { motifCanvas } from './lib/motifs.js'
@@ -15,6 +16,8 @@ export default function App() {
   const [busy, setBusy] = useState(false)
   const [clientsBack, setClientsBack] = useState('library')
   const [pxPerMm, setPxPerMm] = useState(() => getSetting('pxPerMm', defaultPxPerMm()))
+  // l'écran a-t-il déjà été calibré sur cet appareil ? (sinon la taille réelle est approximative)
+  const [calibrated, setCalibrated] = useState(() => getSetting('pxPerMm', null) != null)
 
   const refresh = () => listDesigns().then(setDesigns).catch(() => setDesigns([]))
   useEffect(() => {
@@ -72,10 +75,13 @@ export default function App() {
         onSave={(v) => {
           setPxPerMm(v)
           setSetting('pxPerMm', v)
+          setCalibrated(true)
           setScreen('library')
         }}
       />
     )
+
+  if (screen === 'guide') return <Guide onBack={() => setScreen('library')} onCalibrate={() => setScreen('calibrate')} />
 
   if (screen === 'clients')
     return <Clients pxPerMm={pxPerMm} onBack={() => setScreen(clientsBack)} />
@@ -122,6 +128,8 @@ export default function App() {
       onCalibrate={() => setScreen('calibrate')}
       onClients={() => openClients('library')}
       onRestored={refresh}
+      onGuide={() => setScreen('guide')}
+      calibrated={calibrated}
     />
   )
 }

@@ -83,6 +83,20 @@ code { font-family: ui-monospace, 'Cascadia Mono', monospace; }
 .lib-tools .search { flex: 1; min-width: 0; }
 .sort { background: var(--bg-2); color: #eee9df; border: 1px solid var(--line); border-radius: 10px; padding: 0 10px; }
 
+/* Rappel de calibrage */
+.banner {
+  display: flex; gap: 12px; align-items: center; justify-content: space-between; flex-wrap: wrap;
+  padding: 12px; border-radius: var(--radius); font-size: 13px;
+  background: rgba(242, 169, 192, 0.12); border: 1px solid var(--pink);
+}
+.banner span { flex: 1; min-width: 200px; }
+
+/* Guide */
+.guide-body { padding: 8px 16px 32px; display: grid; gap: 14px; max-width: 760px; }
+.guide-section { background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px 14px; }
+.guide-section h2 { margin: 0 0 6px; font: 600 16px Georgia, serif; color: var(--gold); }
+.guide-section ul { margin: 0; padding-left: 18px; display: grid; gap: 6px; font-size: 14px; }
+
 /* Sauvegarde */
 .backup { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-2); }
 .backup p { margin: 0; }
