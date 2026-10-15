@@ -223,3 +223,18 @@ zone choisie ; recommencer avec « Image entière » pour annuler.
 
 **Limites** : cadre rectangulaire uniquement (pas de détourage libre) ; s'applique au motif principal, pas aux
 calques ajoutés.
+
+## feat/16-mode-immersif-tracage — 15/10/2026
+
+**Ajouté** : **mode immersif** en traçage : une fois le design verrouillé, l'en-tête, la barre des doigts et les
+options disparaissent au profit d'une fine barre (🔓 Maintenir · ◀ doigt / taille ▶ · 🎨). Sur un téléphone
+(375 × 812), la zone de traçage passe de 550 à 756 px de haut (+37 %), et il y a moins de boutons à portée
+du pinceau. Déverrouiller (appui long) fait revenir l'interface complète.
+- Activé par défaut sur écran tactile, désactivé sur ordinateur ; réglable dans ⚙ « Mode immersif une fois
+  verrouillé » (mémorisé).
+
+**Tester** : sur téléphone (ou vue mobile), Tracer un design → la barre fine apparaît ; ◀ ▶ si set 10 doigts ;
+maintenir 🔓 pour revenir.
+
+**Limites** : en vue « Main entière », la barre fine n'affiche pas la navigation (déverrouiller pour changer de
+main).

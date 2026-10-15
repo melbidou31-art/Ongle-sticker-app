@@ -221,6 +221,15 @@ input[type='range'] { width: 100%; accent-color: var(--gold); }
 .crop-handle.tr { left: 100%; top: 0; cursor: nesw-resize; }
 .crop-handle.bl { left: 0; top: 100%; cursor: nesw-resize; }
 .crop-handle.br { left: 100%; top: 100%; cursor: nwse-resize; }
+/* Mode immersif : une fine barre, le reste pour le traçage */
+.immersive-bar {
+  display: flex; align-items: center; justify-content: space-between; gap: 8px;
+  padding: 6px 10px; background: var(--bg); border-bottom: 1px solid var(--line);
+}
+.immersive-bar .ghost { padding: 6px 12px; }
+.pink.compact { padding: 7px 12px; font-size: 13px; }
+.mini-nav { display: flex; align-items: center; gap: 4px; font-size: 13px; white-space: nowrap; }
+.trace.immersive .trace-stage { margin: 4px; border-radius: 14px; }
 .trace-options { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding: 10px 16px 0; }
 .opt { display: flex; align-items: center; gap: 6px; }
 .swatch { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line); }

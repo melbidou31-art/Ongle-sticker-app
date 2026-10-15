@@ -57,6 +57,15 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
   const go = (d) =>
     setFinger((f) => (view === 'hand' ? (f < 5 ? 5 : 0) : (f + d + 10) % 10))
 
+  // par défaut : immersif sur téléphone/tablette (écran tactile), classique sur ordinateur
+  const immersiveOn = display.immersive ?? matchMedia('(pointer: coarse)').matches
+  const immersive = locked && immersiveOn
+  const stage = (
+    <TraceStage
+      {...{ pxPerMm, display, locked, set, view, finger, variant, current, design, onChange, showColors, ink, dark, guides }}
+    />
+  )
+
   function startHold() {
     setHolding(true)
     timer.current = setTimeout(() => {
@@ -75,6 +84,50 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
     else el.requestFullscreen?.().catch(() => {})
   }
 
+  // bouton de déverrouillage (appui long), partagé par l'en-tête et la barre immersive
+  const unlockButton = (compact) => (
+    <button
+      className={`pink hold ${holding ? 'holding' : ''} ${compact ? 'compact' : ''}`}
+      style={{ '--hold': `${HOLD_MS}ms` }}
+      onPointerDown={startHold}
+      onPointerUp={cancelHold}
+      onPointerLeave={cancelHold}
+      onContextMenu={(e) => e.preventDefault()}
+    >
+      🔓 {compact ? 'Maintenir' : <>Unlock design <small>(maintenir)</small></>}
+    </button>
+  )
+  const colorsButton = (
+    <button
+      className={`ghost dark ${showColors ? 'on-gold' : ''}`}
+      onClick={() => setShowColors((v) => !v)}
+      title="Couleurs d'origine sous le trait"
+    >
+      🎨
+    </button>
+  )
+
+  // Mode immersif : verrouillé, tout se réduit à une fine barre pour laisser l'écran au traçage
+  if (immersive)
+    return (
+      <div className="screen trace immersive">
+        <div className="immersive-bar">
+          {unlockButton(true)}
+          {set && view === 'single' ? (
+            <div className="mini-nav">
+              <button className="ghost dark" onClick={() => go(-1)} aria-label="Doigt précédent">◀</button>
+              <span>{FINGERS[finger]}{dims?.size ? ` · ${dims.size}` : ''}</span>
+              <button className="ghost dark" onClick={() => go(1)} aria-label="Doigt suivant">▶</button>
+            </div>
+          ) : (
+            <span className="eyebrow gold">🔒 LOCKED</span>
+          )}
+          {colorsButton}
+        </div>
+        {stage}
+      </div>
+    )
+
   return (
     <div className="screen trace">
       <header className="trace-head">
@@ -88,27 +141,8 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
         </div>
         <div className="eyebrow gold mode">TRACING MODE / HANDS ON</div>
         <div className="row">
-          {locked ? (
-            <button
-              className={`pink hold ${holding ? 'holding' : ''}`}
-              style={{ '--hold': `${HOLD_MS}ms` }}
-              onPointerDown={startHold}
-              onPointerUp={cancelHold}
-              onPointerLeave={cancelHold}
-              onContextMenu={(e) => e.preventDefault()}
-            >
-              🔓 Unlock design <small>(maintenir)</small>
-            </button>
-          ) : (
-            <button className="pink" onClick={() => setLocked(true)}>🔒 Lock design</button>
-          )}
-          <button
-            className={`ghost dark ${showColors ? 'on-gold' : ''}`}
-            onClick={() => setShowColors((v) => !v)}
-            title="Couleurs d'origine sous le trait"
-          >
-            🎨
-          </button>
+          {locked ? unlockButton(false) : <button className="pink" onClick={() => setLocked(true)}>🔒 Lock design</button>}
+          {colorsButton}
           <button
             className={`ghost dark ${showOptions ? 'on-gold' : ''}`}
             onClick={() => setShowOptions((v) => !v)}
@@ -172,9 +206,20 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
               Main droite en miroir
             </label>
           )}
+          <label className="check">
+            <input type="checkbox" checked={immersiveOn} onChange={(e) => updateDisplay({ immersive: e.target.checked })} />
+            Mode immersif une fois verrouillé
+          </label>
         </div>
       )}
 
+      {stage}
+    </div>
+  )
+}
+
+function TraceStage({ pxPerMm, display, locked, set, view, finger, variant, current, design, onChange, showColors, ink, dark, guides }) {
+  return (
       <Grid pxPerMm={pxPerMm} className="trace-stage" variant={display.surface}>
         <div className={`lock-pill ${locked ? '' : 'open'}`}>{locked ? '🔒 DESIGN LOCKED' : '✋ DÉPLACEMENT LIBRE'}</div>
         {set && view === 'hand' ? (
@@ -206,6 +251,5 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
         {locked && <div className="touch-shield" onPointerDown={(e) => e.preventDefault()} onTouchStart={(e) => e.preventDefault()} />}
         <div className="ready">READY TO TRACE</div>
       </Grid>
-    </div>
   )
 }
