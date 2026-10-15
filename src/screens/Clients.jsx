@@ -1,5 +1,8 @@
 import { useState } from 'react'
-import { FINGERS, deleteClient, listClients, nailsFromSizing, newClient, saveClient } from '../lib/clients.js'
+import {
+  FINGERS, deleteClient, isDefaultAdult, kidWidths, listClients, nailsFromSizing, newClient, saveClient,
+} from '../lib/clients.js'
+import { MmInput } from '../components/LengthPicker.jsx'
 import { allBrands } from '../lib/tips.js'
 import LengthPicker from '../components/LengthPicker.jsx'
 import { defaultTipSet } from '../lib/fingerset.js'
@@ -43,6 +46,24 @@ export default function Clients({ pxPerMm, onBack }) {
     setSizing({ mode: 'brand', brand: b, length: sizing.length || 'm', sizes: sizing.sizes || defaultTipSet(b) })
   }
   const computed = sizing.mode === 'brand' && brand ? nailsFromSizing(sizing, edit.shape || 'oval') : null
+
+  // Mode enfant en saisie mm : une longueur commune (saisie à la main) appliquée aux 10 doigts
+  const kidMm = sizing.mode !== 'brand' ? sizing.kidLength : null
+  function setKidLength(mm) {
+    setEdit((c) => ({
+      ...c,
+      sizing: { ...(c.sizing || { mode: 'mm' }), kidLength: mm },
+      nails: c.nails.map((n) => ({ ...n, h: mm })),
+    }))
+  }
+  function toggleKid(on) {
+    if (!on) return setSizing({ kidLength: null })
+    // fiche jamais modifiée : on part de largeurs d'enfant plutôt que d'adulte
+    setEdit((c) => {
+      const w = isDefaultAdult(c.nails) ? kidWidths() : c.nails.map((n) => n.w)
+      return { ...c, sizing: { ...(c.sizing || { mode: 'mm' }), kidLength: 8 }, nails: w.map((x) => ({ w: x, h: 8 })) }
+    })
+  }
 
   if (edit)
     return (
@@ -97,6 +118,15 @@ export default function Clients({ pxPerMm, onBack }) {
               ))}
           </div>
         </div>
+        {sizing.mode !== 'brand' && (
+          <div className="pad client-shape">
+            <label className="check kid-toggle">
+              <input type="checkbox" checked={!!kidMm} onChange={(e) => toggleKid(e.target.checked)} />
+              👧 Mode enfant (longueur saisie à la main, la même pour les 10 doigts)
+            </label>
+            {kidMm && <MmInput label="Longueur" value={kidMm} onChange={setKidLength} />}
+          </div>
+        )}
         {sizing.mode === 'brand' && (
           <div className="pad client-shape">
             <label className="field">
@@ -143,14 +173,19 @@ export default function Clients({ pxPerMm, onBack }) {
           ) : [0, 5].map((start) => (
             <table key={start} className="nails-table">
               <thead>
-                <tr><th>{start ? 'Main droite' : 'Main gauche'}</th><th>Largeur</th><th>Longueur</th><th /></tr>
+                <tr>
+                  <th>{start ? 'Main droite' : 'Main gauche'}</th><th>Largeur</th>
+                  {!kidMm && <th>Longueur</th>}
+                  <th />
+                </tr>
               </thead>
               <tbody>
                 {edit.nails.slice(start, start + 5).map((n, k) => (
                   <tr key={k}>
                     <td>{FINGERS[start + k].replace(/ [GD]$/, '')}</td>
                     <td><NumberField value={n.w} onChange={(w) => setNail(start + k, { w })} /></td>
-                    <td><NumberField value={n.h} onChange={(h) => setNail(start + k, { h })} /></td>
+                    {/* mode enfant : longueur commune saisie au-dessus */}
+                    {!kidMm && <td><NumberField value={n.h} onChange={(h) => setNail(start + k, { h })} /></td>}
                     <td>
                       <button className="chip mini" onClick={() => setMeasuring(start + k)} title="Mesurer à l'écran">📏</button>
                     </td>
@@ -165,9 +200,11 @@ export default function Clients({ pxPerMm, onBack }) {
             pxPerMm={pxPerMm}
             title={FINGERS[measuring].toUpperCase()}
             initial={edit.nails[measuring]}
+            withLength={!kidMm}
             onCancel={() => setMeasuring(null)}
             onDone={(v) => {
-              setNail(measuring, v)
+              // mode enfant : seule la largeur est mesurée, la longueur reste la longueur commune
+              setNail(measuring, kidMm ? { w: v.w } : v)
               setMeasuring(null)
             }}
           />

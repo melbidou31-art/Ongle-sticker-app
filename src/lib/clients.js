@@ -12,6 +12,12 @@ export const FINGERS = [
 const AVERAGE = [
   { w: 16, h: 14 }, { w: 12, h: 12 }, { w: 13, h: 13 }, { w: 12, h: 12 }, { w: 9, h: 10 },
 ]
+// Largeurs moyennes d'ongles d'enfant (approx.) : pouce, index, majeur, annulaire, auriculaire
+const KID_WIDTHS = [11, 8, 8.5, 8, 6.5]
+export const kidWidths = () => [...KID_WIDTHS, ...KID_WIDTHS]
+/** Vrai si les mesures sont encore les valeurs adultes par défaut (jamais modifiées). */
+export const isDefaultAdult = (nails) =>
+  nails.every((n, i) => n.w === AVERAGE[i % 5].w && n.h === AVERAGE[i % 5].h)
 
 const KEY = 'clients'
 export const listClients = () => getSetting(KEY, [])

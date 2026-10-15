@@ -571,3 +571,19 @@ retour ; formes Stiletto / Ballerine.
 
 **Limites** : les formes restent des modèles génériques ; pour coller exactement à une capsule précise, utiliser
 « ✍ Dessiner ma capsule ».
+
+## feat/39-mode-enfant-longueur-manuelle — 15/10/2026 (retour de test)
+
+**Changé** :
+- **👧 Mode enfant : longueur saisie à la main** (au lieu de choisir 8 / 10 / 12… mm) : champ en millimètres
+  (virgule ou point acceptés, 3 à 40 mm) + boutons − / + par demi-millimètre. Capsules (éditeur) et fiche cliente
+  en « marque + numéro ». Les longueurs enfant enregistrées avant restent reconnues.
+- **Mode enfant aussi dans la fiche cliente en « Largeur / longueur (mm) »** : une longueur commune saisie à la
+  main pour les 10 doigts (la colonne Longueur disparaît), largeurs toujours modifiables doigt par doigt et
+  pré-remplies avec des largeurs d'enfant (11 / 8 / 8,5 / 8 / 6,5 mm) si la fiche n'avait pas été modifiée ;
+  📏 ne mesure alors que la largeur.
+
+**Tester** : Ongle → Press-on → une marque → 👧 Mode enfant → taper 9,5 ; 👤 Clientes → + Cliente →
+👧 Mode enfant → taper la longueur → Enregistrer.
+
+**Limites** : largeurs d'enfant par défaut approximatives (à mesurer pour chaque enfant).
