@@ -57,6 +57,40 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
   const go = (d) =>
     setFinger((f) => (view === 'hand' ? (f < 5 ? 5 : 0) : (f + d + 10) % 10))
 
+  // Suivi du set : doigts déjà tracés (mémorisé le temps de la séance, par design)
+  const doneKey = `traced-${design.id}`
+  const [done, setDone] = useState(() => {
+    try {
+      return new Set(JSON.parse(sessionStorage.getItem(doneKey) || '[]'))
+    } catch {
+      return new Set()
+    }
+  })
+  function saveDone(next) {
+    setDone(next)
+    try {
+      sessionStorage.setItem(doneKey, JSON.stringify([...next]))
+    } catch {}
+  }
+  // ✓ : marque le doigt (ou le retire) et passe au prochain doigt pas encore tracé
+  function toggleDone() {
+    const next = new Set(done)
+    if (next.has(finger)) return saveDone((next.delete(finger), next))
+    next.add(finger)
+    saveDone(next)
+    const todo = [1, 2, 3, 4, 5, 6, 7, 8, 9].map((k) => (finger + k) % 10).find((f) => !next.has(f))
+    if (todo !== undefined) setFinger(todo)
+  }
+  const doneButton = (
+    <button
+      className={`chip ${done.has(finger) ? 'on' : ''}`}
+      onClick={toggleDone}
+      title={done.has(finger) ? 'Marquer comme pas encore tracé' : 'Doigt tracé → passer au suivant'}
+    >
+      {done.has(finger) ? '✓ Tracé' : '✓ Fait'} · {done.size}/10
+    </button>
+  )
+
   // par défaut : immersif sur téléphone/tablette (écran tactile), classique sur ordinateur
   const immersiveOn = display.immersive ?? matchMedia('(pointer: coarse)').matches
   const immersive = locked && immersiveOn
@@ -116,8 +150,9 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
           {set && view === 'single' ? (
             <div className="mini-nav">
               <button className="ghost dark" onClick={() => go(-1)} aria-label="Doigt précédent">◀</button>
-              <span>{FINGERS[finger]}{dims?.size ? ` · ${dims.size}` : ''}</span>
+              <span>{done.has(finger) ? '✓ ' : ''}{FINGERS[finger]}{dims?.size ? ` · ${dims.size}` : ''}</span>
               <button className="ghost dark" onClick={() => go(1)} aria-label="Doigt suivant">▶</button>
+              {doneButton}
             </div>
           ) : (
             <span className="eyebrow gold">🔒 LOCKED</span>
@@ -159,7 +194,9 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
         <div className="finger-nav">
           <button className="ghost dark" onClick={() => go(-1)} aria-label="Doigt précédent">◀</button>
           <div className="finger-label">
-            <b>{view === 'hand' ? (finger < 5 ? 'Main gauche' : 'Main droite') : FINGERS[finger]}</b>
+            <b>
+              {view === 'hand' ? (finger < 5 ? 'Main gauche' : 'Main droite') : `${done.has(finger) ? '✓ ' : ''}${FINGERS[finger]}`}
+            </b>
             <span className="muted">
               {view === 'hand'
                 ? '5 ongles'
@@ -167,6 +204,10 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
             </span>
           </div>
           <button className="ghost dark" onClick={() => go(1)} aria-label="Doigt suivant">▶</button>
+          {view === 'single' && doneButton}
+          {done.size > 0 && (
+            <button className="chip mini" onClick={() => saveDone(new Set())} title="Recommencer le suivi du set">↺</button>
+          )}
           <button className="chip" onClick={() => setView(view === 'hand' ? 'single' : 'hand')}>
             {view === 'hand' ? '1 doigt' : 'Main entière'}
           </button>

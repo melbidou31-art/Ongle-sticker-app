@@ -381,3 +381,17 @@ ou zoom du motif, curseurs, forme, capsule, cliente, calques ajoutés ou retiré
 
 **Limites** : l'historique se vide en quittant l'éditeur (il n'est pas enregistré) ; les modifications faites en
 mode traçage (déplacement déverrouillé) n'y figurent pas.
+
+## feat/26-suivi-doigts-traces — 15/10/2026
+
+**Ajouté** en mode traçage, pour les sets 10 doigts (press-on) et les clientes (ongle direct) :
+- Bouton **« ✓ Fait · n/10 »** : marque le doigt affiché comme tracé et **passe directement au prochain doigt
+  pas encore tracé** (plus besoin de compter ni de se demander où on en est).
+- Un doigt déjà tracé est signalé « ✓ » dans son nom ; réappuyer le remet à faire ; **↺** recommence le suivi.
+- Disponible aussi dans la fine barre du mode immersif (utilisable verrouillé).
+- Suivi mémorisé pendant la séance (onglet ouvert), par design.
+
+**Tester** : Tracer un design avec un set → ✓ Fait plusieurs fois → ◀ pour revenir sur un doigt tracé.
+
+**Limites** : le suivi s'efface en fermant l'app (pensé pour une séance de pose) ; pas de suivi en vue
+« Main entière ».
