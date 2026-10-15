@@ -466,3 +466,16 @@ motif du set.
 
 **Limites** : les coefficients de longueur par forme sont approximatifs (pas de données officielles) — mesurer
 ses vraies capsules (Ma boîte, marques perso à venir) pour l'exactitude.
+
+## feat/32-longueurs-xs-xl — 15/10/2026 (retour de test)
+
+**Changé** : les longueurs de capsules sont notées comme des tailles **XS · S · M · L · XL · XXL** (et non plus
+« court / moyen… »), avec deux longueurs courtes en plus :
+XS extra court (14 mm) · S très court (17) · M court (20) · L moyen (26) · XL long (32) · XXL très long (38) —
+×coefficient de la forme (feat/31). La longueur choisie s'applique aux 10 doigts du set.
+Les designs existants sont convertis automatiquement (court → M, moyen → L, long → XL, très long → XXL).
+
+**Tester** : Ongle → Press-on → une marque → boutons XS à XXL.
+
+**Limites** : longueurs approximatives (cuticule → bord libre) ; pour une longueur exacte, régler « Longueur »
+à la main ou utiliser une marque perso (à venir).

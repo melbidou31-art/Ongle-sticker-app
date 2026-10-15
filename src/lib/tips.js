@@ -5,17 +5,24 @@
 import { getSetting, setSetting } from './db.js'
 import { SHAPE_LENGTH } from './shapes.js'
 
-// Longueurs approximatives cuticule → bord libre, en mm
+// Longueurs de capsules, notées comme les tailles de vêtements (XS → XXL), approx. cuticule → bord libre, en mm.
+// La même longueur s'applique aux 10 doigts d'un set.
 export const LENGTHS = {
-  short: { label: 'Court', mm: 20 },
-  medium: { label: 'Moyen', mm: 26 },
-  long: { label: 'Long', mm: 32 },
-  xlong: { label: 'Très long', mm: 38 },
+  xs: { label: 'XS', name: 'Extra court', mm: 14 },
+  s: { label: 'S', name: 'Très court', mm: 17 },
+  m: { label: 'M', name: 'Court', mm: 20 },
+  l: { label: 'L', name: 'Moyen', mm: 26 },
+  xl: { label: 'XL', name: 'Long', mm: 32 },
+  xxl: { label: 'XXL', name: 'Très long', mm: 38 },
 }
 
+// anciennes clés (designs enregistrés avant) → nouvelles
+const LEGACY = { short: 'm', medium: 'l', long: 'xl', xlong: 'xxl' }
+export const lengthKey = (k) => (LENGTHS[k] ? k : LEGACY[k] || 'l')
+
 /** Longueur réelle d'une capsule : longueur commerciale × coefficient de la forme (stiletto plus long…). */
-export const tipLength = (lengthKey, shape) =>
-  Math.round((LENGTHS[lengthKey]?.mm ?? LENGTHS.medium.mm) * (SHAPE_LENGTH[shape] ?? 1) * 2) / 2
+export const tipLength = (key, shape) =>
+  Math.round(LENGTHS[lengthKey(key)].mm * (SHAPE_LENGTH[shape] ?? 1) * 2) / 2
 
 // Génère une série de tailles : largeur de départ, pas de 1 mm
 const series = (labels, firstW) => labels.map((label, i) => ({ label: String(label), w: firstW - i }))

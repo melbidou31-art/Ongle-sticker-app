@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { BRANDS, LENGTHS, getMeasures, saveMeasure, tipLength, tipWidth } from '../lib/tips.js'
+import { BRANDS, LENGTHS, getMeasures, lengthKey, saveMeasure, tipLength, tipWidth } from '../lib/tips.js'
 import { FINGERS, resizeNail } from '../lib/clients.js'
 import { defaultTipSet } from '../lib/fingerset.js'
 import MeasureTool from './MeasureTool.jsx'
@@ -12,7 +12,8 @@ import MeasureTool from './MeasureTool.jsx'
 export default function TipPicker({ design, pxPerMm, onChange }) {
   const [measures, setMeasures] = useState(getMeasures)
   const [measuring, setMeasuring] = useState(false)
-  const tip = design.tip || { brand: '', size: '', length: 'medium' }
+  const rawTip = design.tip || { brand: '', size: '', length: 'l' }
+  const tip = { ...rawTip, length: lengthKey(rawTip.length) } // anciennes longueurs converties
   const brand = BRANDS.find((b) => b.id === tip.brand)
 
   function apply(next, extra = {}) {
@@ -64,10 +65,12 @@ export default function TipPicker({ design, pxPerMm, onChange }) {
               )
             })}
           </div>
-          <div className="seg wrap">
+          <span className="muted">Longueur (la même pour les 10 doigts)</span>
+          <div className="seg wrap lengths">
             {Object.entries(LENGTHS).map(([k, l]) => (
-              <button key={k} className={tip.length === k ? 'on' : ''} onClick={() => apply({ length: k })}>
-                {l.label}
+              <button key={k} className={tip.length === k ? 'on' : ''} onClick={() => apply({ length: k })} title={l.name}>
+                <b>{l.label}</b>
+                <small>{l.name}</small>
               </button>
             ))}
           </div>

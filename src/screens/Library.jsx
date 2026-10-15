@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import BackupPanel from '../components/BackupPanel.jsx'
 import MotifPicker from '../components/MotifPicker.jsx'
-import { BRANDS, LENGTHS } from '../lib/tips.js'
+import { BRANDS, LENGTHS, lengthKey } from '../lib/tips.js'
 import { listClients } from '../lib/clients.js'
 
 // recherche insensible à la casse et aux accents
@@ -17,7 +17,7 @@ function designTag(d, clients) {
   if (d.tip?.brand) {
     const b = BRANDS.find((x) => x.id === d.tip.brand)
     const set = d.tipSet ? ' · set 10' : ` · taille ${d.tip.size}`
-    return `${b?.name || 'Capsule'} ${LENGTHS[d.tip.length]?.label.toLowerCase() || ''}${set}${layers}`
+    return `${b?.name || 'Capsule'} ${LENGTHS[lengthKey(d.tip.length)].label}${set}${layers}`
   }
   if (!d.shape || d.shape === 'none') return `Motif seul · ${Math.round(d.img.w)} mm${layers}`
   return `Ongle ${d.nailW} × ${d.nailH} mm${layers}`
