@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { FINGERS, deleteClient, listClients, newClient, saveClient } from '../lib/clients.js'
 import MeasureTool from '../components/MeasureTool.jsx'
+import { SHAPES } from '../lib/shapes.js'
 
 function NumberField({ value, onChange }) {
   return (
@@ -50,6 +51,18 @@ export default function Clients({ pxPerMm, onBack }) {
           et sa longueur de la cuticule au bord libre souhaité. En millimètres — ou 📏 pour le mesurer directement
           sur l'écran (calibre l'écran avant).
         </p>
+        <div className="pad client-shape">
+          <span className="muted">Forme habituelle de ses ongles</span>
+          <div className="seg wrap">
+            {Object.entries(SHAPES)
+              .filter(([k]) => k !== 'none')
+              .map(([k, l]) => (
+                <button key={k} className={(edit.shape || 'oval') === k ? 'on' : ''} onClick={() => update({ shape: k })}>
+                  {l}
+                </button>
+              ))}
+          </div>
+        </div>
         <div className="hands">
           {[0, 5].map((start) => (
             <table key={start} className="nails-table">
@@ -104,7 +117,9 @@ export default function Clients({ pxPerMm, onBack }) {
             <li key={c.id}>
               <button className="client-row" onClick={() => setEdit(c)}>
                 <b>{c.name}</b>
-                <span className="muted">{c.nails.map((n) => n.w).join(' · ')} mm</span>
+                <span className="muted">
+                  {SHAPES[c.shape || 'oval']} · {c.nails.map((n) => n.w).join(' · ')} mm
+                </span>
               </button>
               <button
                 className="chip danger"

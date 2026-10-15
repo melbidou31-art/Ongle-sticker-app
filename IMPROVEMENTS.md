@@ -303,3 +303,16 @@ créé depuis un motif perso masque ses couleurs d'origine. Stockage sur l'appar
 
 **Limites** : un design appartient à une seule collection ; pas de renommage groupé d'une collection (changer
 chaque design).
+
+## feat/21-forme-ongle-par-cliente — 15/10/2026
+
+**Ajouté** : **forme habituelle des ongles** dans chaque fiche cliente (ovale, carré, amande, ballerine,
+stiletto). En mode *Ongle direct*, choisir la cliente applique automatiquement sa forme (au lieu d'un ovale
+pour tout le monde) ; la forme est rappelée sous les doigts et dans la liste des clientes.
+- Changer de doigt garde une forme modifiée à la main dans l'éditeur (pour un essai ponctuel).
+- Les fiches existantes sans forme utilisent l'ovale.
+
+**Tester** : 👤 Clientes → ouvrir une cliente → « Forme habituelle » → Carré → Enregistrer → ouvrir un design →
+Ongle → Ongle direct → choisir la cliente : le contour passe en carré.
+
+**Limites** : une seule forme par cliente (pas de forme différente par doigt).

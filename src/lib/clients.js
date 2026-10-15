@@ -33,6 +33,7 @@ export function newClient(name = 'Nouvelle cliente') {
   return {
     id: crypto.randomUUID(),
     name,
+    shape: 'oval', // forme habituelle de ses ongles (appliquée en mode ongle direct)
     nails: [...AVERAGE, ...AVERAGE].map((n) => ({ ...n })),
   }
 }

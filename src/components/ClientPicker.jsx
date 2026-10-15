@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { FINGERS, listClients, resizeNail } from '../lib/clients.js'
+import { SHAPES } from '../lib/shapes.js'
 
 /** Mode « Ongle direct » : l'ongle prend les mesures du doigt choisi, le motif suit. */
 export default function ClientPicker({ design, onChange, onManageClients }) {
@@ -12,8 +13,11 @@ export default function ClientPicker({ design, onChange, onManageClients }) {
     const c = clients.find((x) => x.id === s.id)
     if (!c) return onChange({ client: s })
     const n = c.nails[s.finger]
-    // un ongle naturel a besoin d'un contour : ovale si le motif était seul
-    onChange({ client: s, ...resizeNail(design, n.w, n.h), ...(design.shape === 'none' && { shape: 'oval' }) })
+    // forme habituelle de la cliente, appliquée quand on la choisit (ou si le motif était seul) ;
+    // changer de doigt garde la forme éventuellement modifiée à la main
+    const newClient = s.id !== sel.id
+    const shape = newClient || design.shape === 'none' ? { shape: c.shape || 'oval' } : {}
+    onChange({ client: s, ...resizeNail(design, n.w, n.h), ...shape })
   }
 
   if (clients.length === 0)
@@ -54,8 +58,8 @@ export default function ClientPicker({ design, onChange, onManageClients }) {
             ))}
           </div>
           <p className="muted">
-            {FINGERS[sel.finger]} : <b>{client.nails[sel.finger].w} × {client.nails[sel.finger].h} mm</b> · le motif est
-            mis à l'échelle automatiquement.
+            {FINGERS[sel.finger]} : <b>{client.nails[sel.finger].w} × {client.nails[sel.finger].h} mm</b> · forme{' '}
+            habituelle : {SHAPES[client.shape || 'oval'].toLowerCase()} · le motif est mis à l'échelle automatiquement.
           </p>
         </>
       )}
