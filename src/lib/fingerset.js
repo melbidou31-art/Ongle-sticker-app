@@ -31,8 +31,28 @@ export function fingerDims(design, finger) {
 
 export const hasSet = (design) => !!fingerDims(design, 0)
 
-/** Variante du design mise aux dimensions d'un doigt (le motif suit proportionnellement). */
-export function forFinger(design, finger) {
+// Champs du « motif » d'un design (ce qu'on emprunte pour un ongle accent) ; la forme, la capsule,
+// la cliente, le French et le miroir restent ceux du set.
+const MOTIF_FIELDS = ['lineart', 'original', 'cropOriginal', 'colorSrc', 'aspect', 'img', 'layers', 'text', 'colors']
+
+/**
+ * Variante du design mise aux dimensions d'un doigt (le motif suit proportionnellement).
+ * Ongle accent : si `design.accents[finger]` désigne un autre design (présent dans `others`, id → design),
+ * son motif remplace celui du set sur ce doigt, mis à l'échelle de l'ongle.
+ */
+export function forFinger(design, finger, others = {}) {
   const d = fingerDims(design, finger)
-  return d ? { ...design, ...resizeNail(design, d.w, d.h) } : design
+  if (!d) return design
+  let base = design
+  const other = others[design.accents?.[finger]]
+  if (other) {
+    base = { ...design }
+    for (const k of MOTIF_FIELDS) base[k] = other[k]
+    // le motif emprunté est placé par rapport à son propre ongle : on part de ses dimensions
+    if (other.shape !== 'none') Object.assign(base, { nailW: other.nailW, nailH: other.nailH })
+  }
+  return { ...base, ...resizeNail(base, d.w, d.h) }
 }
+
+/** Index id → design, pour retrouver les motifs des ongles accent. */
+export const byId = (designs) => Object.fromEntries(designs.map((x) => [x.id, x]))

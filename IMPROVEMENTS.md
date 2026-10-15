@@ -434,3 +434,19 @@ quand le motif dépasse. Le **mode traçage reste toujours en 1:1** (taille rée
 
 **Limites** : quand le motif occupe toute la zone zoomée, faire défiler depuis les bords quadrillés (glisser sur
 le motif le déplace / gomme / dessine) ; le zoom n'est pas mémorisé d'une ouverture à l'autre.
+
+## feat/30-ongles-accent — 15/10/2026
+
+**Ajouté** : **💅 Ongles accent** (onglet *Ongle*, dès qu'il y a un set 10 doigts ou une cliente) : pour chaque
+doigt, « Même motif » ou **le motif d'un autre design de la bibliothèque** — ex. annulaires avec une étoile ou des
+paillettes, initiale sur le pouce. Le motif emprunté (trait, couleurs, calques, texte) est mis à la taille de
+l'ongle ; la forme, la capsule/cliente, le French et le miroir restent ceux du set.
+- Pris en compte en **traçage** (◀ ▶ et vue « Main entière ») et dans l'**export de la planche** (PDF / PNG / SVG)
+  et le **partage** d'aperçu.
+
+**Tester** : avoir au moins deux designs → ouvrir celui avec un set → Ongle → 💅 Ongles accent → Annulaire G/D :
+choisir l'autre design → Tracer → Main entière.
+
+**Limites** : l'ongle accent reprend le motif du design choisi tel qu'il est (on le modifie dans son propre
+design) ; il ne se déplace pas depuis le mode traçage ; si le design choisi est supprimé, le doigt reprend le
+motif du set.

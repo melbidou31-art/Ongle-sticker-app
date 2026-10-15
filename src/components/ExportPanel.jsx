@@ -1,5 +1,6 @@
-import { useState } from 'react'
-import { hasSet } from '../lib/fingerset.js'
+import { useEffect, useState } from 'react'
+import { byId, hasSet } from '../lib/fingerset.js'
+import { listDesigns } from '../lib/db.js'
 
 // chargé à la demande : l'export embarque le rendu serveur de React, inutile au démarrage
 const loadExport = () => import('../lib/export.js')
@@ -9,14 +10,20 @@ export default function ExportPanel({ design }) {
   const [o, setO] = useState({ set: canSet, colors: !!design.colors?.on, mirror: false, outline: true })
   const [busy, setBusy] = useState(false)
   const toggle = (k) => setO((p) => ({ ...p, [k]: !p[k] }))
+  // designs de la bibliothèque pour les ongles accent de la planche
+  const [others, setOthers] = useState({})
+  useEffect(() => {
+    if (Object.keys(design.accents || {}).length) listDesigns().then((all) => setOthers(byId(all))).catch(() => {})
+  }, [design.accents])
+  const opts = { ...o, others }
 
   async function run(kind) {
     setBusy(true)
     try {
       const m = await loadExport()
-      if (kind === 'png') await m.exportPNG(design, o)
-      else if (kind === 'pdf') await m.exportPDF(design, o)
-      else m.exportSVG(design, o)
+      if (kind === 'png') await m.exportPNG(design, opts)
+      else if (kind === 'pdf') await m.exportPDF(design, opts)
+      else m.exportSVG(design, opts)
     } catch (e) {
       console.error(e)
       alert(kind === 'svg' ? "L'export a échoué." : `L'export ${kind.toUpperCase()} a échoué. Essaie l'export SVG.`)
@@ -32,7 +39,7 @@ export default function ExportPanel({ design }) {
     try {
       const m = await loadExport()
       // aperçu fidèle : jamais en miroir, avec couleurs et contours
-      const res = await m.shareDesign(design, { set: o.set })
+      const res = await m.shareDesign(design, { set: o.set, others })
       if (res === 'downloaded') setShareMsg("Partage direct indisponible ici : l'image a été téléchargée, envoie-la à ta cliente.")
     } catch (e) {
       console.error(e)

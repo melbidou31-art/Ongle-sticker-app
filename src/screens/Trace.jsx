@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react'
 import NailView from '../components/NailView.jsx'
 import Grid from '../components/Grid.jsx'
 import { FINGERS, resizeNail } from '../lib/clients.js'
-import { fingerDims, forFinger, hasSet } from '../lib/fingerset.js'
+import { byId, fingerDims, forFinger, hasSet } from '../lib/fingerset.js'
+import { listDesigns } from '../lib/db.js'
 import { LINE_COLORS, SURFACES, getDisplay, getGuides, inkColor, saveDisplay, saveGuides } from '../lib/display.js'
 
 const HOLD_MS = 700 // appui long pour déverrouiller : évite qu'une capsule posée ne débloque l'écran
@@ -46,9 +47,14 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
   const dark = display.surface === 'dark'
   const [guides, setGuidesState] = useState(getGuides)
   const toggleGuides = () => setGuidesState((g) => saveGuides({ ...g, on: !g.on }))
+  // designs de la bibliothèque, pour les ongles accent (motif d'un autre design sur certains doigts)
+  const [others, setOthers] = useState({})
+  useEffect(() => {
+    if (Object.keys(design.accents || {}).length) listDesigns().then((all) => setOthers(byId(all))).catch(() => {})
+  }, [design.accents])
   // variante d'un doigt ; la main droite peut être en miroir pour un set symétrique
   const variant = (f) => {
-    const v = forFinger(design, f)
+    const v = forFinger(design, f, others)
     return display.mirrorRight && f >= 5 ? { ...v, flip: !v.flip } : v
   }
 
@@ -281,7 +287,8 @@ function TraceStage({ pxPerMm, display, locked, set, view, finger, variant, curr
             design={current}
             pxPerMm={pxPerMm}
             onMove={
-              locked
+              // un ongle accent emprunte le motif d'un autre design : on ne le déplace pas d'ici
+              locked || (set && design.accents?.[finger])
                 ? undefined
                 : // on déplace la variante du doigt, puis on ramène le placement à la taille de base
                   (img) => onChange({ ...design, img: resizeNail({ ...current, img }, design.nailW, design.nailH).img })

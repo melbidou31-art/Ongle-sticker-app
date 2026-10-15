@@ -13,6 +13,8 @@ import { DEFAULT_FRENCH, FRENCH_STYLES } from '../lib/french.js'
 import { motifFromDesign } from '../lib/mymotifs.js'
 import { DEFAULT_TEXT, FONTS } from '../lib/fonts.js'
 import useHistory from '../lib/useHistory.js'
+import AccentPicker from '../components/AccentPicker.jsx'
+import { hasSet } from '../lib/fingerset.js'
 
 function Slider({ label, value, min, max, step = 1, unit = '', onChange }) {
   return (
@@ -257,6 +259,7 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             ) : (
               <TipPicker design={design} pxPerMm={pxPerMm} onChange={set} />
             )}
+            {hasSet(design) && <AccentPicker design={design} onChange={set} />}
             <div className="seg wrap">
               {Object.entries(SHAPES).map(([k, l]) => (
                 <button key={k} className={design.shape === k ? 'on' : ''} onClick={() => set({ shape: k })}>{l}</button>

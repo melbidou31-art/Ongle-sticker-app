@@ -11,8 +11,12 @@ const MARGIN = 6 // mm autour de la planche
 const PAD = 4 // marge interne de NailView (voir NailView.jsx)
 
 /** Construit le SVG de la planche. options : { set, colors, mirror, outline } */
-export function buildSheetSVG(design, { set = false, colors = false, mirror = false, outline = true } = {}) {
-  const items = set && hasSet(design) ? FINGERS.map((label, f) => ({ d: forFinger(design, f), label, f })) : [{ d: design, f: 0 }]
+// others : designs id → design, pour les ongles accent de la planche
+export function buildSheetSVG(design, { set = false, colors = false, mirror = false, outline = true, others = {} } = {}) {
+  const items =
+    set && hasSet(design)
+      ? FINGERS.map((label, f) => ({ d: forFinger(design, f, others), label, f }))
+      : [{ d: design, f: 0 }]
   const perRow = items.length > 1 ? 5 : 1
 
   // taille de chaque case = taille du SVG de NailView (pxPerMm = 1 → unités en mm)
