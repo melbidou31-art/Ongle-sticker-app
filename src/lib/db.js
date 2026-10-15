@@ -55,6 +55,7 @@ export function newDesign({ original, lineart, aspect }) {
     lineart,
     aspect, // hauteur / largeur de l'image
     process: { mode: 'trait', seuil: 50, epaisseur: 0 },
+    crop: null, // zone conservée { x, y, w, h } (relative à l'image entière) ; cropOriginal = photo recadrée
     erase: [], // traits de gomme (coordonnées relatives à l'image), réappliqués au recalcul
     layers: [], // motifs supplémentaires : { id, name, lineart, original, aspect, img: { x, y, w, rot } }
     shape: 'none', // motif seul sur le quadrillage ; une forme d'ongle est optionnelle

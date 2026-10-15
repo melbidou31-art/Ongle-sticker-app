@@ -209,3 +209,17 @@ exportés (aide visuelle uniquement).
 dans la recherche ; changer le tri.
 
 **Limites** : pas de dossiers ni de favoris ; la recherche ne porte pas sur le contenu de l'image.
+
+## feat/15-recadrage-image — 15/10/2026
+
+**Ajouté** : **✂ Recadrer** dans l'onglet *Motif* : on entoure la partie utile de la photo de référence (sans
+doigts, fond ni texte) avec un cadre déplaçable aux coins étirables ; le reste est assombri pendant le réglage.
+- Le trait, le calque couleurs d'origine et la miniature n'utilisent plus que la zone gardée.
+- Le motif garde la même échelle à l'écran (la taille affichée suit la part d'image conservée).
+- Non destructif : « ✂ Recadrer » → « Image entière » revient à la photo complète ; la gomme reste alignée.
+
+**Tester** : importer une photo → Motif → ✂ Recadrer → tirer un coin → Valider → le motif ne montre plus que la
+zone choisie ; recommencer avec « Image entière » pour annuler.
+
+**Limites** : cadre rectangulaire uniquement (pas de détourage libre) ; s'applique au motif principal, pas aux
+calques ajoutés.

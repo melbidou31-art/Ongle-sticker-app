@@ -204,6 +204,23 @@ input[type='range'] { width: 100%; accent-color: var(--gold); }
   background: var(--pink); border: 3px solid #fff; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3); touch-action: none;
 }
 .mini { padding: 2px 8px; font-size: 12px; }
+
+/* Recadrage */
+.crop-wrap { flex: 1; display: grid; place-items: center; padding: 8px 16px; min-height: 0; }
+.crop-box { position: relative; touch-action: none; user-select: none; line-height: 0; }
+.crop-box img { display: block; max-width: 100%; max-height: 62vh; }
+.crop-rect {
+  position: absolute; border: 2px solid var(--pink); cursor: move;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.55); /* assombrit ce qui sera coupé */
+}
+.crop-handle {
+  position: absolute; width: 26px; height: 26px; border-radius: 50%;
+  background: var(--pink); border: 3px solid #fff; transform: translate(-50%, -50%);
+}
+.crop-handle.tl { left: 0; top: 0; cursor: nwse-resize; }
+.crop-handle.tr { left: 100%; top: 0; cursor: nesw-resize; }
+.crop-handle.bl { left: 0; top: 100%; cursor: nesw-resize; }
+.crop-handle.br { left: 100%; top: 100%; cursor: nwse-resize; }
 .trace-options { display: flex; flex-wrap: wrap; gap: 10px 18px; align-items: center; padding: 10px 16px 0; }
 .opt { display: flex; align-items: center; gap: 6px; }
 .swatch { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--line); }

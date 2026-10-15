@@ -7,7 +7,8 @@ import ExportPanel from '../components/ExportPanel.jsx'
 import LayersBar from '../components/LayersBar.jsx'
 import { getGuides, saveGuides } from '../lib/display.js'
 import { SHAPES } from '../lib/shapes.js'
-import { downscale, loadImage, toLineArt } from '../lib/lineart.js'
+import { cropCanvas, downscale, hasCrop, loadImage, toLineArt } from '../lib/lineart.js'
+import CropTool from '../components/CropTool.jsx'
 
 function Slider({ label, value, min, max, step = 1, unit = '', onChange }) {
   return (
@@ -30,28 +31,53 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
     let alive = true
     const t = setTimeout(async () => {
       if (!srcCanvas.current) srcCanvas.current = downscale(await loadImage(design.original))
-      const lineart = toLineArt(srcCanvas.current, design.process, design.erase || [])
-      if (alive && lineart !== design.lineart) onChange((d) => ({ ...d, lineart }))
+      const src = srcCanvas.current
+      const crop = hasCrop(design.crop) ? design.crop : null
+      const lineart = toLineArt(src, design.process, design.erase || [], crop)
+      if (!alive) return
+      if (crop) {
+        // le recadrage change les proportions et la photo couleur affichée
+        const cropOriginal = cropCanvas(src, crop).toDataURL('image/jpeg', 0.9)
+        const aspect = (crop.h * src.height) / (crop.w * src.width)
+        onChange((d) => ({ ...d, lineart, cropOriginal, aspect }))
+      } else if (lineart !== design.lineart || design.cropOriginal) {
+        onChange((d) => ({ ...d, lineart, cropOriginal: null, aspect: src.height / src.width }))
+      }
     }, 120)
     return () => {
       alive = false
       clearTimeout(t)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [design.process.mode, design.process.seuil, design.process.epaisseur, design.erase])
+  }, [design.process.mode, design.process.seuil, design.process.epaisseur, design.erase, design.crop])
 
-  // Gomme : chaque tracé est mémorisé (annulable) et réappliqué à chaque recalcul du trait
+  // Recadrage : la taille du motif à l'écran suit la part d'image conservée
+  const [cropping, setCropping] = useState(false)
+  function applyCrop(c) {
+    setCropping(false)
+    onChange((d) => ({ ...d, crop: c, img: { ...d.img, w: (d.img.w * c.w) / (d.crop?.w ?? 1) } }))
+  }
+
+  // Gomme : chaque tracé est mémorisé (annulable) et réappliqué à chaque recalcul du trait.
+  // Les points sont convertis de l'image affichée (recadrée) vers l'image entière.
   const [eraser, setEraser] = useState({ on: false, size: 1.5 }) // size = rayon en mm
   const strokes = design.erase || []
+  const full = (d, u, v) => {
+    const c = d.crop || { x: 0, y: 0, w: 1, h: 1 }
+    return [c.x + u * c.w, c.y + v * c.h]
+  }
   const eraseHandlers = {
     start: (u, v) =>
-      onChange((d) => ({ ...d, erase: [...(d.erase || []), { r: eraser.size / d.img.w, pts: [[u, v]] }] })),
+      onChange((d) => ({
+        ...d,
+        erase: [...(d.erase || []), { r: (eraser.size / d.img.w) * (d.crop?.w ?? 1), pts: [full(d, u, v)] }],
+      })),
     move: (u, v) =>
       onChange((d) => {
         const list = d.erase || []
         const last = list[list.length - 1]
         if (!last) return d
-        return { ...d, erase: [...list.slice(0, -1), { ...last, pts: [...last.pts, [u, v]] }] }
+        return { ...d, erase: [...list.slice(0, -1), { ...last, pts: [...last.pts, full(d, u, v)] }] }
       }),
   }
 
@@ -112,6 +138,9 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             <Slider label="Épaisseur du trait" value={p.epaisseur} min={0} max={3} onChange={(epaisseur) => setProcess({ epaisseur })} />
             <div className="eraser">
               <div className="row">
+                <button className={`chip ${hasCrop(design.crop) ? 'on' : ''}`} onClick={() => setCropping(true)}>
+                  ✂ Recadrer{hasCrop(design.crop) ? ' (actif)' : ''}
+                </button>
                 <button className={`chip ${eraser.on ? 'on' : ''}`} onClick={() => setEraser((e) => ({ ...e, on: !e.on }))}>
                   🧽 Gomme {eraser.on ? 'activée' : ''}
                 </button>
@@ -205,6 +234,9 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
           </div>
         )}
       </section>
+      {cropping && (
+        <CropTool src={design.original} initial={design.crop} onDone={applyCrop} onCancel={() => setCropping(false)} />
+      )}
     </div>
   )
 }

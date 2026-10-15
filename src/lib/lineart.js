@@ -91,8 +91,9 @@ function dilate(mask, w, h) {
  * mode 'contours' : détecte les bords (idéal pour une photo en couleur)
  * seuil 0–100, epaisseur 0–3
  * erase : traits de gomme [{ r, pts: [[u, v], …] }] en coordonnées relatives à l'image (0–1 ; r en largeur d'image)
+ * crop : zone conservée { x, y, w, h } relative à l'image entière (la gomme reste exprimée sur l'image entière)
  */
-export function toLineArt(canvas, { mode = 'trait', seuil = 50, epaisseur = 0 } = {}, erase = []) {
+export function toLineArt(canvas, { mode = 'trait', seuil = 50, epaisseur = 0 } = {}, erase = [], crop = null) {
   const { width: w, height: h } = canvas
   const ctx = canvas.getContext('2d')
   const { data } = ctx.getImageData(0, 0, w, h)
@@ -133,5 +134,21 @@ export function toLineArt(canvas, { mode = 'trait', seuil = 50, epaisseur = 0 } 
       octx.stroke()
     }
   }
-  return out.toDataURL('image/png')
+  return crop ? cropCanvas(out, crop).toDataURL('image/png') : out.toDataURL('image/png')
 }
+
+/** Zone { x, y, w, h } (relative, 0–1) d'un canvas, dans un nouveau canvas. */
+export function cropCanvas(canvas, crop) {
+  const sx = Math.round(crop.x * canvas.width)
+  const sy = Math.round(crop.y * canvas.height)
+  const sw = Math.max(1, Math.round(crop.w * canvas.width))
+  const sh = Math.max(1, Math.round(crop.h * canvas.height))
+  const c = document.createElement('canvas')
+  c.width = sw
+  c.height = sh
+  c.getContext('2d').drawImage(canvas, sx, sy, sw, sh, 0, 0, sw, sh)
+  return c
+}
+
+/** Recadrage actif ? (null ou la zone entière = pas de recadrage) */
+export const hasCrop = (c) => !!c && (c.x > 0 || c.y > 0 || c.w < 1 || c.h < 1)
