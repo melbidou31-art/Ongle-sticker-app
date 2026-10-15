@@ -4,6 +4,7 @@
 import { getSetting, listDesigns, listMyMotifs, saveDesign, saveMyMotif, setSetting } from './db.js'
 import { listClients } from './clients.js'
 import { getMeasures, listCustomBrands, saveCustomBrand } from './tips.js'
+import { listCustomShapes, saveCustomShape } from './customShapes.js'
 
 const APP = 'ongle-trace'
 const VERSION = 1
@@ -18,6 +19,7 @@ export async function buildBackup() {
     clients: listClients(),
     tipMeasures: getMeasures(),
     customBrands: listCustomBrands(),
+    customShapes: listCustomShapes(),
     traceDisplay: getSetting('traceDisplay', null),
   }
 }
@@ -83,6 +85,9 @@ export async function restoreBackup(text) {
   // marques perso (fusion par identifiant)
   if (Array.isArray(data.customBrands))
     for (const b of data.customBrands) if (b?.id && Array.isArray(b.sizes)) saveCustomBrand(b)
+  // formes de capsules dessinées
+  if (Array.isArray(data.customShapes))
+    for (const s of data.customShapes) if (s?.id && Array.isArray(s.pts)) saveCustomShape(s)
   if (data.traceDisplay && !getSetting('traceDisplay', null)) setSetting('traceDisplay', data.traceDisplay)
 
   return { designs, motifs, clients: clients.length }

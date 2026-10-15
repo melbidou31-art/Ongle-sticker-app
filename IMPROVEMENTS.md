@@ -506,3 +506,18 @@ mes capsules… ».
 **Tester** : Ongle → Press-on → + Nouvelle marque → nom + 2 tailles → Enregistrer → choisir les tailles.
 
 **Limites** : une marque perso utilise les formes et longueurs de l'app (le contour exact se dessine en feat/35).
+
+## feat/35-contour-capsule-dessine — 15/10/2026 (retour de test)
+
+**Ajouté** : **✍ Dessiner ma capsule** (onglet *Ongle*, sous les formes) : on pose sa vraie capsule à plat sur
+l'écran (**cuticule vers le haut**) et on fait le tour de son bord d'un trait, au doigt ou au stylet. Grâce au
+calibrage, l'app enregistre **la forme exacte ET ses dimensions** (affichées pendant le tracé) ; on lui donne un nom.
+- La forme dessinée devient une forme comme les autres (« ✍ Nom ») : utilisable pour tous les designs, toutes les
+  tailles (le contour est mis à l'échelle), les sets 10 doigts, les fiches clientes (forme habituelle), le French,
+  le traçage et l'export.
+- « Supprimer cette forme » (les designs qui l'utilisent repassent en ovale) ; incluse dans la 💾 sauvegarde.
+
+**Tester** : Ongle → ✍ Dessiner ma capsule → tracer autour d'une capsule → nommer → Valider.
+
+**Limites** : la précision dépend du calibrage et du tracé (un stylet aide ; on peut recommencer autant que
+voulu) ; le contour n'est pas rendu symétrique automatiquement.

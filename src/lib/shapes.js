@@ -1,4 +1,5 @@
 // Formes d'ongle, en millimètres. Cuticule en haut (y = 0), bord libre en bas (y = h).
+import { customPath, findCustomShape, isCustomShape, listCustomShapes } from './customShapes.js'
 
 export const SHAPES = {
   none: 'Aucun (motif seul)',
@@ -15,7 +16,19 @@ export const SHAPES = {
 // Coefficients approximatifs appliqués à la longueur choisie (cf. IMPROVEMENTS.md).
 export const SHAPE_LENGTH = { stiletto: 1.25, almond: 1.12, coffin: 1, oval: 1, round: 0.95, squoval: 0.95, square: 0.95 }
 
+/** Formes de l'app + formes dessinées à la main (« Mes capsules »), pour les sélecteurs. */
+export function allShapes() {
+  const out = { ...SHAPES }
+  for (const s of listCustomShapes()) out[s.id] = `✍ ${s.name}`
+  return out
+}
+
 export function nailPath(shape, w, h) {
+  if (isCustomShape(shape)) {
+    const custom = findCustomShape(shape)
+    if (custom) return customPath(custom, w, h)
+    shape = 'oval' // forme perso supprimée : repli sur une forme standard
+  }
   const c = w * 0.32 // profondeur de l'arrondi de la cuticule
   const top = `M 0 ${c} C 0 ${-c * 0.2}, ${w} ${-c * 0.2}, ${w} ${c}`
   switch (shape) {

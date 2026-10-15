@@ -6,7 +6,9 @@ import ClientPicker from '../components/ClientPicker.jsx'
 import ExportPanel from '../components/ExportPanel.jsx'
 import LayersBar from '../components/LayersBar.jsx'
 import { getGuides, saveGuides } from '../lib/display.js'
-import { SHAPES } from '../lib/shapes.js'
+import { allShapes } from '../lib/shapes.js'
+import { deleteCustomShape, isCustomShape, saveCustomShape } from '../lib/customShapes.js'
+import OutlineTool from '../components/OutlineTool.jsx'
 import { cropCanvas, downscale, hasCrop, loadImage, toLineArt } from '../lib/lineart.js'
 import CropTool from '../components/CropTool.jsx'
 import { DEFAULT_FRENCH, FRENCH_STYLES } from '../lib/french.js'
@@ -133,6 +135,17 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
       ? set({ layers: design.layers.map((l) => (l.id === layer.id ? { ...l, img } : l)) })
       : set({ img })
   const setImg = (patch) => moveActive({ ...activeImg, ...patch })
+  // formes disponibles (dont les capsules dessinées à la main) et outil de tracé du contour
+  const [shapes, setShapes] = useState(allShapes)
+  const [outlining, setOutlining] = useState(false)
+  function applyOutline(shape) {
+    saveCustomShape(shape)
+    setShapes(allShapes())
+    setOutlining(false)
+    // la forme dessinée devient celle de l'ongle, à ses dimensions mesurées
+    set({ shape: shape.id, ...resizeNail(design, shape.w, shape.h) })
+  }
+
   // changer de forme avec une capsule du commerce : la longueur suit la forme (un stiletto « M » est plus long)
   function changeShape(shape) {
     if (design.mode !== 'direct' && design.tip?.brand && shape !== 'none')
@@ -270,9 +283,25 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             )}
             {hasSet(design) && <AccentPicker design={design} onChange={set} />}
             <div className="seg wrap">
-              {Object.entries(SHAPES).map(([k, l]) => (
+              {Object.entries(shapes).map(([k, l]) => (
                 <button key={k} className={design.shape === k ? 'on' : ''} onClick={() => changeShape(k)}>{l}</button>
               ))}
+            </div>
+            <div className="row">
+              <button className="chip gold" onClick={() => setOutlining(true)}>✍ Dessiner ma capsule</button>
+              {isCustomShape(design.shape) && (
+                <button
+                  className="chip mini danger"
+                  onClick={() => {
+                    if (!confirm('Supprimer cette forme dessinée ? (les designs qui l\'utilisent repasseront en ovale)')) return
+                    deleteCustomShape(design.shape)
+                    setShapes(allShapes())
+                    set({ shape: 'oval' })
+                  }}
+                >
+                  Supprimer cette forme
+                </button>
+              )}
             </div>
             {design.shape === 'none' ? (
               <p className="muted">Motif seul sur le quadrillage. Choisis une forme ou une capsule pour afficher un contour d'ongle.</p>
@@ -361,6 +390,7 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
           </div>
         )}
       </section>
+      {outlining && <OutlineTool pxPerMm={pxPerMm} onDone={applyOutline} onCancel={() => setOutlining(false)} />}
       {cropping && (
         <CropTool src={design.original} initial={design.crop} onDone={applyCrop} onCancel={() => setCropping(false)} />
       )}

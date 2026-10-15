@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { FINGERS, deleteClient, listClients, newClient, saveClient } from '../lib/clients.js'
 import MeasureTool from '../components/MeasureTool.jsx'
-import { SHAPES } from '../lib/shapes.js'
+import { allShapes } from '../lib/shapes.js'
 
 function NumberField({ value, onChange }) {
   return (
@@ -54,7 +54,7 @@ export default function Clients({ pxPerMm, onBack }) {
         <div className="pad client-shape">
           <span className="muted">Forme habituelle de ses ongles</span>
           <div className="seg wrap">
-            {Object.entries(SHAPES)
+            {Object.entries(allShapes())
               .filter(([k]) => k !== 'none')
               .map(([k, l]) => (
                 <button key={k} className={(edit.shape || 'oval') === k ? 'on' : ''} onClick={() => update({ shape: k })}>
@@ -118,7 +118,7 @@ export default function Clients({ pxPerMm, onBack }) {
               <button className="client-row" onClick={() => setEdit(c)}>
                 <b>{c.name}</b>
                 <span className="muted">
-                  {SHAPES[c.shape || 'oval']} · {c.nails.map((n) => n.w).join(' · ')} mm
+                  {allShapes()[c.shape || 'oval'] || 'Ovale'} · {c.nails.map((n) => n.w).join(' · ')} mm
                 </span>
               </button>
               <button
