@@ -105,7 +105,8 @@ function withDpi(png, dpi) {
   return out
 }
 
-export async function exportPNG(design, options, dpi = 300) {
+/** Planche rendue dans un canvas à la résolution demandée ; W, H en mm. */
+async function renderSheet(design, options, dpi) {
   const { svg, W, H } = buildSheetSVG(design, options)
   const k = dpi / 25.4
   const img = new Image()
@@ -116,7 +117,84 @@ export async function exportPNG(design, options, dpi = 300) {
   c.height = Math.round(H * k)
   c.getContext('2d').drawImage(img, 0, 0, c.width, c.height)
   URL.revokeObjectURL(img.src)
+  return { canvas: c, W, H }
+}
+
+export async function exportPNG(design, options, dpi = 300) {
+  const { canvas: c } = await renderSheet(design, options, dpi)
   const blob = await new Promise((r) => c.toBlob(r, 'image/png'))
   const png = withDpi(new Uint8Array(await blob.arrayBuffer()), dpi)
   download(new Blob([png], { type: 'image/png' }), `${safeName(design.name)}-${dpi}dpi.png`)
+}
+
+// ---- PDF minimal écrit à la main : une page A4 (ou plus grande si la planche ne tient pas), ----
+// ---- avec la planche en image JPEG placée à sa taille exacte en millimètres.              ----
+const PT = 72 / 25.4 // points PDF par mm
+
+/** Assemble un PDF d'une page contenant une image JPEG de wMm × hMm, coin haut-gauche à (xMm, yMm). */
+export function buildPDF(jpeg, pxW, pxH, { pageW, pageH, x, y, w, h }) {
+  const enc = new TextEncoder()
+  const parts = []
+  const offsets = []
+  let size = 0
+  const push = (chunk) => {
+    const b = typeof chunk === 'string' ? enc.encode(chunk) : chunk
+    parts.push(b)
+    size += b.length
+  }
+  const obj = (n, body) => {
+    offsets[n] = size
+    push(`${n} 0 obj\n`)
+    body()
+    push('\nendobj\n')
+  }
+  const f = (v) => (v * PT).toFixed(2)
+  // le PDF compte y depuis le bas de la page
+  const content = `q ${f(w)} 0 0 ${f(h)} ${f(x)} ${f(pageH - y - h)} cm /Im0 Do Q`
+
+  push('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n')
+  obj(1, () => push('<< /Type /Catalog /Pages 2 0 R >>'))
+  obj(2, () => push('<< /Type /Pages /Kids [3 0 R] /Count 1 >>'))
+  obj(3, () =>
+    push(
+      `<< /Type /Page /Parent 2 0 R /MediaBox [0 0 ${f(pageW)} ${f(pageH)}] ` +
+        '/Resources << /XObject << /Im0 4 0 R >> >> /Contents 5 0 R >>',
+    ),
+  )
+  obj(4, () => {
+    push(
+      `<< /Type /XObject /Subtype /Image /Width ${pxW} /Height ${pxH} /ColorSpace /DeviceRGB ` +
+        `/BitsPerComponent 8 /Filter /DCTDecode /Length ${jpeg.length} >>\nstream\n`,
+    )
+    push(jpeg)
+    push('\nendstream')
+  })
+  obj(5, () => push(`<< /Length ${content.length} >>\nstream\n${content}\nendstream`))
+
+  const xref = size
+  push(`xref\n0 6\n0000000000 65535 f \n`)
+  for (let n = 1; n <= 5; n++) push(`${String(offsets[n]).padStart(10, '0')} 00000 n \n`)
+  push(`trailer\n<< /Size 6 /Root 1 0 R >>\nstartxref\n${xref}\n%%EOF`)
+
+  const out = new Uint8Array(size)
+  let o = 0
+  for (const p of parts) {
+    out.set(p, o)
+    o += p.length
+  }
+  return out
+}
+
+export async function exportPDF(design, options, dpi = 300) {
+  const { canvas, W, H } = await renderSheet(design, options, dpi)
+  const blob = await new Promise((r) => canvas.toBlob(r, 'image/jpeg', 0.95))
+  const jpeg = new Uint8Array(await blob.arrayBuffer())
+  const margin = 10 // mm
+  // A4 portrait, ou paysage / plus grand si la planche ne tient pas
+  let [pageW, pageH] = [210, 297]
+  if (W + 2 * margin > pageW && W + 2 * margin <= 297 && H + 2 * margin <= 210) [pageW, pageH] = [297, 210]
+  pageW = Math.max(pageW, W + 2 * margin)
+  pageH = Math.max(pageH, H + 2 * margin)
+  const pdf = buildPDF(jpeg, canvas.width, canvas.height, { pageW, pageH, x: margin, y: margin, w: W, h: H })
+  download(new Blob([pdf], { type: 'application/pdf' }), `${safeName(design.name)}-taille-reelle.pdf`)
 }

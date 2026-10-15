@@ -316,3 +316,19 @@ pour tout le monde) ; la forme est rappelée sous les doigts et dans la liste de
 Ongle → Ongle direct → choisir la cliente : le contour passe en carré.
 
 **Limites** : une seule forme par cliente (pas de forme différente par doigt).
+
+## feat/22-export-pdf-a4 — 15/10/2026
+
+**Ajouté** : onglet *Export* → **« PDF à imprimer (A4) »** (bouton principal). La planche (design seul ou set 10
+doigts, avec les mêmes options : couleurs, contour, miroir water decals) est placée sur une page A4 avec 10 mm de
+marge, **à sa taille exacte en millimètres** (300 dpi). Paysage automatiquement si elle ne tient qu'en largeur,
+page agrandie si elle dépasse l'A4. C'est le format le plus simple à imprimer depuis un téléphone (ouvrir →
+imprimer à 100 %). PDF écrit directement par l'app, sans bibliothèque supplémentaire (≈ 100 Ko pour un set).
+SVG et PNG 300 dpi restent disponibles.
+
+**Tester** : ouvrir un design → Export → PDF à imprimer (A4) → ouvrir le fichier → imprimer en « Taille réelle /
+100 % » → mesurer une capsule à la règle.
+
+**Limites** : la structure du PDF a été vérifiée (index, objets, image JPEG), mais son rendu n'a pas pu être
+contrôlé visuellement dans l'environnement de développement → à confirmer en ouvrant/imprimant un fichier.
+L'image est en JPEG (pas de transparence, fond blanc).

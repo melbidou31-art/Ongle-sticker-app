@@ -15,10 +15,11 @@ export default function ExportPanel({ design }) {
     try {
       const m = await loadExport()
       if (kind === 'png') await m.exportPNG(design, o)
+      else if (kind === 'pdf') await m.exportPDF(design, o)
       else m.exportSVG(design, o)
     } catch (e) {
       console.error(e)
-      alert(kind === 'png' ? "L'export PNG a échoué. Essaie l'export SVG." : "L'export a échoué.")
+      alert(kind === 'svg' ? "L'export a échoué." : `L'export ${kind.toUpperCase()} a échoué. Essaie l'export SVG.`)
     } finally {
       setBusy(false)
     }
@@ -49,7 +50,8 @@ export default function ExportPanel({ design }) {
         Miroir (water decals / papier transfert)
       </label>
       <div className="row">
-        <button className="pink" disabled={busy} onClick={() => run('svg')}>Télécharger SVG</button>
+        <button className="pink" disabled={busy} onClick={() => run('pdf')}>PDF à imprimer (A4)</button>
+        <button className="chip" disabled={busy} onClick={() => run('svg')}>SVG</button>
         <button className="chip gold" disabled={busy} onClick={() => run('png')}>{busy ? 'Export…' : 'PNG 300 dpi'}</button>
       </div>
     </div>
