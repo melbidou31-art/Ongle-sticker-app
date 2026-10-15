@@ -491,3 +491,18 @@ n'importe quel curseur.
 et bouger « Profondeur du sourire » : l'ongle reste visible.
 
 **Limites** : sur un très petit écran, la zone de réglages est plus courte (défiler davantage).
+
+## feat/34-marques-capsules-perso — 15/10/2026 (retour de test)
+
+**Ajouté** : **Mes marques / mes capsules** — onglet *Ongle* → Press-on → liste des capsules → « + Nouvelle marque /
+mes capsules… ».
+- On saisit le **nom**, une **référence** (boîte, forme, collection…) et la liste des **tailles** : libellé
+  (1, 2, 10, S…) + **largeur en mm**, saisie ou **mesurée à l'écran** (📏, en posant la vraie capsule).
+  « + Taille » propose la taille suivante (−1 mm, à ajuster).
+- Les marques perso apparaissent sous « Mes marques » dans la liste (avec leur référence), s'utilisent comme les
+  marques du commerce (tailles, longueurs XS–XXL, set 10 doigts) et sont **exactes** (pas d'« approx. »).
+- « ✎ Modifier » / Supprimer une marque perso ; incluses dans la 💾 sauvegarde.
+
+**Tester** : Ongle → Press-on → + Nouvelle marque → nom + 2 tailles → Enregistrer → choisir les tailles.
+
+**Limites** : une marque perso utilise les formes et longueurs de l'app (le contour exact se dessine en feat/35).

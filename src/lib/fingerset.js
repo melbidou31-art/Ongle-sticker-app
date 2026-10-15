@@ -1,6 +1,6 @@
 // Set complet de 10 ongles : dimensions de chaque doigt selon le mode du design.
 import { listClients, resizeNail } from './clients.js'
-import { BRANDS, getMeasures, tipLength, tipWidth } from './tips.js'
+import { findBrand, getMeasures, tipLength, tipWidth } from './tips.js'
 
 // Écart de taille habituel d'un set press-on, à partir de la taille du pouce
 // (pouce, index, majeur, annulaire, auriculaire) — approx., à ajuster par cliente
@@ -8,7 +8,7 @@ const SET_OFFSETS = [0, 4, 3, 4, 7]
 
 /** Tailles par défaut d'un set de 10 pour une marque, autour de la taille actuelle. */
 export function defaultTipSet(brandId, thumbSize) {
-  const sizes = BRANDS.find((b) => b.id === brandId)?.sizes || []
+  const sizes = findBrand(brandId)?.sizes || []
   let t = sizes.findIndex((s) => s.label === thumbSize)
   if (t < 0) t = 1
   const hand = SET_OFFSETS.map((o) => sizes[Math.min(sizes.length - 1, t + o)]?.label)

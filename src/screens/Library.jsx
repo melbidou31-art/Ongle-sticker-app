@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react'
 import BackupPanel from '../components/BackupPanel.jsx'
 import MotifPicker from '../components/MotifPicker.jsx'
-import { BRANDS, LENGTHS, lengthKey } from '../lib/tips.js'
+import { LENGTHS, findBrand, lengthKey } from '../lib/tips.js'
 import { listClients } from '../lib/clients.js'
 
 // recherche insensible à la casse et aux accents
@@ -15,7 +15,7 @@ function designTag(d, clients) {
     return `Ongle direct · ${c ? c.name : 'cliente supprimée'}${layers}`
   }
   if (d.tip?.brand) {
-    const b = BRANDS.find((x) => x.id === d.tip.brand)
+    const b = findBrand(d.tip.brand)
     const set = d.tipSet ? ' · set 10' : ` · taille ${d.tip.size}`
     return `${b?.name || 'Capsule'} ${LENGTHS[lengthKey(d.tip.length)].label}${set}${layers}`
   }

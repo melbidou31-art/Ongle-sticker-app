@@ -62,10 +62,37 @@ export function saveMeasure(brandId, size, w) {
   return all
 }
 
-/** Largeur à utiliser : la mesure perso si elle existe, sinon la valeur approximative. */
+// ---- Marques perso : capsules de l'utilisatrice (nom, référence, tailles mesurées en mm) ----
+const CUSTOM_KEY = 'customBrands'
+export const listCustomBrands = () => getSetting(CUSTOM_KEY, [])
+export function saveCustomBrand(brand) {
+  const all = listCustomBrands().filter((b) => b.id !== brand.id)
+  all.push({ ...brand, custom: true })
+  setSetting(CUSTOM_KEY, all)
+  return all
+}
+export function deleteCustomBrand(id) {
+  const all = listCustomBrands().filter((b) => b.id !== id)
+  setSetting(CUSTOM_KEY, all)
+  return all
+}
+export const newCustomBrand = () => ({
+  id: `perso-${crypto.randomUUID().slice(0, 8)}`,
+  name: 'Ma marque',
+  ref: '',
+  custom: true,
+  sizes: [{ label: '1', w: 15 }],
+})
+
+/** Marques du commerce + marques perso. */
+export const allBrands = () => [...BRANDS, ...listCustomBrands()]
+export const findBrand = (id) => allBrands().find((b) => b.id === id)
+
+/** Largeur à utiliser : la mesure perso si elle existe, sinon la valeur de la marque (exacte si marque perso). */
 export function tipWidth(brandId, size, measures = getMeasures()) {
   const measured = measures[brandId]?.[size]
   if (measured) return { w: measured, exact: true }
-  const s = BRANDS.find((b) => b.id === brandId)?.sizes.find((x) => x.label === size)
-  return s ? { w: s.w, exact: false } : null
+  const brand = findBrand(brandId)
+  const s = brand?.sizes.find((x) => x.label === size)
+  return s ? { w: s.w, exact: !!brand.custom } : null
 }

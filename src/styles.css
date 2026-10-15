@@ -200,6 +200,11 @@ input[type='range'] { width: 100%; accent-color: var(--gold); }
 .accents p { margin: 0; }
 .seg.lengths button { display: grid; gap: 1px; padding: 6px 4px; min-width: 52px; }
 .seg.lengths small { font-size: 10px; opacity: 0.75; }
+.brand-editor {
+  display: grid; gap: 10px; padding: 12px; border: 1px solid var(--gold); border-radius: var(--radius);
+  background: var(--bg);
+}
+.brand-editor .num { width: 70px; }
 .share-box { display: grid; gap: 6px; justify-items: start; padding-bottom: 12px; border-bottom: 1px solid var(--line); }
 .french { display: grid; gap: 10px; padding: 10px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
 .eraser { display: grid; gap: 8px; padding: 10px 0; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }

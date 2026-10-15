@@ -1,5 +1,9 @@
 import { useState } from 'react'
-import { BRANDS, LENGTHS, getMeasures, lengthKey, saveMeasure, tipLength, tipWidth } from '../lib/tips.js'
+import {
+  LENGTHS, allBrands, deleteCustomBrand, getMeasures, lengthKey, newCustomBrand, saveCustomBrand, saveMeasure,
+  tipLength, tipWidth,
+} from '../lib/tips.js'
+import BrandEditor from './BrandEditor.jsx'
 import { FINGERS, resizeNail } from '../lib/clients.js'
 import { defaultTipSet } from '../lib/fingerset.js'
 import MeasureTool from './MeasureTool.jsx'
@@ -14,7 +18,18 @@ export default function TipPicker({ design, pxPerMm, onChange }) {
   const [measuring, setMeasuring] = useState(false)
   const rawTip = design.tip || { brand: '', size: '', length: 'l' }
   const tip = { ...rawTip, length: lengthKey(rawTip.length) } // anciennes longueurs converties
-  const brand = BRANDS.find((b) => b.id === tip.brand)
+  const [brands, setBrands] = useState(allBrands)
+  const brand = brands.find((b) => b.id === tip.brand)
+  const [editing, setEditing] = useState(null) // marque perso en cours de création / modification
+
+  function saveBrand(b) {
+    saveCustomBrand(b)
+    setBrands(allBrands())
+    setEditing(null)
+    // la marque créée (ou modifiée) devient la capsule choisie
+    const keep = b.sizes.find((s) => s.label === tip.size) ? tip.size : b.sizes[0].label
+    apply({ brand: b.id, size: keep }, b.id === tip.brand ? {} : { tipSet: null })
+  }
 
   function apply(next, extra = {}) {
     const t = { ...tip, ...next }
@@ -29,7 +44,8 @@ export default function TipPicker({ design, pxPerMm, onChange }) {
   function chooseBrand(id) {
     // les tailles d'un set ne sont pas transposables d'une marque à l'autre
     if (!id) return onChange({ tip: null, tipSet: null })
-    const b = BRANDS.find((x) => x.id === id)
+    if (id === '__new') return setEditing(newCustomBrand())
+    const b = brands.find((x) => x.id === id)
     // taille du milieu par défaut
     apply({ brand: id, size: b.sizes[Math.floor(b.sizes.length / 2)].label }, { tipSet: null })
   }
@@ -42,13 +58,45 @@ export default function TipPicker({ design, pxPerMm, onChange }) {
         <span>Capsule du commerce</span>
         <select value={tip.brand} onChange={(e) => chooseBrand(e.target.value)}>
           <option value="">Réglage manuel</option>
-          {BRANDS.map((b) => (
-            <option key={b.id} value={b.id}>{b.name}</option>
-          ))}
+          <optgroup label="Marques du commerce">
+            {brands.filter((b) => !b.custom).map((b) => (
+              <option key={b.id} value={b.id}>{b.name}</option>
+            ))}
+          </optgroup>
+          <optgroup label="Mes marques">
+            {brands.filter((b) => b.custom).map((b) => (
+              <option key={b.id} value={b.id}>{b.name}{b.ref ? ` — ${b.ref}` : ''}</option>
+            ))}
+            <option value="__new">+ Nouvelle marque / mes capsules…</option>
+          </optgroup>
         </select>
       </label>
 
-      {brand && (
+      {brand?.custom && !editing && (
+        <button className="chip mini" onClick={() => setEditing(brand)}>✎ Modifier « {brand.name} »</button>
+      )}
+
+      {editing && (
+        <BrandEditor
+          key={editing.id}
+          brand={editing}
+          pxPerMm={pxPerMm}
+          onSave={saveBrand}
+          onCancel={() => setEditing(null)}
+          onDelete={
+            brands.some((b) => b.id === editing.id)
+              ? () => {
+                  deleteCustomBrand(editing.id)
+                  setBrands(allBrands())
+                  setEditing(null)
+                  if (tip.brand === editing.id) onChange({ tip: null, tipSet: null })
+                }
+              : undefined
+          }
+        />
+      )}
+
+      {brand && !editing && (
         <>
           <div className="sizes">
             {brand.sizes.map((s) => {
@@ -78,7 +126,7 @@ export default function TipPicker({ design, pxPerMm, onChange }) {
             <p className="muted">
               Taille {tip.size} : <b>{design.nailW} mm</b> de large ·{' '}
               {current.exact ? (
-                <span className="ok">✓ mesurée sur ta boîte</span>
+                <span className="ok">✓ {brand.custom ? `mesure de ta marque${brand.ref ? ` (${brand.ref})` : ''}` : 'mesurée sur ta boîte'}</span>
               ) : (
                 <span className="approx">approx. — source : {brand.source}</span>
               )}

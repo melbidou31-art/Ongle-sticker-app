@@ -3,7 +3,7 @@
 // Le calibrage de l'écran n'est PAS inclus : il est propre à chaque appareil.
 import { getSetting, listDesigns, listMyMotifs, saveDesign, saveMyMotif, setSetting } from './db.js'
 import { listClients } from './clients.js'
-import { getMeasures } from './tips.js'
+import { getMeasures, listCustomBrands, saveCustomBrand } from './tips.js'
 
 const APP = 'ongle-trace'
 const VERSION = 1
@@ -17,6 +17,7 @@ export async function buildBackup() {
     myMotifs: await listMyMotifs(),
     clients: listClients(),
     tipMeasures: getMeasures(),
+    customBrands: listCustomBrands(),
     traceDisplay: getSetting('traceDisplay', null),
   }
 }
@@ -79,6 +80,9 @@ export async function restoreBackup(text) {
     for (const [brand, sizes] of Object.entries(data.tipMeasures)) merged[brand] = { ...(merged[brand] || {}), ...sizes }
     setSetting('tipMeasures', merged)
   }
+  // marques perso (fusion par identifiant)
+  if (Array.isArray(data.customBrands))
+    for (const b of data.customBrands) if (b?.id && Array.isArray(b.sizes)) saveCustomBrand(b)
   if (data.traceDisplay && !getSetting('traceDisplay', null)) setSetting('traceDisplay', data.traceDisplay)
 
   return { designs, motifs, clients: clients.length }
