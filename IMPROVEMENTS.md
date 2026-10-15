@@ -409,3 +409,16 @@ coupé, compléter un détail perdu à la conversion d'une photo, renforcer une 
 
 **Limites** : trait noir uniforme (pas de pression) ; un trait tracé hors de l'image (dans la marge) n'est pas
 conservé ; s'applique au motif principal, pas aux calques ajoutés.
+
+## feat/28-partage-apercu-cliente — 15/10/2026
+
+**Ajouté** : onglet *Export* → **📤 Partager un aperçu à la cliente**. Crée une image nette du design (ou de la
+planche 10 doigts), **avec les couleurs d'origine** et les contours, jamais en miroir, et ouvre le **menu de
+partage du téléphone** (WhatsApp, Instagram, SMS, mail…) avec le texte « Proposition de design : … » — pour
+faire valider le design avant la pose. Sur ordinateur (ou si le partage de fichiers n'est pas possible), l'image
+est téléchargée avec un message d'explication.
+
+**Tester** : sur téléphone, ouvrir un design → Export → 📤 Partager → choisir WhatsApp.
+
+**Limites** : le partage direct dépend du navigateur (Safari iOS et Chrome Android le permettent, la plupart des
+navigateurs d'ordinateur non → téléchargement) et demande une connexion https (OK une fois en ligne sur Vercel).

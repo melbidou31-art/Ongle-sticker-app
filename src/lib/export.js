@@ -127,6 +127,29 @@ export async function exportPNG(design, options, dpi = 300) {
   download(new Blob([png], { type: 'image/png' }), `${safeName(design.name)}-${dpi}dpi.png`)
 }
 
+/**
+ * Aperçu à envoyer à une cliente (WhatsApp, Instagram, SMS…) : image PNG nette, avec les couleurs d'origine,
+ * via le menu de partage du téléphone. Repli : téléchargement si le partage de fichiers n'est pas possible.
+ * Renvoie 'shared', 'downloaded' ou 'cancelled'.
+ */
+export async function shareDesign(design, options) {
+  const { canvas } = await renderSheet(design, { colors: true, outline: true, ...options }, 200)
+  const blob = await new Promise((r) => canvas.toBlob(r, 'image/png'))
+  const name = `${safeName(design.name)}-apercu.png`
+  const file = new File([blob], name, { type: 'image/png' })
+  if (navigator.canShare?.({ files: [file] })) {
+    try {
+      await navigator.share({ files: [file], title: design.name, text: `Proposition de design : ${design.name}` })
+      return 'shared'
+    } catch (e) {
+      if (e?.name === 'AbortError') return 'cancelled' // la cliente… ou la prothésiste a fermé le menu
+      throw e
+    }
+  }
+  download(blob, name)
+  return 'downloaded'
+}
+
 // ---- PDF minimal écrit à la main : une page A4 (ou plus grande si la planche ne tient pas), ----
 // ---- avec la planche en image JPEG placée à sa taille exacte en millimètres.              ----
 const PT = 72 / 25.4 // points PDF par mm
