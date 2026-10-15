@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { FINGERS, deleteClient, listClients, newClient, saveClient } from '../lib/clients.js'
+import { FINGERS, deleteClient, listClients, nailsFromSizing, newClient, saveClient } from '../lib/clients.js'
+import { LENGTHS, allBrands } from '../lib/tips.js'
+import { defaultTipSet } from '../lib/fingerset.js'
 import MeasureTool from '../components/MeasureTool.jsx'
 import { allShapes } from '../lib/shapes.js'
 
@@ -30,6 +32,17 @@ export default function Clients({ pxPerMm, onBack }) {
     setEdit((c) => ({ ...c, nails: c.nails.map((n, j) => (j === i ? { ...n, ...patch } : n)) }))
   }
 
+  // Saisie « marque + numéro » : marque, longueur commune XS–XXL, numéro de capsule par doigt
+  const brands = allBrands()
+  const sizing = edit?.sizing || { mode: 'mm' }
+  const brand = brands.find((b) => b.id === sizing.brand)
+  const setSizing = (patch) => setEdit((c) => ({ ...c, sizing: { ...(c.sizing || { mode: 'mm' }), ...patch } }))
+  function toBrandMode() {
+    const b = sizing.brand || brands[0].id
+    setSizing({ mode: 'brand', brand: b, length: sizing.length || 'm', sizes: sizing.sizes || defaultTipSet(b) })
+  }
+  const computed = sizing.mode === 'brand' && brand ? nailsFromSizing(sizing, edit.shape || 'oval') : null
+
   if (edit)
     return (
       <div className="screen clients">
@@ -39,18 +52,38 @@ export default function Clients({ pxPerMm, onBack }) {
           <button
             className="pink"
             onClick={() => {
-              setClients(saveClient(edit))
+              // en « marque + numéro », les mesures en mm sont recalculées pour le reste de l'app
+              const c = sizing.mode === 'brand' && computed ? { ...edit, nails: computed } : edit
+              setClients(saveClient(c))
               setEdit(null)
             }}
           >
             Enregistrer
           </button>
         </header>
-        <p className="muted pad">
-          Mesure chaque ongle naturel au point le plus large (d'une paroi latérale à l'autre, en suivant la courbe),
-          et sa longueur de la cuticule au bord libre souhaité. En millimètres — ou 📏 pour le mesurer directement
-          sur l'écran (calibre l'écran avant).
-        </p>
+        <div className="pad client-shape">
+          <span className="muted">Saisie des ongles</span>
+          <div className="seg">
+            <button className={sizing.mode !== 'brand' ? 'on' : ''} onClick={() => setSizing({ mode: 'mm' })}>
+              Largeur / longueur (mm)
+            </button>
+            <button className={sizing.mode === 'brand' ? 'on' : ''} onClick={toBrandMode}>
+              Marque + numéro
+            </button>
+          </div>
+        </div>
+        {sizing.mode === 'brand' ? (
+          <p className="muted pad">
+            Choisis la marque de capsules utilisée pour elle, le numéro de chaque doigt et la longueur (la même pour les
+            10 doigts) : les millimètres sont calculés automatiquement.
+          </p>
+        ) : (
+          <p className="muted pad">
+            Mesure chaque ongle naturel au point le plus large (d'une paroi latérale à l'autre, en suivant la courbe),
+            et sa longueur de la cuticule au bord libre souhaité. En millimètres — ou 📏 pour le mesurer directement
+            sur l'écran (calibre l'écran avant).
+          </p>
+        )}
         <div className="pad client-shape">
           <span className="muted">Forme habituelle de ses ongles</span>
           <div className="seg wrap">
@@ -63,8 +96,58 @@ export default function Clients({ pxPerMm, onBack }) {
               ))}
           </div>
         </div>
+        {sizing.mode === 'brand' && (
+          <div className="pad client-shape">
+            <label className="field">
+              <span>Marque</span>
+              <select value={sizing.brand} onChange={(e) => setSizing({ brand: e.target.value, sizes: defaultTipSet(e.target.value) })}>
+                {brands.map((b) => (
+                  <option key={b.id} value={b.id}>{b.name}{b.ref ? ` — ${b.ref}` : ''}</option>
+                ))}
+              </select>
+            </label>
+            <span className="muted">Longueur (les 10 doigts)</span>
+            <div className="seg wrap lengths">
+              {Object.entries(LENGTHS).map(([k, l]) => (
+                <button key={k} className={sizing.length === k ? 'on' : ''} onClick={() => setSizing({ length: k })} title={l.name}>
+                  <b>{l.label}</b>
+                  <small>{l.name}</small>
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
         <div className="hands">
-          {[0, 5].map((start) => (
+          {sizing.mode === 'brand' ? (
+            [0, 5].map((start) => (
+              <table key={start} className="nails-table">
+                <thead>
+                  <tr><th>{start ? 'Main droite' : 'Main gauche'}</th><th>N°</th><th>Largeur × longueur</th></tr>
+                </thead>
+                <tbody>
+                  {sizing.sizes.slice(start, start + 5).map((size, k) => (
+                    <tr key={k}>
+                      <td>{FINGERS[start + k].replace(/ [GD]$/, '')}</td>
+                      <td>
+                        <select
+                          className="num"
+                          value={size}
+                          onChange={(e) => setSizing({ sizes: sizing.sizes.map((s, j) => (j === start + k ? e.target.value : s)) })}
+                        >
+                          {(brand?.sizes || []).map((s) => (
+                            <option key={s.label} value={s.label}>{s.label}</option>
+                          ))}
+                        </select>
+                      </td>
+                      <td className="muted">
+                        {computed ? `${computed[start + k].w} × ${computed[start + k].h} mm` : 'marque introuvable'}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            ))
+          ) : [0, 5].map((start) => (
             <table key={start} className="nails-table">
               <thead>
                 <tr><th>{start ? 'Main droite' : 'Main gauche'}</th><th>Largeur</th><th>Longueur</th><th /></tr>

@@ -521,3 +521,16 @@ calibrage, l'app enregistre **la forme exacte ET ses dimensions** (affichées pe
 
 **Limites** : la précision dépend du calibrage et du tracé (un stylet aide ; on peut recommencer autant que
 voulu) ; le contour n'est pas rendu symétrique automatiquement.
+
+## feat/36-cliente-marque-taille — 15/10/2026 (retour de test)
+
+**Ajouté** dans la fiche cliente (👤 Clientes) : choix de la **saisie des ongles** :
+- **Largeur / longueur (mm)** : comme avant, doigt par doigt (ou 📏 à l'écran).
+- **Marque + numéro** : on choisit la **marque** (du commerce ou perso), le **numéro de capsule de chaque doigt**
+  (pré-rempli avec un set habituel) et **une longueur XS–XXL commune aux 10 doigts** ; les millimètres sont
+  calculés et affichés à côté de chaque doigt, puis utilisés partout (ongle direct, traçage, export).
+
+**Tester** : 👤 Clientes → + Cliente → « Marque + numéro » → choisir marque, numéros, longueur → Enregistrer.
+
+**Limites** : en « marque + numéro », les largeurs sont celles de la marque (approx. pour les marques du commerce
+sauf mesures « Ma boîte », exactes pour les marques perso).

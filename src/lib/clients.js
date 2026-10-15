@@ -1,6 +1,7 @@
 // Profils clientes : largeur et longueur de chacun des 10 ongles naturels, en mm.
 // Sert au mode « Ongle direct » (et à choisir les bonnes capsules en press-on).
 import { getSetting, setSetting } from './db.js'
+import { tipLength, tipWidth } from './tips.js'
 
 export const FINGERS = [
   'Pouce G', 'Index G', 'Majeur G', 'Annulaire G', 'Auriculaire G',
@@ -36,6 +37,17 @@ export function newClient(name = 'Nouvelle cliente') {
     shape: 'oval', // forme habituelle de ses ongles (appliquée en mode ongle direct)
     nails: [...AVERAGE, ...AVERAGE].map((n) => ({ ...n })),
   }
+}
+
+/**
+ * Mesures des 10 ongles à partir d'une saisie « par marque et numéro » :
+ * largeur = taille de capsule de chaque doigt, longueur = longueur XS–XXL commune (selon la forme).
+ */
+export function nailsFromSizing(sizing, shape) {
+  return sizing.sizes.map((size) => ({
+    w: tipWidth(sizing.brand, size)?.w ?? 12,
+    h: tipLength(sizing.length, shape),
+  }))
 }
 
 /**
