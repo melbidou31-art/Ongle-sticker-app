@@ -1,5 +1,6 @@
 import { useRef } from 'react'
 import { nailPath } from '../lib/shapes.js'
+import { frenchPaths } from '../lib/french.js'
 
 const PAD = 4 // marge autour de l'ongle, en mm
 
@@ -15,6 +16,7 @@ export default function NailView({
   const { nailW, nailH, shape, img, flip, clip, text, lineart, aspect } = design
   // calque couleurs : réglage du design, sauf si l'écran de traçage le force
   const showColors = colors ?? !!design.colors?.on
+  const french = design.french
   const iw = img.w
   const ih = img.w * aspect
   const free = shape === 'none'
@@ -180,6 +182,24 @@ export default function NailView({
           </text>
         )}
       </g>
+      {french?.on && !free && (
+        // ligne French en vecteur (millimètres), découpée à la forme de l'ongle
+        <g clipPath={`url(#${clipId})`} pointerEvents="none">
+          <g transform={`translate(${PAD} ${PAD})`}>
+            {frenchPaths(french, nailW, nailH).map((p, i) => (
+              <path
+                key={i}
+                d={p}
+                fill="none"
+                stroke={lineColor || '#000'}
+                strokeWidth={0.3}
+                strokeLinecap="round"
+                strokeDasharray={i ? '1 0.7' : undefined}
+              />
+            ))}
+          </g>
+        </g>
+      )}
       {guides?.on && (
         <g pointerEvents="none">
           {!free && guides.margin > 0 && (

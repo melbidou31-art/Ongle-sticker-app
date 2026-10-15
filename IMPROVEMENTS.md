@@ -252,3 +252,20 @@ main).
 ❓ Guide pour lire la marche à suivre.
 
 **Limites** : le guide est un texte fixe (pas de tutoriel interactif).
+
+## feat/18-gabarit-french-sourire — 15/10/2026
+
+**Ajouté** : **gabarit French** (onglet *Ongle*, dès qu'une forme d'ongle est choisie) : la ligne du sourire tracée
+en vecteur, à l'intérieur de l'ongle, à décalquer au pinceau.
+- Styles : **classique**, **en V**, **oblique**, **sourire profond** ; option **double French** (2e ligne en
+  pointillés, 1,2 mm au-dessus).
+- Réglages en millimètres : **hauteur du bord libre** (au centre) et **profondeur du sourire** (remontée le long
+  des parois). Comme les cotes sont en mm, la ligne s'adapte automatiquement à la largeur de chaque doigt et de
+  chaque capsule (set 10 doigts, ongle direct) — même hauteur de bord blanc sur tout le set.
+- Suit la couleur du trait et le fond du mode traçage ; incluse dans l'export SVG/PNG.
+
+**Tester** : design avec une forme (ou une capsule) → Ongle → cocher « Gabarit French » → changer le style et les
+réglages → Tracer → ◀ ▶ : la ligne garde la même hauteur sur chaque doigt.
+
+**Limites** : la ligne suit la forme 2D de l'ongle vu de dessus (pas la courbure C). La hauteur est mesurée
+depuis le bout de la capsule/ongle tel que dessiné.

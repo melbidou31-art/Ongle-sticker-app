@@ -9,6 +9,7 @@ import { getGuides, saveGuides } from '../lib/display.js'
 import { SHAPES } from '../lib/shapes.js'
 import { cropCanvas, downscale, hasCrop, loadImage, toLineArt } from '../lib/lineart.js'
 import CropTool from '../components/CropTool.jsx'
+import { DEFAULT_FRENCH, FRENCH_STYLES } from '../lib/french.js'
 
 function Slider({ label, value, min, max, step = 1, unit = '', onChange }) {
   return (
@@ -97,6 +98,8 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
       : set({ img })
   const setImg = (patch) => moveActive({ ...activeImg, ...patch })
   const setText = (patch) => set({ text: { ...design.text, ...patch } })
+  const french = { ...DEFAULT_FRENCH, ...design.french }
+  const setFrench = (patch) => set({ french: { ...french, ...patch } })
   const colors = { on: false, opacity: 0.4, ...design.colors }
   const setColors = (patch) => set({ colors: { ...colors, ...patch } })
 
@@ -200,6 +203,29 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
                   Couper le motif à la forme de l'ongle
                 </label>
               </>
+            )}
+            {design.shape !== 'none' && (
+              <div className="french">
+                <label className="check">
+                  <input type="checkbox" checked={french.on} onChange={(e) => setFrench({ on: e.target.checked })} />
+                  Gabarit French (ligne du sourire)
+                </label>
+                {french.on && (
+                  <>
+                    <div className="seg wrap">
+                      {Object.entries(FRENCH_STYLES).map(([k, l]) => (
+                        <button key={k} className={french.style === k ? 'on' : ''} onClick={() => setFrench({ style: k })}>{l}</button>
+                      ))}
+                    </div>
+                    <Slider label="Hauteur du bord libre" unit=" mm" value={french.height} min={2} max={Math.max(4, design.nailH - 2)} step={0.5} onChange={(height) => setFrench({ height })} />
+                    <Slider label="Profondeur du sourire" unit=" mm" value={french.depth} min={0} max={8} step={0.5} onChange={(depth) => setFrench({ depth })} />
+                    <label className="check">
+                      <input type="checkbox" checked={french.double} onChange={(e) => setFrench({ double: e.target.checked })} />
+                      Double French (2e ligne à {french.gap} mm)
+                    </label>
+                  </>
+                )}
+              </div>
             )}
             <label className="check">
               <input type="checkbox" checked={guides.on} onChange={(e) => setGuides({ on: e.target.checked })} />
