@@ -78,6 +78,10 @@ code { font-family: ui-monospace, 'Cascadia Mono', monospace; }
 .card-body { display: grid; gap: 4px; align-content: start; min-width: 0; }
 .card-body b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .card-body code { color: var(--muted); font-size: 11px; }
+.tag { color: var(--gold); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lib-tools { display: flex; gap: 8px; padding: 16px 16px 0; }
+.lib-tools .search { flex: 1; min-width: 0; }
+.sort { background: var(--bg-2); color: #eee9df; border: 1px solid var(--line); border-radius: 10px; padding: 0 10px; }
 
 /* Sauvegarde */
 .backup { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line); border-radius: var(--radius); background: var(--bg-2); }

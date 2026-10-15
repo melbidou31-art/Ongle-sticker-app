@@ -194,3 +194,18 @@ principal (un calque éloigné peut déborder du cadre à l'export).
 
 **Limites** : en mode « motif seul » (sans ongle), seul l'axe central est affiché. Les repères ne sont pas
 exportés (aide visuelle uniquement).
+
+## feat/14-bibliotheque-dupliquer-rechercher — 15/10/2026
+
+**Ajouté** dans la bibliothèque :
+- **⧉ Dupliquer** un design (copie indépendante « … (copie) ») : décliner un même motif pour une autre cliente,
+  une autre marque/taille de capsule, ou tester une variante sans abîmer l'original.
+- **Recherche** (insensible aux majuscules et aux accents) sur le nom et sur l'étiquette du design.
+- **Tri** : récents ou nom A→Z.
+- **Étiquette** sur chaque carte : à quoi sert le design — « Kiara Sky moyen · set 10 », « Ongle direct · Léa »,
+  « Motif seul · 20 mm », « … · 3 motifs » (remplace l'identifiant technique).
+
+**Tester** : bibliothèque → ⧉ sur un design → la copie apparaît en tête ; taper une marque ou un nom de cliente
+dans la recherche ; changer le tri.
+
+**Limites** : pas de dossiers ni de favoris ; la recherche ne porte pas sur le contenu de l'image.

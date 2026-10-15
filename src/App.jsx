@@ -109,6 +109,12 @@ export default function App() {
         setDesign(d)
         setScreen('trace')
       }}
+      onDuplicate={async (d) => {
+        // copie indépendante : nouvel identifiant, même contenu
+        const copy = { ...d, id: crypto.randomUUID().toUpperCase(), name: `${d.name} (copie)`, createdAt: Date.now() }
+        await saveDesign(copy)
+        refresh()
+      }}
       onDelete={async (d) => {
         await deleteDesign(d.id)
         refresh()
