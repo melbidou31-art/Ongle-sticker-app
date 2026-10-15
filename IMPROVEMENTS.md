@@ -587,3 +587,9 @@ retour ; formes Stiletto / Ballerine.
 👧 Mode enfant → taper la longueur → Enregistrer.
 
 **Limites** : largeurs d'enfant par défaut approximatives (à mesurer pour chaque enfant).
+
+## feat/40-corrections-passes-tests — 15/10/2026 (passes de tests 2 à 6)
+
+Corrections trouvées par les passes de test automatisées (toutes les fonctionnalités, plusieurs fois) :
+- **Recherche de la bibliothèque** : « p2 test » ne trouvait pas « P2-test » (tiret, ponctuation). La recherche
+  ignore maintenant la ponctuation et accepte plusieurs mots dans n'importe quel ordre (nom, étiquette, collection).

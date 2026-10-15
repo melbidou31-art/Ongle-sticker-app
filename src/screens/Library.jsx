@@ -4,8 +4,16 @@ import MotifPicker from '../components/MotifPicker.jsx'
 import { findBrand, lengthLabel } from '../lib/tips.js'
 import { listClients } from '../lib/clients.js'
 
-// recherche insensible à la casse et aux accents
-const norm = (s) => (s || '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+// recherche insensible à la casse, aux accents et à la ponctuation (« p2 test » trouve « P2-test »)
+const norm = (s) =>
+  (s || '')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, ' ')
+    .trim()
+// tous les mots tapés doivent se retrouver dans le texte, dans n'importe quel ordre
+const matches = (text, q) => q.split(' ').every((w) => text.includes(w))
 
 /** Étiquette courte : à quoi sert ce design (capsule, cliente, motif seul…) */
 function designTag(d, clients) {
@@ -48,7 +56,7 @@ export default function Library({
     let list = designs
     if (activeFilter === 'fav') list = list.filter((d) => d.favorite)
     else if (activeFilter !== 'all') list = list.filter((d) => d.collection === activeFilter)
-    if (q) list = list.filter((d) => norm(d.name).includes(q) || norm(designTag(d, clients)).includes(q) || norm(d.collection).includes(q))
+    if (q) list = list.filter((d) => matches(norm(`${d.name} ${designTag(d, clients)} ${d.collection || ''}`), q))
     return sort === 'name' ? [...list].sort((a, b) => a.name.localeCompare(b.name, 'fr')) : list
   }, [designs, query, sort, clients, activeFilter])
 
