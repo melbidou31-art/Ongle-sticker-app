@@ -71,6 +71,7 @@ export default function Guide({ onBack, onCalibrate }) {
             </ul>
           </section>
         ))}
+        <button className="pink big" onClick={onBack}>‹ Retour à mes designs</button>
       </div>
     </div>
   )

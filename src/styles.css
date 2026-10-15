@@ -157,6 +157,10 @@ code { font-family: ui-monospace, 'Cascadia Mono', monospace; }
 
 /* Éditeur */
 .topbar { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+/* écrans qui défilent (guide, clientes, calibrage) : la barre avec « Retour » reste toujours visible */
+.guide > .topbar, .clients > .topbar, .calibrate > .topbar {
+  position: sticky; top: 0; z-index: 10; background: var(--bg);
+}
 .topbar b { flex: 1; text-align: center; }
 .ghost.icon { font-size: 20px; padding: 4px 8px; line-height: 1; }
 .ghost.icon:disabled { opacity: 0.3; }
@@ -258,8 +262,17 @@ input[type='range'] { width: 100%; accent-color: var(--gold); }
 .hand-row { display: flex; align-items: center; gap: 2px; }
 
 /* Mesure à l'écran */
-.measure-tool { position: fixed; inset: 0; z-index: 20; background: var(--bg); display: flex; flex-direction: column; }
-.measure-value { flex: 1; display: grid; text-align: center; }
+.measure-tool {
+  position: fixed; inset: 0; z-index: 40; background: var(--bg); display: flex; flex-direction: column;
+  /* encoche / barre d'état de l'iPhone (app installée) : la barre « Valider » reste toujours atteignable */
+  padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
+}
+.measure-tool .topbar > button { flex: none; }
+.measure-value { flex: 1; min-width: 0; display: grid; text-align: center; }
+.measure-value > * { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* gros bouton de validation en bas, à portée de pouce */
+.tool-footer { display: flex; gap: 8px; align-items: center; padding: 10px 12px; border-top: 1px solid var(--line); }
+.tool-footer .pink { flex: 1; }
 .measure-value b { font-size: 18px; }
 .measure-area { position: relative; flex: 1; overflow: hidden; touch-action: none; }
 .measure-grid { position: absolute; inset: 0; }

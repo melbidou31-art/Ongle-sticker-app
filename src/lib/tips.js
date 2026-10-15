@@ -40,33 +40,33 @@ export function tipLength(key, shape) {
   return Math.round(LENGTHS[k].mm * (SHAPE_LENGTH[shape] ?? 1) * 2) / 2
 }
 
-// Génère une série de tailles : largeur de départ, pas de 1 mm
-const series = (labels, firstW) => labels.map((label, i) => ({ label: String(label), w: firstW - i }))
+// Génère une série de tailles : de la plus large (firstW, pouce) à la plus étroite (lastW, auriculaire),
+// proportionnellement au numéro (« 00 » = −1 ; une demi-taille tombe à mi-chemin), arrondi au demi-mm.
+// (Avant : −1 mm par taille sans limite, ce qui donnait 4 mm pour une taille 14.)
+function series(labels, firstW, lastW) {
+  const num = (l) => (String(l) === '00' ? -1 : Number(l))
+  const lo = num(labels[0])
+  const hi = num(labels[labels.length - 1])
+  return labels.map((label) => {
+    const t = (num(label) - lo) / (hi - lo)
+    return { label: String(label), w: Math.round((firstW - t * (firstW - lastW)) * 2) / 2 }
+  })
+}
 const range = (a, b) => Array.from({ length: b - a + 1 }, (_, i) => a + i)
 
 export const BRANDS = [
   {
     id: 'apres',
     name: 'Apres Gel-X',
-    sizes: series(['00', 0, 1, 2, 3, 4, 4.5, 5, 5.5, 6, 6.5, 7, 8, 9], 18),
+    sizes: series(['00', 0, 1, 2, 3, 4, 4.5, 5, 5.5, 6, 6.5, 7, 8, 9], 18, 8),
     source: 'apresnail.com (14 tailles, demi-tailles 4.5 / 5.5 / 6.5)',
   },
-  { id: 'kiara', name: 'Kiara Sky Gelly Tips', sizes: series(range(0, 9), 17), source: 'Boîtes de 500, tailles 0 à 9' },
-  { id: 'beetles', name: 'Beetles', sizes: series(range(0, 14), 18), source: 'beetlesgel.com (15 tailles, 0 à 14)' },
-  { id: 'modelones', name: 'Modelones', sizes: series(range(0, 9), 17), source: 'Boîtes de 500, tailles 0 à 9' },
-  { id: 'makartt', name: 'Makartt', sizes: series(range(0, 11), 17), source: 'Tailles 0 à 11 selon les boîtes' },
-  { id: 'bornpretty', name: 'Born Pretty', sizes: series(range(0, 11), 17), source: 'Tailles 0 à 11 selon les boîtes' },
+  { id: 'kiara', name: 'Kiara Sky Gelly Tips', sizes: series(range(0, 9), 17, 8), source: 'Boîtes de 500, tailles 0 à 9' },
+  { id: 'beetles', name: 'Beetles', sizes: series(range(0, 14), 18, 7), source: 'beetlesgel.com (15 tailles, 0 à 14)' },
+  { id: 'modelones', name: 'Modelones', sizes: series(range(0, 9), 17, 8), source: 'Boîtes de 500, tailles 0 à 9' },
+  { id: 'makartt', name: 'Makartt', sizes: series(range(0, 11), 17, 7.5), source: 'Tailles 0 à 11 selon les boîtes' },
+  { id: 'bornpretty', name: 'Born Pretty', sizes: series(range(0, 11), 17, 7.5), source: 'Tailles 0 à 11 selon les boîtes' },
 ]
-
-// Corrige les demi-tailles Apres : une demi-taille est à mi-chemin entre ses voisines
-{
-  const s = BRANDS[0].sizes
-  let w = 18
-  for (let i = 0; i < s.length; i++) {
-    if (i > 0) w -= s[i].label.includes('.') || s[i - 1].label.includes('.') ? 0.5 : 1
-    s[i].w = w
-  }
-}
 
 // ---- Ma boîte : largeurs mesurées par l'utilisatrice, par marque et par taille ----
 const KEY = 'tipMeasures'

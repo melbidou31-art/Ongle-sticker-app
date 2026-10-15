@@ -34,7 +34,8 @@ function Slider({ label, value, min, max, step = 1, unit = '', onChange }) {
 export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onManageClients }) {
   const [tab, setTab] = useState('motif')
   const srcCanvas = useRef(null)
-  const set = (patch) => onChange({ ...design, ...patch })
+  // appliqué à l'état le plus récent : deux réglages faits coup sur coup ne s'écrasent plus
+  const set = (patch) => onChange((d) => ({ ...d, ...patch }))
   // Zoom d'affichage pour les retouches fines ; 1:1 = taille réelle (le traçage reste toujours en 1:1)
   const [zoom, setZoom] = useState(1)
   const viewPx = pxPerMm * zoom

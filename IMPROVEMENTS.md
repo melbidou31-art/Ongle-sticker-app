@@ -547,3 +547,27 @@ longueur en mm pour ces designs.
 
 **Limites** : seules les longueurs changent en mode enfant (les numéros de capsules restent ceux de la marque —
 utiliser une marque perso pour des capsules enfant aux largeurs exactes).
+
+## feat/38-corrections-tests-mobile — 15/10/2026 (retours de test + passe de tests 1)
+
+**Corrigé** :
+- **Impossible de valider la mesure de la capsule** (et le tracé de contour / le recadrage) sur téléphone : depuis
+  que le panneau de réglages défile (feat/33), ces outils s'ouvraient *dans* le panneau et Safari iOS les coupait,
+  rendant la barre « Valider » inaccessible. Ils s'ouvrent maintenant au niveau de la page, tiennent compte de
+  l'encoche de l'iPhone, et ont un **grand bouton « ✓ Valider » en bas** de l'écran.
+- **Impossible de sortir du guide** : la barre avec « ‹ Designs » reste collée en haut en faisant défiler (guide,
+  clientes, calibrage) + bouton **« ‹ Retour à mes designs »** en bas du guide.
+- **Formes** redessinées : **stiletto** (flancs droits sur le lit de l'ongle puis longue courbe bombée jusqu'à une
+  pointe nette), **ballerine** (flancs qui s'affinent en ligne droite vers un bout plat), **amande** (flancs droits
+  puis bout pointu arrondi).
+- **Largeurs des tailles** : elles décroissaient de 1 mm par taille sans limite (Beetles taille 14 = 4 mm !) ;
+  désormais réparties de ≈ 18 mm (plus grande) à ≈ 7–8 mm (plus petite), demi-tailles Apres à mi-chemin.
+- **Set 10 doigts** créé depuis une très petite taille : toutes les tailles étaient identiques ; le pouce laisse
+  maintenant de la place aux doigts plus petits.
+- Éditeur : deux réglages faits coup sur coup ne s'écrasent plus (chaque modification part de l'état le plus récent).
+
+**Tester** : sur téléphone, Ongle → Press-on → 📏 Mesurer la capsule → ✓ Valider en bas ; ❓ Guide → défiler →
+retour ; formes Stiletto / Ballerine.
+
+**Limites** : les formes restent des modèles génériques ; pour coller exactement à une capsule précise, utiliser
+« ✍ Dessiner ma capsule ».

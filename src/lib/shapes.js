@@ -33,17 +33,22 @@ export function nailPath(shape, w, h) {
   const top = `M 0 ${c} C 0 ${-c * 0.2}, ${w} ${-c * 0.2}, ${w} ${c}`
   switch (shape) {
     case 'coffin': {
-      const tw = w * 0.56
-      return `${top} C ${w} ${h * 0.45}, ${w / 2 + tw / 2} ${h * 0.8}, ${w / 2 + tw / 2} ${h}
-        L ${w / 2 - tw / 2} ${h} C ${w / 2 - tw / 2} ${h * 0.8}, 0 ${h * 0.45}, 0 ${c} Z`
+      // ballerine : flancs droits le long du lit de l'ongle, puis s'affinent en ligne droite vers un bout plat
+      const tw = w * 0.58
+      const r = w * 0.06 // coins du bout légèrement adoucis
+      const a = h * 0.36 // fin de la partie droite
+      return `${top} L ${w} ${a} L ${w / 2 + tw / 2} ${h - r} Q ${w / 2 + tw / 2} ${h}, ${w / 2 + tw / 2 - r} ${h}
+        L ${w / 2 - tw / 2 + r} ${h} Q ${w / 2 - tw / 2} ${h}, ${w / 2 - tw / 2} ${h - r} L 0 ${a} Z`
     }
     case 'almond':
-      return `${top} C ${w} ${h * 0.7}, ${w * 0.64} ${h}, ${w / 2} ${h}
-        C ${w * 0.36} ${h}, 0 ${h * 0.7}, 0 ${c} Z`
+      // amande : flancs droits, puis se resserrent en courbe vers un bout pointu mais arrondi
+      return `${top} L ${w} ${h * 0.4} C ${w} ${h * 0.74}, ${w * 0.66} ${h}, ${w / 2} ${h}
+        C ${w * 0.34} ${h}, 0 ${h * 0.74}, 0 ${h * 0.4} Z`
     case 'stiletto':
-      // flancs presque droits qui se resserrent dès le premier tiers jusqu'à une pointe fine
-      return `${top} C ${w} ${h * 0.32}, ${w * 0.66} ${h * 0.72}, ${w / 2} ${h}
-        C ${w * 0.34} ${h * 0.72}, 0 ${h * 0.32}, 0 ${c} Z`
+      // stiletto : flancs droits sur le lit de l'ongle, puis s'affinent en longue courbe jusqu'à une pointe nette
+      // (points de contrôle à l'extérieur de la corde → flancs légèrement bombés, jamais creusés)
+      return `${top} L ${w} ${h * 0.36} C ${w} ${h * 0.64}, ${w * 0.76} ${h * 0.88}, ${w / 2} ${h}
+        C ${w * 0.24} ${h * 0.88}, 0 ${h * 0.64}, 0 ${h * 0.36} Z`
     case 'oval':
       // bout en ellipse, plus allongé que le rond
       return `${top} L ${w} ${h * 0.55} C ${w} ${h * 0.85}, ${w * 0.72} ${h}, ${w / 2} ${h}

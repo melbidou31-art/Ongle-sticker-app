@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import Grid from './Grid.jsx'
 
 const round = (v) => Math.round(v * 2) / 2 // au demi-millimètre
@@ -42,7 +43,9 @@ export default function MeasureTool({ pxPerMm, title, initial = { w: 14, h: 20 }
 
   const px = (v) => `calc(50% + ${v * pxPerMm}px)`
 
-  return (
+  // rendu au niveau de la page (portail) : à l'intérieur d'un panneau qui défile, Safari iOS coupait l'outil
+  // et sa barre « Valider » devenait inaccessible
+  return createPortal(
     <div className="measure-tool">
       <header className="topbar">
         <button className="ghost dark" onClick={onCancel}>Annuler</button>
@@ -71,6 +74,11 @@ export default function MeasureTool({ pxPerMm, title, initial = { w: 14, h: 20 }
           </>
         )}
       </div>
-    </div>
+      <footer className="tool-footer">
+        <button className="ghost dark" onClick={onCancel}>Annuler</button>
+        <button className="pink big" onClick={() => onDone({ w, h })}>✓ Valider {w} mm{withLength ? ` × ${h} mm` : ''}</button>
+      </footer>
+    </div>,
+    document.body,
   )
 }

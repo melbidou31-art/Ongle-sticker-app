@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import Grid from './Grid.jsx'
 import { shapeFromStroke } from '../lib/customShapes.js'
 
@@ -37,7 +38,8 @@ export default function OutlineTool({ pxPerMm, onDone, onCancel }) {
   const valid = pts.length > 15 && w > 4 && h > 4
   const d = pts.map(([x, y], i) => `${i ? 'L' : 'M'} ${(x * pxPerMm).toFixed(1)} ${(y * pxPerMm).toFixed(1)}`).join(' ')
 
-  return (
+  // portail : rendu au niveau de la page, jamais coupé par le panneau qui défile (Safari iOS)
+  return createPortal(
     <div className="measure-tool">
       <header className="topbar">
         <button className="ghost dark" onClick={onCancel}>Annuler</button>
@@ -61,6 +63,13 @@ export default function OutlineTool({ pxPerMm, onDone, onCancel }) {
           {pts.length > 1 && <path d={`${d}${drawing.current ? '' : ' Z'}`} fill="rgba(242,169,192,0.15)" stroke="#e0005a" strokeWidth="2" strokeLinejoin="round" />}
         </svg>
       </div>
-    </div>
+      <footer className="tool-footer">
+        <button className="ghost dark" onClick={onCancel}>Annuler</button>
+        <button className="pink big" disabled={!valid} onClick={() => onDone(shapeFromStroke(pts, name))}>
+          {valid ? `✓ Valider ${w.toFixed(1)} × ${h.toFixed(1)} mm` : 'Trace le contour…'}
+        </button>
+      </footer>
+    </div>,
+    document.body,
   )
 }

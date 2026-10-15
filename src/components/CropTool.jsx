@@ -1,4 +1,5 @@
 import { useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 
 const MIN = 0.05 // taille minimale de la zone (5 % de l'image)
 const clamp = (v, a, b) => Math.max(a, Math.min(b, v))
@@ -48,7 +49,8 @@ export default function CropTool({ src, initial, onDone, onCancel }) {
 
   const pct = (v) => `${v * 100}%`
 
-  return (
+  // portail : rendu au niveau de la page, jamais coupé par un conteneur qui défile (Safari iOS)
+  return createPortal(
     <div className="measure-tool">
       <header className="topbar">
         <button className="ghost dark" onClick={onCancel}>Annuler</button>
@@ -73,9 +75,11 @@ export default function CropTool({ src, initial, onDone, onCancel }) {
           </div>
         </div>
       </div>
-      <div className="row pad">
+      <footer className="tool-footer">
         <button className="chip" onClick={() => setC({ x: 0, y: 0, w: 1, h: 1 })}>Image entière</button>
-      </div>
-    </div>
+        <button className="pink big" onClick={() => onDone(c)}>✓ Valider</button>
+      </footer>
+    </div>,
+    document.body,
   )
 }

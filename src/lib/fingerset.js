@@ -11,6 +11,8 @@ export function defaultTipSet(brandId, thumbSize) {
   const sizes = findBrand(brandId)?.sizes || []
   let t = sizes.findIndex((s) => s.label === thumbSize)
   if (t < 0) t = 1
+  // le pouce doit laisser de la place aux doigts plus petits (sinon tout le set prenait la même taille)
+  t = Math.max(0, Math.min(t, sizes.length - 1 - Math.max(...SET_OFFSETS)))
   const hand = SET_OFFSETS.map((o) => sizes[Math.min(sizes.length - 1, t + o)]?.label)
   return [...hand, ...hand]
 }
