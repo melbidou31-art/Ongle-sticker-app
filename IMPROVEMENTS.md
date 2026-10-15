@@ -422,3 +422,15 @@ est téléchargée avec un message d'explication.
 
 **Limites** : le partage direct dépend du navigateur (Safari iOS et Chrome Android le permettent, la plupart des
 navigateurs d'ordinateur non → téléchargement) et demande une connexion https (OK une fois en ligne sur Vercel).
+
+## feat/29-zoom-editeur — 15/10/2026
+
+**Ajouté** : **zoom de l'éditeur** (boutons 1:1 · ×2 · ×3 · ×4 en haut à droite de la zone de travail). À taille
+réelle, un ongle ne fait que ~14 mm sur l'écran : zoomer rend la gomme, le crayon, le placement des calques et
+du texte bien plus précis. Les déplacements restent exacts en millimètres quel que soit le zoom ; la zone défile
+quand le motif dépasse. Le **mode traçage reste toujours en 1:1** (taille réelle).
+
+**Tester** : ouvrir un design → ×3 → 🧽 Gomme ou ✏ Crayon sur un petit détail → 1:1 pour revenir.
+
+**Limites** : quand le motif occupe toute la zone zoomée, faire défiler depuis les bords quadrillés (glisser sur
+le motif le déplace / gomme / dessine) ; le zoom n'est pas mémorisé d'une ouverture à l'autre.

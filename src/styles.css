@@ -165,6 +165,13 @@ code { font-family: ui-monospace, 'Cascadia Mono', monospace; }
   font: 600 16px Georgia, serif; text-align: center;
 }
 .editor-stage { min-height: 46vh; }
+.zoom-bar { position: absolute; top: 8px; right: 8px; z-index: 2; display: flex; gap: 4px; }
+.zoom-bar .chip { background: rgba(28, 26, 24, 0.85); }
+.zoom-bar .chip.on { background: var(--gold); }
+.stage-inner { display: flex; }
+/* zoomé : la zone défile ; « margin: auto » garde le motif centré tant qu'il tient, sans le couper sinon */
+.editor-stage.zoomed { overflow: auto; justify-content: flex-start; align-items: flex-start; max-height: 60vh; }
+.editor-stage.zoomed .stage-inner { margin: auto; padding: 40px 16px 32px; }
 .panel { background: var(--bg-2); border-top: 1px solid var(--line); padding: 12px 16px calc(16px + env(safe-area-inset-bottom)); }
 .panel-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 8px; }
 .design-id { font: 600 15px ui-monospace, monospace; color: #eee9df; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }

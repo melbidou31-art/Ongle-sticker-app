@@ -29,6 +29,9 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
   const [tab, setTab] = useState('motif')
   const srcCanvas = useRef(null)
   const set = (patch) => onChange({ ...design, ...patch })
+  // Zoom d'affichage pour les retouches fines ; 1:1 = taille réelle (le traçage reste toujours en 1:1)
+  const [zoom, setZoom] = useState(1)
+  const viewPx = pxPerMm * zoom
   // ↶ / ↷ : toutes les modifications de l'éditeur (une étape = jusqu'à une courte pause)
   const history = useHistory(design, onChange)
 
@@ -146,12 +149,21 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
         <button className="pink" onClick={onTrace}>Tracer</button>
       </header>
 
-      <Grid pxPerMm={pxPerMm} className="editor-stage">
-        {eraser.on ? (
-          <NailView design={design} pxPerMm={pxPerMm} onErase={eraseHandlers} guides={guides} />
-        ) : (
-          <NailView design={design} pxPerMm={pxPerMm} onMove={moveActive} activeLayer={activeLayer} guides={guides} />
-        )}
+      <Grid pxPerMm={viewPx} className={`editor-stage ${zoom > 1 ? 'zoomed' : ''}`}>
+        <div className="zoom-bar" role="group" aria-label="Zoom">
+          {[1, 2, 3, 4].map((z) => (
+            <button key={z} className={`chip mini ${zoom === z ? 'on' : ''}`} onClick={() => setZoom(z)}>
+              {z === 1 ? '1:1' : `×${z}`}
+            </button>
+          ))}
+        </div>
+        <div className="stage-inner">
+          {eraser.on ? (
+            <NailView design={design} pxPerMm={viewPx} onErase={eraseHandlers} guides={guides} />
+          ) : (
+            <NailView design={design} pxPerMm={viewPx} onMove={moveActive} activeLayer={activeLayer} guides={guides} />
+          )}
+        </div>
         <p className="hint">
           {!eraser.on
             ? 'Glisse pour déplacer · pince pour zoomer'
