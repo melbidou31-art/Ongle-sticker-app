@@ -636,3 +636,17 @@ Vérifié aussi en passe 4 (aucun problème) : position exacte de la gomme en zo
 service worker actif, manifeste valide, module d'export chargé à la demande dans la version publiée.
 
 **Limites** : le module d'export n'est mis en cache qu'à sa première utilisation (l'exporter une fois en ligne).
+
+## feat/44-libelles-francais — 16/10/2026 (passe de tests 5)
+
+**Corrigé** :
+- **Libellés restés en anglais** (repris de l'app d'origine) : « EDITING », « DESIGN LOCKED », « READY TO TRACE »,
+  « LOCKED », « Lock design », « TRACING MODE / HANDS ON » → « ÉDITION », « DESIGN VERROUILLÉ », « PRÊT À TRACER »,
+  « VERROUILLÉ », « Verrouiller », « MODE TRAÇAGE / MAINS LIBRES ».
+- **Identifiant technique affiché dans l'éditeur** (une longue suite de lettres/chiffres sans intérêt) : remplacé par
+  la taille de la capsule (« capsule 16 × 14 mm ») ou « ongle direct ».
+
+Vérifié aussi en passe 5 (aucun problème) : mesure 📏 depuis le créateur de marque puis Annuler (rien n'est créé),
+annulation du tracé de contour, French et repères sur une forme dessinée, annuler/rétablir l'ajout et le retrait
+d'un calque, fiche de tailles en ongle direct (cliente + 10 doigts), suivi « ✓ Fait » en mode traçage sur téléphone
+(cocher/décocher, doigt suivant/précédent, retour au pouce après l'auriculaire droit).

@@ -200,8 +200,11 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
 
       <section className="panel">
         <div className="panel-head">
-          <span className="eyebrow">EDITING</span>
-          <code className="design-id">{design.id}</code>
+          <span className="eyebrow">ÉDITION</span>
+          {/* les dimensions de l'ongle plutôt que l'identifiant interne, illisible pour l'utilisatrice */}
+          <code className="design-id">
+            {design.mode === 'direct' ? 'ongle direct' : `capsule ${design.nailW} × ${design.nailH} mm`}
+          </code>
         </div>
         <nav className="tabs">
           {[['motif', 'Motif'], ['ongle', 'Ongle'], ['position', 'Calques'], ['texte', 'Texte'], ['export', 'Export']].map(([k, l]) => (

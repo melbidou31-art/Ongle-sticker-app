@@ -161,7 +161,7 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
               {doneButton}
             </div>
           ) : (
-            <span className="eyebrow gold">🔒 LOCKED</span>
+            <span className="eyebrow gold">🔒 VERROUILLÉ</span>
           )}
           {colorsButton}
         </div>
@@ -180,9 +180,9 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
           </div>
           <span className="badge">• PRIVATE</span>
         </div>
-        <div className="eyebrow gold mode">TRACING MODE / HANDS ON</div>
+        <div className="eyebrow gold mode">MODE TRAÇAGE / MAINS LIBRES</div>
         <div className="row">
-          {locked ? unlockButton(false) : <button className="pink" onClick={() => setLocked(true)}>🔒 Lock design</button>}
+          {locked ? unlockButton(false) : <button className="pink" onClick={() => setLocked(true)}>🔒 Verrouiller</button>}
           {colorsButton}
           <button
             className={`ghost dark ${showOptions ? 'on-gold' : ''}`}
@@ -268,7 +268,7 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
 function TraceStage({ pxPerMm, display, locked, set, view, finger, variant, current, design, onChange, showColors, ink, dark, guides }) {
   return (
       <Grid pxPerMm={pxPerMm} className="trace-stage" variant={display.surface}>
-        <div className={`lock-pill ${locked ? '' : 'open'}`}>{locked ? '🔒 DESIGN LOCKED' : '✋ DÉPLACEMENT LIBRE'}</div>
+        <div className={`lock-pill ${locked ? '' : 'open'}`}>{locked ? '🔒 DESIGN VERROUILLÉ' : '✋ DÉPLACEMENT LIBRE'}</div>
         {set && view === 'hand' ? (
           <div className="hand-row">
             {[0, 1, 2, 3, 4].map((k) => {
@@ -297,7 +297,7 @@ function TraceStage({ pxPerMm, display, locked, set, view, finger, variant, curr
         )}
         {/* Couche qui avale toutes les touches quand c'est verrouillé */}
         {locked && <div className="touch-shield" onPointerDown={(e) => e.preventDefault()} onTouchStart={(e) => e.preventDefault()} />}
-        <div className="ready">READY TO TRACE</div>
+        <div className="ready">PRÊT À TRACER</div>
       </Grid>
   )
 }
