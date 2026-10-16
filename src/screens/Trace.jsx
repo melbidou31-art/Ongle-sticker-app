@@ -39,6 +39,9 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
   const [view, setView] = useState('single')
   // couleurs d'origine : bascule rapide pendant le traçage (trait seul ↔ trait + couleurs)
   const [showColors, setShowColors] = useState(!!design.colors?.on)
+  // rappel des notes du design (vernis, technique) pendant le traçage
+  const notes = (design.notes || '').trim()
+  const [showNotes, setShowNotes] = useState(false)
   // affichage : couleur du trait, fond, miroir de la main droite
   const [display, setDisplay] = useState(getDisplay)
   const [showOptions, setShowOptions] = useState(false)
@@ -103,6 +106,7 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
   const stage = (
     <TraceStage
       {...{ pxPerMm, display, locked, set, view, finger, variant, current, design, onChange, showColors, ink, dark, guides }}
+      notes={showNotes ? notes : ''}
     />
   )
 
@@ -146,6 +150,16 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
       🎨
     </button>
   )
+  const notesButton = notes && (
+    <button
+      className={`ghost dark ${showNotes ? 'on-gold' : ''}`}
+      onClick={() => setShowNotes((v) => !v)}
+      title="Notes du design (vernis, technique)"
+      aria-label="Afficher les notes du design"
+    >
+      📝
+    </button>
+  )
 
   // Mode immersif : verrouillé, tout se réduit à une fine barre pour laisser l'écran au traçage
   if (immersive)
@@ -164,6 +178,7 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
             <span className="eyebrow gold">🔒 VERROUILLÉ</span>
           )}
           {colorsButton}
+          {notesButton}
         </div>
         {stage}
       </div>
@@ -184,6 +199,7 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
         <div className="row">
           {locked ? unlockButton(false) : <button className="pink" onClick={() => setLocked(true)}>🔒 Verrouiller</button>}
           {colorsButton}
+          {notesButton}
           <button
             className={`ghost dark ${showOptions ? 'on-gold' : ''}`}
             onClick={() => setShowOptions((v) => !v)}
@@ -265,7 +281,7 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
   )
 }
 
-function TraceStage({ pxPerMm, display, locked, set, view, finger, variant, current, design, onChange, showColors, ink, dark, guides }) {
+function TraceStage({ pxPerMm, display, locked, set, view, finger, variant, current, design, onChange, showColors, ink, dark, guides, notes }) {
   return (
       <Grid pxPerMm={pxPerMm} className="trace-stage" variant={display.surface}>
         <div className={`lock-pill ${locked ? '' : 'open'}`}>{locked ? '🔒 DESIGN VERROUILLÉ' : '✋ DÉPLACEMENT LIBRE'}</div>
@@ -297,6 +313,8 @@ function TraceStage({ pxPerMm, display, locked, set, view, finger, variant, curr
         )}
         {/* Couche qui avale toutes les touches quand c'est verrouillé */}
         {locked && <div className="touch-shield" onPointerDown={(e) => e.preventDefault()} onTouchStart={(e) => e.preventDefault()} />}
+        {/* au-dessus du bouclier tactile mais sans capter les touches : la capsule posée dessus ne fait rien */}
+        {notes && <div className="trace-notes">📝 {notes}</div>}
         <div className="ready">PRÊT À TRACER</div>
       </Grid>
   )

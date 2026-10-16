@@ -731,3 +731,14 @@ la carte ; taper une référence dans la recherche.
 
 **Limites** : texte libre (pas de liste de vernis structurée) ; sur la fiche PDF, une note longue est coupée après
 2 lignes.
+## feat/51-notes-en-tracage — 16/10/2026
+
+**Ajouté** : en **mode traçage**, un bouton **📝** (seulement si le design a des notes) affiche les notes du design
+(vernis, technique…) dans un encart en bas de la zone de traçage, pour avoir les références sous les yeux pendant la
+pose. Il fonctionne aussi en mode immersif et quand l'écran est verrouillé ; l'encart ne capte aucune touche (la
+capsule posée dessus ne fait rien) et se masque d'un nouvel appui sur 📝.
+
+**Tester** : écrire des notes sur un design (Motif → 📝 Notes du design) → Tracer → 📝.
+
+**Limites** : encart masqué par défaut à chaque ouverture du traçage ; une note très longue est coupée (30 % de la
+hauteur de l'écran au maximum).

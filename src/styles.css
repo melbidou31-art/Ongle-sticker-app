@@ -354,6 +354,12 @@ input[type='range'] { width: 100%; accent-color: var(--gold); }
 }
 .lock-pill.open { background: var(--pink); color: var(--pink-ink); }
 .touch-shield { position: absolute; inset: 0; z-index: 1; touch-action: none; }
+.trace-notes {
+  position: absolute; left: 12px; right: 12px; bottom: 32px; z-index: 2; pointer-events: none;
+  max-height: 30%; overflow: hidden; white-space: pre-line;
+  background: rgba(255, 255, 255, 0.92); color: var(--ink); border-radius: 12px; padding: 8px 12px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15); font-size: 13px; line-height: 1.35;
+}
 .ready {
   position: absolute; bottom: 12px;
   font: 600 10px ui-monospace, monospace; letter-spacing: 0.2em; color: #a49d90;
