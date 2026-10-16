@@ -26,7 +26,7 @@ function NumberField({ value, onChange }) {
   )
 }
 
-export default function Clients({ pxPerMm, onBack, onOpenDesign }) {
+export default function Clients({ pxPerMm, onBack, onOpenDesign, onApplyDesign }) {
   const [clients, setClients] = useState(listClients)
   const [edit, setEdit] = useState(null)
   const [measuring, setMeasuring] = useState(null) // index du doigt en cours de mesure
@@ -44,6 +44,19 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign }) {
         .filter((d) => d.mode === 'direct' && d.client?.id === edit.id)
         .sort((a, b) => (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0))
     : []
+
+  // tous les autres designs (press-on, autres clientes…), à copier pour elle
+  const others = edit ? allDesigns.filter((d) => !designs.includes(d)) : []
+  // la fiche telle qu'elle sera enregistrée (en « marque + numéro », mesures en mm recalculées)
+  const toSave = () => (sizing.mode === 'brand' && computed ? { ...edit, nails: computed } : edit)
+  function apply(id) {
+    const d = allDesigns.find((x) => x.id === id)
+    if (!d) return
+    // la copie est rattachée à la fiche : on l'enregistre d'abord (sinon le mode ongle direct ne la trouverait pas)
+    const c = toSave()
+    setClients(saveClient(c))
+    onApplyDesign(d, c)
+  }
 
   // ouvrir un de ses designs : on ne perd pas sans prévenir une fiche modifiée et pas enregistrée
   function open(d, screen) {
@@ -98,9 +111,7 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign }) {
           <button
             className="pink"
             onClick={() => {
-              // en « marque + numéro », les mesures en mm sont recalculées pour le reste de l'app
-              const c = sizing.mode === 'brand' && computed ? { ...edit, nails: computed } : edit
-              setClients(saveClient(c))
+              setClients(saveClient(toSave()))
               setEdit(null)
             }}
           >
@@ -174,6 +185,17 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign }) {
                 </div>
               ))}
             </div>
+          )}
+          {others.length > 0 && (
+            <label className="field">
+              <span>✨ Lui appliquer un design (copie à ses mesures, l'original ne change pas)</span>
+              <select value="" onChange={(e) => apply(e.target.value)}>
+                <option value="">Choisir un design…</option>
+                {others.map((d) => (
+                  <option key={d.id} value={d.id}>{d.name}</option>
+                ))}
+              </select>
+            </label>
           )}
         </div>
         {sizing.mode !== 'brand' && (

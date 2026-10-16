@@ -11,6 +11,7 @@ import {
 import { downscale, fileToDataURL, loadImage, toLineArt } from './lib/lineart.js'
 import { motifCanvas } from './lib/motifs.js'
 import { myMotifCanvas } from './lib/mymotifs.js'
+import { resizeNail } from './lib/clients.js'
 
 export default function App() {
   const [screen, setScreen] = useState('library')
@@ -86,6 +87,25 @@ export default function App() {
     else refresh()
   }
 
+  // Copie d'un design existant pour une cliente, en ongle direct : mesures de son index G, sa forme habituelle.
+  // L'original (press-on ou autre cliente) n'est pas modifié.
+  async function applyToClient(d, client) {
+    const finger = 1
+    const n = client.nails[finger]
+    const copy = {
+      ...d,
+      ...resizeNail(d, n.w, n.h),
+      id: crypto.randomUUID().toUpperCase(),
+      name: `${d.name} · ${client.name}`.slice(0, 60),
+      mode: 'direct',
+      client: { id: client.id, finger },
+      shape: client.shape || 'oval',
+      createdAt: Date.now(),
+    }
+    await saveDesign(copy)
+    openDesign(copy, 'editor')
+  }
+
   async function openClients(from) {
     setClientsBack(from)
     // la fiche cliente liste ses designs : enregistrer d'abord la modification en attente
@@ -130,6 +150,7 @@ export default function App() {
         onBack={() => setScreen(clientsBack)}
         // design ouvert depuis la fiche d'une cliente (la sauvegarde en attente a été faite en ouvrant les clientes)
         onOpenDesign={(d, next) => openDesign(d, next)}
+        onApplyDesign={applyToClient}
       />
     )
 

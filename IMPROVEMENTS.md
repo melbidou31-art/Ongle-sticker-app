@@ -705,3 +705,15 @@ dans `src/lib/search.js`.
 **Tester** : 👤 Clientes (avec quelques clientes) → taper un prénom, ou un mot d'une note.
 
 **Limites** : la recherche ne porte pas sur les mesures ni sur la marque de capsules.
+## feat/49-appliquer-design-cliente — 16/10/2026
+
+**Ajouté** : dans la fiche d'une cliente, **« ✨ Lui appliquer un design »** : on choisit n'importe quel design de la
+bibliothèque (un press-on, celui d'une autre cliente…) et l'app en crée **une copie à ses mesures**, en ongle direct,
+avec sa forme habituelle, nommée « <design> · <cliente> », puis l'ouvre dans l'éditeur. L'original ne change pas.
+La fiche est enregistrée au passage (indispensable pour rattacher la copie), y compris une nouvelle cliente.
+
+**Tester** : 👤 Clientes → une cliente → « ✨ Lui appliquer un design » → choisir un design : l'éditeur s'ouvre en
+ongle direct sur son index G ; la copie apparaît ensuite dans « Ses designs » de la fiche.
+
+**Limites** : la copie démarre sur l'index gauche (changer de doigt dans Ongle → Ongle direct) ; les tailles d'un set
+press-on ne sont pas utilisées en ongle direct (chaque doigt prend les mesures de la cliente).
