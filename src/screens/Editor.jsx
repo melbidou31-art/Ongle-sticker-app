@@ -17,6 +17,7 @@ import { DEFAULT_TEXT, FONTS } from '../lib/fonts.js'
 import useHistory from '../lib/useHistory.js'
 import AccentPicker from '../components/AccentPicker.jsx'
 import PalettePanel from '../components/PalettePanel.jsx'
+import useMoveGesture from '../lib/useMoveGesture.js'
 import { hasSet } from '../lib/fingerset.js'
 import { tipLength } from '../lib/tips.js'
 import { resizeNail } from '../lib/clients.js'
@@ -165,6 +166,9 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
       ? set({ layers: design.layers.map((l) => (l.id === layer.id ? { ...l, img } : l)) })
       : set({ img })
   const setImg = (patch) => moveActive({ ...activeImg, ...patch })
+  // déplacement / pincement sur toute la zone quadrillée (en 1:1, hors gomme et crayon)
+  const stageMove = !eraser.on && zoom === 1
+  const stageGesture = useMoveGesture(activeImg, viewPx, moveActive)
   // formes disponibles (dont les capsules dessinées à la main) et outil de tracé du contour
   const [shapes, setShapes] = useState(allShapes)
   const [outlining, setOutlining] = useState(false)
@@ -203,7 +207,15 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
         <button className="pink" onClick={onTrace}>Tracer</button>
       </header>
 
-      <Grid pxPerMm={viewPx} className={`editor-stage ${zoom > 1 ? 'zoomed' : ''}`}>
+      <Grid
+        pxPerMm={viewPx}
+        className={`editor-stage ${zoom > 1 ? 'zoomed' : ''}`}
+        // en 1:1, glisser / pincer n'importe où sur le quadrillage (pas besoin de viser l'ongle) ;
+        // zoomé, la zone défile au doigt et c'est l'ongle qu'on fait glisser
+        {...(stageMove ? stageGesture : {})}
+        onPointerCancel={stageMove ? stageGesture.onPointerUp : undefined}
+        style={stageMove ? { touchAction: 'none', cursor: 'grab' } : undefined}
+      >
         <div className="zoom-bar" role="group" aria-label="Zoom">
           {[1, 2, 3, 4].map((z) => (
             <button key={z} className={`chip mini ${zoom === z ? 'on' : ''}`} onClick={() => setZoom(z)}>
@@ -215,12 +227,14 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
           {eraser.on ? (
             <NailView design={design} pxPerMm={viewPx} onErase={eraseHandlers} guides={guides} />
           ) : (
-            <NailView design={design} pxPerMm={viewPx} onMove={moveActive} activeLayer={activeLayer} guides={guides} />
+            <NailView design={design} pxPerMm={viewPx} onMove={stageMove ? undefined : moveActive} activeLayer={activeLayer} guides={guides} />
           )}
         </div>
         <p className="hint">
           {!eraser.on
-            ? 'Glisse pour déplacer · pince pour zoomer'
+            ? stageMove
+              ? "Glisse n'importe où pour déplacer · pince pour agrandir"
+              : "Glisse l'ongle pour déplacer · pince pour agrandir"
             : eraser.mode === 'draw'
               ? '✏ Crayon : dessine pour compléter ou refermer le trait'
               : '🧽 Gomme : frotte sur le trait à effacer'}

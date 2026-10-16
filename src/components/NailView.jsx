@@ -2,6 +2,7 @@ import { useRef } from 'react'
 import { nailPath } from '../lib/shapes.js'
 import { frenchPaths } from '../lib/french.js'
 import { DEFAULT_TEXT, fontFamily } from '../lib/fonts.js'
+import useMoveGesture from '../lib/useMoveGesture.js'
 
 const PAD = 4 // marge autour de l'ongle, en mm
 
@@ -36,8 +37,7 @@ export default function NailView({
   const layers = design.layers || []
   const moving = (activeLayer && layers.find((l) => l.id === activeLayer)?.img) || img
 
-  const pointers = useRef(new Map())
-  const start = useRef(null)
+  const gesture = useMoveGesture(moving, pxPerMm, onMove)
   const erasing = useRef(false)
 
   // Position du pointeur en coordonnées relatives à l'image (0–1), en tenant compte de rotation et miroir
@@ -64,38 +64,17 @@ export default function NailView({
       erasing.current = true
       return onErase.start(...toImage(e))
     }
-    if (!onMove) return
-    try {
-      e.currentTarget.setPointerCapture(e.pointerId)
-    } catch {}
-    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
-    start.current = { img: { ...moving }, pts: new Map(pointers.current) }
+    gesture.onPointerDown(e)
   }
 
   function onPointerMove(e) {
     if (onErase) return erasing.current && onErase.move(...toImage(e))
-    if (!onMove || !pointers.current.has(e.pointerId)) return
-    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY })
-    const s = start.current
-    const now = [...pointers.current.values()]
-    const before = [...s.pts.values()]
-    if (now.length === 1 && before.length === 1) {
-      onMove({
-        ...s.img,
-        x: s.img.x + (now[0].x - before[0].x) / pxPerMm,
-        y: s.img.y + (now[0].y - before[0].y) / pxPerMm,
-      })
-    } else if (now.length >= 2 && before.length >= 2) {
-      const dist = (p) => Math.hypot(p[0].x - p[1].x, p[0].y - p[1].y)
-      const k = dist(now) / Math.max(1, dist(before))
-      onMove({ ...s.img, w: Math.max(2, Math.min(60, s.img.w * k)) })
-    }
+    gesture.onPointerMove(e)
   }
 
   function onPointerUp(e) {
     erasing.current = false
-    pointers.current.delete(e.pointerId)
-    start.current = { img: { ...moving }, pts: new Map(pointers.current) }
+    gesture.onPointerUp(e)
   }
 
   return (

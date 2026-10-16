@@ -783,3 +783,17 @@ Le 📏 mesure à nouveau largeur **et** longueur en mode enfant.
 pouce → Enregistrer → rouvrir : chaque longueur est conservée.
 
 **Limites** : en saisie « Marque + numéro », la longueur reste commune aux 10 doigts (comme pour les adultes).
+## feat/55-deplacer-partout — 16/10/2026 (demande de l'utilisatrice)
+
+**Modifié** : dans l'éditeur (zoom 1:1), on **déplace et on agrandit le motif en touchant n'importe où sur la zone
+quadrillée** : plus besoin de viser l'ongle (qui ne fait que 15 mm). Un doigt = déplacer, deux doigts = pincer pour
+agrandir / réduire. Le déplacement suit le doigt à taille réelle. Les curseurs de feat/53 (taille, position
+horizontale et verticale) restent disponibles.
+
+**Corrigé au passage** : quand un 2e doigt se posait juste après le 1er, le motif pouvait revenir brusquement en
+arrière (le geste repartait d'une position périmée).
+
+**Tester** : un design → poser le doigt à côté de l'ongle et glisser ; pincer à deux doigts sur le quadrillage.
+
+**Limites** : zoomé (×2 à ×4), la zone défile au doigt : c'est alors l'ongle lui-même qu'il faut faire glisser
+(ou les curseurs) ; gomme et crayon gardent leur fonctionnement.
