@@ -650,3 +650,16 @@ Vérifié aussi en passe 5 (aucun problème) : mesure 📏 depuis le créateur d
 annulation du tracé de contour, French et repères sur une forme dessinée, annuler/rétablir l'ajout et le retrait
 d'un calque, fiche de tailles en ongle direct (cliente + 10 doigts), suivi « ✓ Fait » en mode traçage sur téléphone
 (cocher/décocher, doigt suivant/précédent, retour au pouce après l'auriculaire droit).
+## feat/45-deverrouiller-francais — 16/10/2026 (passe de tests 6, dernière)
+
+**Corrigé** :
+- Derniers libellés en anglais du mode traçage : « Unlock design » → « Déverrouiller », « PRIVATE » → « PRIVÉ ».
+
+Vérifié aussi en passe 6 (parcours complet, aucun autre problème) : import d'une image, seuil et épaisseur du trait,
+photo → contours, recadrage, gomme + « Dernière retouche », toutes les formes, largeurs de la 1re et de la dernière
+taille de chaque marque, texte avec police, exports PDF / SVG / PNG (noms accentués corrects), traçage verrouillé
+(le design ne bouge pas, un appui court ne déverrouille pas, l'appui long oui), options d'affichage, recherche sans
+accents ni ordre des mots, sauvegarde .json complète, fiche cliente marque + numéro + longueur XS, suppression de
+cliente, motifs, guide, calibrage.
+
+**Bilan des 6 passes** : 13 défauts trouvés et corrigés (branches feat/39 à feat/45).

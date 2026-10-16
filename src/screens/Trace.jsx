@@ -134,7 +134,7 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
       onPointerLeave={cancelHold}
       onContextMenu={(e) => e.preventDefault()}
     >
-      🔓 {compact ? 'Maintenir' : <>Unlock design <small>(maintenir)</small></>}
+      🔓 {compact ? 'Maintenir' : <>Déverrouiller <small>(maintenir)</small></>}
     </button>
   )
   const colorsButton = (
@@ -178,7 +178,7 @@ export default function Trace({ design, pxPerMm, onChange, onExit }) {
             <div className="eyebrow gold">BY BERRY</div>
             <div className="title">ONGLE TRACE</div>
           </div>
-          <span className="badge">• PRIVATE</span>
+          <span className="badge">• PRIVÉ</span>
         </div>
         <div className="eyebrow gold mode">MODE TRAÇAGE / MAINS LIBRES</div>
         <div className="row">
