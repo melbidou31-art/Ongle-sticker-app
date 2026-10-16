@@ -21,14 +21,42 @@ import { hasSet } from '../lib/fingerset.js'
 import { tipLength } from '../lib/tips.js'
 import { resizeNail } from '../lib/clients.js'
 
-function Slider({ label, value, min, max, step = 1, unit = '', onChange }) {
+// `fine` : ajoute des boutons − / + qui avancent d'un pas (réglage précis sans glisser)
+function Slider({ label, value, min, max, step = 1, unit = '', onChange, fine = false }) {
+  const nudge = (d) => onChange(Math.min(max, Math.max(min, Math.round((value + d * step) / step) * step)))
+  const input = <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(+e.target.value)} />
+  // avec les boutons, pas de <label> : toucher le texte déclencherait le premier bouton (−)
+  const Box = fine ? 'div' : 'label'
   return (
-    <label className="slider">
+    <Box className="slider">
       <span>
         {label} <b>{Math.round(value * 10) / 10}{unit}</b>
       </span>
-      <input type="range" min={min} max={max} step={step} value={value} onChange={(e) => onChange(+e.target.value)} />
-    </label>
+      {fine ? (
+        <span className="fine">
+          <button type="button" className="chip mini" onClick={() => nudge(-1)} aria-label={`${label} : moins`}>−</button>
+          {input}
+          <button type="button" className="chip mini" onClick={() => nudge(1)} aria-label={`${label} : plus`}>+</button>
+        </span>
+      ) : (
+        input
+      )}
+    </Box>
+  )
+}
+
+/** Taille, position et rotation d'une image (motif principal ou calque), aux curseurs : sans les doigts. */
+function ImageControls({ name, img, onChange, onCenter }) {
+  return (
+    <>
+      <Slider label={`Taille ${name}`} unit=" mm" value={img.w} min={2} max={60} step={0.5} fine onChange={(w) => onChange({ w })} />
+      <Slider label="Position horizontale" unit=" mm" value={img.x} min={-30} max={30} step={0.5} fine onChange={(x) => onChange({ x })} />
+      <Slider label="Position verticale" unit=" mm" value={img.y} min={-30} max={30} step={0.5} fine onChange={(y) => onChange({ y })} />
+      <Slider label="Rotation" unit="°" value={img.rot} min={-180} max={180} fine onChange={(rot) => onChange({ rot })} />
+      <div className="row">
+        <button className="chip" onClick={onCenter}>Recentrer</button>
+      </div>
+    </>
   )
 }
 
@@ -221,6 +249,14 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             </div>
             <Slider label="Seuil" value={p.seuil} min={0} max={100} onChange={(seuil) => setProcess({ seuil })} />
             <Slider label="Épaisseur du trait" value={p.epaisseur} min={0} max={3} onChange={(epaisseur) => setProcess({ epaisseur })} />
+            {/* taille / position de l'image aussi aux curseurs : le pincement à deux doigts est délicat sur un petit ongle */}
+            <span className="eyebrow gold">TAILLE ET POSITION DE L'IMAGE</span>
+            <ImageControls
+              name="de l'image"
+              img={design.img}
+              onChange={(patch) => onChange((d) => ({ ...d, img: { ...d.img, ...patch } }))}
+              onCenter={() => onChange((d) => ({ ...d, img: { ...d.img, x: 0, y: 0 } }))}
+            />
             <div className="row">
               <button className="chip gold" disabled={savingMotif} onClick={saveAsMotif}>
                 ⭐ Enregistrer dans Mes motifs
@@ -372,10 +408,13 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
         {tab === 'position' && (
           <div className="controls">
             <LayersBar design={design} active={activeLayer} onSelect={setActiveLayer} onChange={onChange} />
-            <Slider label={layer ? `Taille de « ${layer.name} »` : 'Taille du motif'} unit=" mm" value={activeImg.w} min={2} max={60} step={0.5} onChange={(w) => setImg({ w })} />
-            <Slider label="Rotation" unit="°" value={activeImg.rot} min={-180} max={180} onChange={(rot) => setImg({ rot })} />
+            <ImageControls
+              name={layer ? `de « ${layer.name} »` : 'du motif'}
+              img={activeImg}
+              onChange={setImg}
+              onCenter={() => setImg({ x: 0, y: 0 })}
+            />
             <div className="row">
-              <button className="chip" onClick={() => setImg({ x: 0, y: 0 })}>Recentrer</button>
               <button className={`chip ${design.flip ? 'on' : ''}`} onClick={() => set({ flip: !design.flip })}>Miroir ⇋</button>
             </div>
           </div>

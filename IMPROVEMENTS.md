@@ -755,3 +755,20 @@ apparaît dans les notes.
 
 **Limites** : les couleurs viennent de l'image, pas d'un nuancier de vernis (aucune référence de marque proposée) ;
 le fond (souvent blanc) compte parmi les couleurs ; les nuances très proches sont regroupées.
+## feat/53-reglage-taille-image — 16/10/2026 (demande de l'utilisatrice)
+
+**Ajouté** : la **taille de l'image** se règle maintenant de deux façons : aux doigts (pincer / glisser, comme
+avant) **ou avec un curseur**, directement dans l'onglet **Motif**, juste sous « Seuil » et « Épaisseur du trait » :
+- **Taille de l'image** (mm), **Position horizontale**, **Position verticale** (mm) et **Rotation** (°) ;
+- chaque curseur a des boutons **− / +** pour avancer pas à pas (0,5 mm, 1°) sans glisser ;
+- bouton **Recentrer**.
+Les mêmes réglages (avec − / +) sont dans l'onglet Calques, pour le motif principal ou le calque choisi. ↶ / ↷
+fonctionnent.
+
+**Pourquoi** : le pincement à deux doigts ne marche que si les deux doigts sont posés sur l'ongle lui-même, ce qui
+est difficile sur un petit ongle (15 mm) — d'où les « bugs » de modification aux doigts.
+
+**Tester** : un design → onglet Motif → « Taille de l'image » : glisser le curseur ou toucher + / −.
+
+**Limites** : dans l'onglet Motif, les curseurs règlent toujours l'image principale (pour un calque, passer par
+l'onglet Calques) ; positions limitées à ± 30 mm du centre.

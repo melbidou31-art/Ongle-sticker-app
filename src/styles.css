@@ -196,6 +196,9 @@ code { font-family: ui-monospace, 'Cascadia Mono', monospace; }
 .seg button { flex: 1; background: var(--bg); color: #eee9df; border: 1px solid var(--line); padding: 8px 10px; border-radius: 10px; font-size: 13px; }
 .slider { display: grid; gap: 4px; font-size: 13px; color: var(--muted); }
 .slider b { color: #eee9df; font-weight: 600; }
+.slider .fine { display: flex; align-items: center; gap: 8px; }
+.slider .fine input { flex: 1; min-width: 0; }
+.slider .fine .chip { min-width: 36px; min-height: 32px; font-size: 16px; }
 input[type='range'] { width: 100%; accent-color: var(--gold); }
 .check { display: flex; gap: 8px; align-items: center; font-size: 13px; }
 .text-input { background: var(--bg); border: 1px solid var(--line); color: inherit; padding: 10px 12px; border-radius: 10px; }
