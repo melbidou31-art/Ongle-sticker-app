@@ -621,3 +621,18 @@ Vérifié aussi en passe 3 (aucun problème) : image invalide refusée propremen
 version future / partiellement invalides refusées ou ignorées sans rien écraser, cliente / marque / design
 d'accent supprimés sans plantage, mode immersif, création depuis un motif intégré, pas de débordement
 horizontal sur téléphone.
+
+## feat/43-hors-ligne-noms-fichiers — 16/10/2026 (passe de tests 4)
+
+**Corrigé** (trouvé en testant la version publiée, `vite build` + `vite preview`) :
+- **Mode hors-ligne incomplet à la première visite** : le service worker ne gardait que les fichiers demandés
+  après son installation, donc pas la page ni son JavaScript/CSS principal → l'app ne s'ouvrait pas sans réseau
+  avant une deuxième visite. Il met maintenant en cache, dès l'installation, la page et tout ce qu'elle référence ;
+  les caches des anciennes versions sont supprimés ; seules les réponses valides sont gardées.
+- **Noms de fichiers exportés abîmés** : les accents étaient remplacés par « _ » (« Cœur » → « C_ur.pdf »,
+  « Léa » → « L_a »). Ils sont maintenant retirés proprement (« Coeur.pdf », « Lea_mariage.svg »).
+
+Vérifié aussi en passe 4 (aucun problème) : position exacte de la gomme en zoom ×3 et après rotation 90° + miroir,
+service worker actif, manifeste valide, module d'export chargé à la demande dans la version publiée.
+
+**Limites** : le module d'export n'est mis en cache qu'à sa première utilisation (l'exporter une fois en ligne).

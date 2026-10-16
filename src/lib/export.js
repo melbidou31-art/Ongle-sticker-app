@@ -71,7 +71,18 @@ function download(blob, name) {
   setTimeout(() => URL.revokeObjectURL(a.href), 2000)
 }
 
-const safeName = (s) => (s || 'design').replace(/[^\w\-]+/g, '_').slice(0, 40)
+// nom de fichier lisible : accents retirés (« Léa » → « Lea », « Cœur » → « Coeur ») plutôt que remplacés par « _ »
+const safeName = (s) =>
+  (s || 'design')
+    .replace(/œ/g, 'oe')
+    .replace(/Œ/g, 'OE')
+    .replace(/æ/g, 'ae')
+    .replace(/Æ/g, 'AE')
+    .normalize('NFD')
+    .replace(/[̀-ͯ]/g, '')
+    .replace(/[^\w\-]+/g, '_')
+    .replace(/^_+|_+$/g, '')
+    .slice(0, 40) || 'design'
 
 export function exportSVG(design, options) {
   const { svg } = buildSheetSVG(design, options)
