@@ -662,4 +662,4 @@ taille de chaque marque, texte avec police, exports PDF / SVG / PNG (noms accent
 accents ni ordre des mots, sauvegarde .json complète, fiche cliente marque + numéro + longueur XS, suppression de
 cliente, motifs, guide, calibrage.
 
-**Bilan des 6 passes** : 13 défauts trouvés et corrigés (branches feat/39 à feat/45).
+**Bilan des 6 passes** : 12 défauts trouvés et corrigés (branches feat/38, feat/40, feat/42 à feat/45).
