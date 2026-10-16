@@ -4,7 +4,6 @@ import { matches, norm } from '../lib/search.js'
 import {
   FINGERS, deleteClient, isDefaultAdult, kidWidths, listClients, nailsFromSizing, newClient, saveClient,
 } from '../lib/clients.js'
-import { MmInput } from '../components/LengthPicker.jsx'
 import { allBrands } from '../lib/tips.js'
 import LengthPicker from '../components/LengthPicker.jsx'
 import { defaultTipSet } from '../lib/fingerset.js'
@@ -84,16 +83,9 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign, onApplyDesign }
   }
   const computed = sizing.mode === 'brand' && brand ? nailsFromSizing(sizing, edit.shape || 'oval') : null
 
-  // Mode enfant en saisie mm : petites longueurs, une par doigt ; `kidLength` sert de raccourci « même longueur
-  // pour les 10 doigts » (le tableau garde la longueur de chaque doigt)
+  // Mode enfant en saisie mm : petites longueurs de départ, puis largeur et longueur réglées doigt par doigt
+  // (`kidLength` ne sert plus qu'à savoir que le mode est actif)
   const kidMm = sizing.mode !== 'brand' ? sizing.kidLength : null
-  function setKidLength(mm) {
-    setEdit((c) => ({
-      ...c,
-      sizing: { ...(c.sizing || { mode: 'mm' }), kidLength: mm },
-      nails: c.nails.map((n) => ({ ...n, h: mm })),
-    }))
-  }
   function toggleKid(on) {
     if (!on) return setSizing({ kidLength: null })
     // fiche jamais modifiée : on part de largeurs d'enfant plutôt que d'adulte
@@ -205,13 +197,7 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign, onApplyDesign }
               <input type="checkbox" checked={!!kidMm} onChange={(e) => toggleKid(e.target.checked)} />
               👧 Mode enfant (petites longueurs, réglables doigt par doigt)
             </label>
-            {kidMm && (
-              <>
-                {/* raccourci : règle d'un coup les 10 longueurs, chacune reste modifiable dans le tableau */}
-                <MmInput label="Même longueur pour les 10 doigts" value={kidMm} onChange={setKidLength} />
-                <p className="muted">Puis ajuste la longueur de chaque doigt dans le tableau si besoin.</p>
-              </>
-            )}
+            {kidMm && <p className="muted">Largeur et longueur de chaque doigt se règlent dans le tableau ci-dessous.</p>}
           </div>
         )}
         {sizing.mode === 'brand' && (

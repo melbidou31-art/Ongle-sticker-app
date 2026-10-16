@@ -815,3 +815,13 @@ les 4 repères puis la courbe → ✓ Valider.
 
 **Limites** : les flancs sont droits (pour une forme très particulière : « Dessiner ma capsule ») ; changer ensuite de
 longueur XS–XXL recalcule la longueur ; la forme mesurée est enregistrée par taille, pas pour toute la marque.
+## feat/57-enfant-sans-longueur-commune — 16/10/2026 (demande de l'utilisatrice)
+
+**Modifié** : fiche cliente, 👧 Mode enfant : le champ « Même longueur pour les 10 doigts » est **retiré**. La
+largeur **et** la longueur se règlent uniquement dans le tableau, **ongle par ongle**. En cochant le mode enfant,
+le tableau est pré-rempli avec des largeurs d'enfant moyennes et 8 mm de longueur, à ajuster doigt par doigt.
+
+**Tester** : 👤 Clientes → + Cliente → cocher 👧 Mode enfant → modifier la longueur de quelques doigts →
+Enregistrer → rouvrir : chaque longueur est conservée.
+
+**Limites** : aucune nouvelle ; les fiches déjà enregistrées gardent leurs mesures.
