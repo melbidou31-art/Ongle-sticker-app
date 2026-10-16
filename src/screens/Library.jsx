@@ -46,7 +46,7 @@ export default function Library({
     let list = designs
     if (activeFilter === 'fav') list = list.filter((d) => d.favorite)
     else if (activeFilter !== 'all') list = list.filter((d) => d.collection === activeFilter)
-    if (q) list = list.filter((d) => matches(norm(`${d.name} ${designTag(d, clients)} ${d.collection || ''}`), q))
+    if (q) list = list.filter((d) => matches(norm(`${d.name} ${designTag(d, clients)} ${d.collection || ''} ${d.notes || ''}`), q))
     return sort === 'name' ? [...list].sort((a, b) => a.name.localeCompare(b.name, 'fr')) : list
   }, [designs, query, sort, clients, activeFilter])
 
@@ -108,7 +108,7 @@ export default function Library({
           <input
             className="text-input search"
             type="search"
-            placeholder="🔍 Rechercher un design…"
+            placeholder="🔍 Rechercher un design (nom, cliente, vernis…)"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
           />
@@ -158,6 +158,7 @@ export default function Library({
                   {d.collection ? `📁 ${d.collection} · ` : ''}
                   {designTag(d, clients)}
                 </span>
+                {d.notes?.trim() && <span className="client-note">📝 {d.notes.trim()}</span>}
                 <div className="row">
                   <button className="chip" onClick={() => onOpen(d)}>Éditer</button>
                   <button className="chip gold" onClick={() => onTrace(d)}>Tracer</button>

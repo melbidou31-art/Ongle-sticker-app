@@ -717,3 +717,17 @@ ongle direct sur son index G ; la copie apparaît ensuite dans « Ses designs »
 
 **Limites** : la copie démarre sur l'index gauche (changer de doigt dans Ongle → Ongle direct) ; les tailles d'un set
 press-on ne sont pas utilisées en ongle direct (chaque doigt prend les mesures de la cliente).
+## feat/50-notes-design-vernis — 16/10/2026
+
+**Ajouté** : **📝 Notes du design** (onglet Motif, en bas) pour garder la recette d'un nail art : références de
+vernis et de base, couleurs, technique, temps de pose… Les notes :
+- s'affichent sous le design dans la bibliothèque (2 lignes) ;
+- sont trouvées par la 🔍 recherche (« bubble bath » retrouve le design qui utilise ce vernis) ;
+- sont imprimées sur la 📋 fiche de tailles PDF (2 lignes max, sous la marque/forme/longueur) ;
+- suivent le design dans les copies, « Lui appliquer un design » et la 💾 sauvegarde ; ↶ / ↷ fonctionnent.
+
+**Tester** : un design → Motif → « 📝 Notes du design » → taper des références → ‹ Designs : la note apparaît sur
+la carte ; taper une référence dans la recherche.
+
+**Limites** : texte libre (pas de liste de vernis structurée) ; sur la fiche PDF, une note longue est coupée après
+2 lignes.

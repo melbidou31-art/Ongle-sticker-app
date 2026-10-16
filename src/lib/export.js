@@ -266,6 +266,21 @@ export async function exportSizeSheet(design) {
     text(v, 45, 50 + i * 8, 4.5)
   })
 
+  // notes du design (vernis, technique…) : 2 lignes max, à gauche de l'aperçu
+  const notes = (design.notes || '').replace(/\s+/g, ' ').trim()
+  if (notes) {
+    x.font = `400 ${mm(3.8)}px Georgia, 'Times New Roman', serif`
+    const lines = ['']
+    for (const w of `📝 ${notes}`.split(' ')) {
+      const next = lines[lines.length - 1] ? `${lines[lines.length - 1]} ${w}` : w
+      if (x.measureText(next).width > mm(125) && lines[lines.length - 1]) lines.push(w)
+      else lines[lines.length - 1] = next
+    }
+    const shown = lines.slice(0, 2)
+    if (lines.length > 2) shown[1] += ' …'
+    shown.forEach((l, i) => text(l, 15, 50 + info.length * 8 + 2 + i * 5.5, 3.8, '400', 'left', '#555'))
+  }
+
   // aperçu du motif (trait) en haut à droite
   try {
     const img = new Image()

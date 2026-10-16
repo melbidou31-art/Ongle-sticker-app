@@ -267,6 +267,17 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             {colors.on && (
               <Slider label="Intensité des couleurs" unit=" %" value={Math.round(colors.opacity * 100)} min={10} max={100} step={5} onChange={(v) => setColors({ opacity: v / 100 })} />
             )}
+            <label className="field">
+              <span>📝 Notes du design (vernis et références, couleurs, technique, temps de pose…)</span>
+              <textarea
+                className="client-notes"
+                rows={3}
+                maxLength={1000}
+                placeholder="Ex. : base nude OPI « Bubble Bath », liner noir, top mat · 1 h 30"
+                value={design.notes || ''}
+                onChange={(e) => set({ notes: e.target.value })}
+              />
+            </label>
           </div>
         )}
 
