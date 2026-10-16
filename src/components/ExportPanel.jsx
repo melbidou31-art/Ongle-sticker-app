@@ -21,7 +21,8 @@ export default function ExportPanel({ design }) {
     setBusy(true)
     try {
       const m = await loadExport()
-      if (kind === 'png') await m.exportPNG(design, opts)
+      if (kind === 'sheet') await m.exportSizeSheet(design)
+      else if (kind === 'png') await m.exportPNG(design, opts)
       else if (kind === 'pdf') await m.exportPDF(design, opts)
       else m.exportSVG(design, opts)
     } catch (e) {
@@ -80,6 +81,11 @@ export default function ExportPanel({ design }) {
       </label>
       <div className="row">
         <button className="chip gold" disabled={busy} onClick={() => run('pdf')}>PDF à imprimer (A4)</button>
+        {canSet && (
+          <button className="chip" disabled={busy} onClick={() => run('sheet')} title="Taille et mm de chaque doigt, sur une page">
+            📋 Fiche de tailles
+          </button>
+        )}
         <button className="chip" disabled={busy} onClick={() => run('svg')}>SVG</button>
         <button className="chip gold" disabled={busy} onClick={() => run('png')}>{busy ? 'Export…' : 'PNG 300 dpi'}</button>
       </div>

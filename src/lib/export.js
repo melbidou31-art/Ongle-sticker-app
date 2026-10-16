@@ -3,8 +3,10 @@
 import { createElement } from 'react'
 import { renderToStaticMarkup } from 'react-dom/server'
 import NailView from '../components/NailView.jsx'
-import { FINGERS } from './clients.js'
-import { forFinger, hasSet } from './fingerset.js'
+import { FINGERS, listClients } from './clients.js'
+import { fingerDims, forFinger, hasSet } from './fingerset.js'
+import { findBrand, lengthLabel } from './tips.js'
+import { allShapes } from './shapes.js'
 
 const GAP = 3 // mm entre deux ongles
 const MARGIN = 6 // mm autour de la planche
@@ -210,6 +212,80 @@ export function buildPDF(jpeg, pxW, pxH, { pageW, pageH, x, y, w, h }) {
     o += p.length
   }
   return out
+}
+
+/**
+ * Fiche de tailles (A4, PDF) d'un set : cliente / marque, forme, longueur et, pour chaque doigt, numéro de capsule
+ * et dimensions en mm, avec l'aperçu du motif. Pour préparer une commande press-on ou garder la trace d'une pose.
+ */
+export async function exportSizeSheet(design) {
+  const k = 150 / 25.4 // 150 dpi suffisent pour du texte imprimé
+  const c = document.createElement('canvas')
+  c.width = Math.round(210 * k)
+  c.height = Math.round(297 * k)
+  const x = c.getContext('2d')
+  const mm = (v) => v * k
+  x.fillStyle = '#fff'
+  x.fillRect(0, 0, c.width, c.height)
+  x.fillStyle = '#1b1a18'
+  x.textBaseline = 'alphabetic'
+  const text = (s, px, py, size, weight = '400', align = 'left', color = '#1b1a18') => {
+    x.font = `${weight} ${mm(size)}px Georgia, 'Times New Roman', serif`
+    x.textAlign = align
+    x.fillStyle = color
+    x.fillText(s, mm(px), mm(py))
+  }
+
+  const client = design.mode === 'direct' && design.client?.id ? listClients().find((cl) => cl.id === design.client.id) : null
+  const brand = design.tip?.brand ? findBrand(design.tip.brand) : null
+  const shape = allShapes()[design.shape] || '—'
+  const today = new Date().toLocaleDateString('fr-FR')
+
+  text('Fiche de tailles', 15, 25, 9, '700')
+  text(today, 195, 25, 4, '400', 'right', '#777')
+  text(design.name, 15, 35, 5.5, '400', 'left', '#555')
+  const info = [
+    client ? ['Cliente', client.name] : null,
+    brand ? ['Capsules', `${brand.name}${brand.ref ? ` — ${brand.ref}` : ''}`] : null,
+    ['Forme', shape.replace(/^✍ /, '')],
+    design.tip?.length ? ['Longueur', lengthLabel(design.tip.length)] : null,
+  ].filter(Boolean)
+  info.forEach(([l, v], i) => {
+    text(`${l} :`, 15, 50 + i * 8, 4.5, '700')
+    text(v, 45, 50 + i * 8, 4.5)
+  })
+
+  // aperçu du motif (trait) en haut à droite
+  try {
+    const img = new Image()
+    img.src = design.lineart
+    await img.decode()
+    const bw = 50
+    const bh = Math.min(50, bw * design.aspect)
+    const iw = Math.min(bw, bh / design.aspect)
+    x.drawImage(img, mm(195 - iw), mm(40), mm(iw), mm(iw * design.aspect))
+  } catch {}
+
+  // tableau des 10 doigts
+  let y = 100
+  const cols = [15, 70, 110, 150]
+  ;['Doigt', 'Taille', 'Largeur', 'Longueur'].forEach((h, i) => text(h, cols[i], y, 4.5, '700'))
+  x.fillRect(mm(15), mm(y + 2), mm(180), mm(0.4))
+  FINGERS.forEach((f, i) => {
+    y += 10
+    const d = fingerDims(design, i)
+    if (i === 5) x.fillRect(mm(15), mm(y - 6.5), mm(180), mm(0.2)) // séparation main gauche / main droite
+    text(f, cols[0], y, 4.5)
+    text(d?.size ?? '—', cols[1], y, 4.5)
+    text(d ? `${d.w} mm` : '—', cols[2], y, 4.5)
+    text(d ? `${d.h} mm` : '—', cols[3], y, 4.5)
+  })
+  text('Ongle Trace · dimensions de cuticule à bord libre, largeur au point le plus large.', 15, 285, 3.2, '400', 'left', '#999')
+
+  const blob = await new Promise((r) => c.toBlob(r, 'image/jpeg', 0.92))
+  const jpeg = new Uint8Array(await blob.arrayBuffer())
+  const pdf = buildPDF(jpeg, c.width, c.height, { pageW: 210, pageH: 297, x: 0, y: 0, w: 210, h: 297 })
+  download(new Blob([pdf], { type: 'application/pdf' }), `${safeName(design.name)}-fiche-tailles.pdf`)
 }
 
 export async function exportPDF(design, options, dpi = 300) {

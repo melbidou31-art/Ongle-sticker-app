@@ -595,3 +595,15 @@ Corrections trouvées par les passes de test automatisées (toutes les fonctionn
   ignore maintenant la ponctuation et accepte plusieurs mots dans n'importe quel ordre (nom, étiquette, collection).
 - **Restaurer une sauvegarde mélangeait l'ordre « Récents »** (chaque design recevait la date du jour) : les dates de
   modification d'origine sont maintenant conservées.
+
+## feat/41-fiche-tailles-set — 16/10/2026
+
+**Ajouté** : onglet *Export* → **📋 Fiche de tailles** (dès qu'il y a un set 10 doigts ou une cliente) : une page A4
+en PDF avec le nom du design, la date, la **cliente** ou la **marque de capsules** (avec sa référence), la **forme**,
+la **longueur**, l'aperçu du motif et un **tableau des 10 doigts** (numéro de capsule, largeur et longueur en mm,
+main gauche / main droite). Pratique pour préparer une commande press-on, la joindre au colis ou garder la trace
+d'une pose.
+
+**Tester** : ouvrir un design avec un set ou une cliente → Export → 📋 Fiche de tailles → ouvrir le PDF.
+
+**Limites** : texte en image dans le PDF (pas sélectionnable) ; une seule page.
