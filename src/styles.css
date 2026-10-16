@@ -321,6 +321,10 @@ input[type='range'] { width: 100%; accent-color: var(--gold); }
 }
 .mini { padding: 2px 8px; font-size: 12px; }
 .outline-svg { position: absolute; inset: 0; pointer-events: none; }
+.capsule-outline { position: absolute; overflow: visible; pointer-events: none; }
+.curve-row { display: flex; align-items: center; gap: 8px; padding-top: 0; padding-bottom: 8px; }
+.curve-row input { flex: 1; min-width: 0; }
+.curve-row .chip { min-width: 36px; min-height: 32px; font-size: 16px; }
 .measure-tool .row.pad .text-input { flex: 1; min-width: 0; }
 
 /* Recadrage */

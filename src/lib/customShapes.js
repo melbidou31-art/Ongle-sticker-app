@@ -44,6 +44,23 @@ export function shapeFromStroke(ptsMm, name, step = 0.4) {
   }
 }
 
+/**
+ * Forme perso à partir d'un chemin SVG tracé à la taille w × h mm (ex. capsule mesurée avec sa courbe) :
+ * le contour est échantillonné puis normalisé, comme un contour dessiné à la main.
+ */
+export function shapeFromPath(d, w, h, id, name, extra = {}) {
+  const path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+  path.setAttribute('d', d)
+  const len = path.getTotalLength()
+  const n = 96
+  const pts = []
+  for (let i = 0; i < n; i++) {
+    const p = path.getPointAtLength((i / n) * len)
+    pts.push([+(p.x / w).toFixed(4), +(p.y / h).toFixed(4)])
+  }
+  return { id, name: (name || 'Ma capsule').slice(0, 24), w, h, pts, ...extra }
+}
+
 /** Chemin SVG fermé et lissé (courbes passant par les milieux des segments) pour une taille w × h mm. */
 export function customPath(shape, w, h) {
   const p = shape.pts.map(([x, y]) => [x * w, y * h])

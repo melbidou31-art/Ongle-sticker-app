@@ -8,13 +8,15 @@ import LengthPicker from './LengthPicker.jsx'
 import { FINGERS, resizeNail } from '../lib/clients.js'
 import { defaultTipSet } from '../lib/fingerset.js'
 import MeasureTool from './MeasureTool.jsx'
+import { capsulePath } from '../lib/shapes.js'
+import { findCustomShape, saveCustomShape, shapeFromPath } from '../lib/customShapes.js'
 
 /**
  * Choix d'une capsule du commerce (marque + taille + longueur) qui règle la taille de l'ongle.
  * « Enregistrer ma mesure » mémorise la largeur actuelle (ajustée sur la vraie capsule posée
  * sur l'écran) pour cette marque et cette taille.
  */
-export default function TipPicker({ design, pxPerMm, onChange }) {
+export default function TipPicker({ design, pxPerMm, onChange, onShapesChange }) {
   const [measures, setMeasures] = useState(getMeasures)
   const [measuring, setMeasuring] = useState(false)
   const rawTip = design.tip || { brand: '', size: '', length: 'l' }
@@ -52,6 +54,8 @@ export default function TipPicker({ design, pxPerMm, onChange }) {
   }
 
   const current = brand && tip.size ? tipWidth(tip.brand, tip.size, measures) : null
+  // forme « capsule mesurée » (longueur + courbe du bout) de la marque / taille choisie
+  const capsuleShapeId = `perso-cap-${tip.brand}-${tip.size}`.replace(/[^\w-]/g, '_')
 
   return (
     <div className="tip-picker">
@@ -151,14 +155,19 @@ export default function TipPicker({ design, pxPerMm, onChange }) {
             <MeasureTool
               pxPerMm={pxPerMm}
               title={`${brand.name.toUpperCase()} · TAILLE ${tip.size}`}
-              initial={{ w: design.nailW, h: design.nailH }}
-              withLength={false}
+              initial={{ w: design.nailW, h: design.nailH, curve: findCustomShape(capsuleShapeId)?.curve }}
+              withCurve
               onCancel={() => setMeasuring(false)}
-              onDone={({ w }) => {
+              onDone={({ w, h, curve }) => {
                 setMeasuring(false)
-                const m = saveMeasure(tip.brand, tip.size, w)
-                setMeasures(m)
-                onChange(resizeNail(design, w, design.nailH))
+                // largeur : mémorisée pour cette marque et cette taille (comme « Enregistrer ma mesure »)
+                setMeasures(saveMeasure(tip.brand, tip.size, w))
+                // longueur + courbe du bout : une forme « capsule mesurée » propre à cette marque / taille
+                // (re-mesurer la même taille la remplace), appliquée au design
+                const name = `${brand.name} ${tip.size}`
+                saveCustomShape(shapeFromPath(capsulePath(w, h, curve), w, h, capsuleShapeId, name, { curve }))
+                onShapesChange?.()
+                onChange({ ...resizeNail(design, w, h), shape: capsuleShapeId })
               }}
             />
           )}

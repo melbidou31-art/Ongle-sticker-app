@@ -350,7 +350,7 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             {design.mode === 'direct' ? (
               <ClientPicker design={design} onChange={set} onManageClients={onManageClients} />
             ) : (
-              <TipPicker design={design} pxPerMm={pxPerMm} onChange={set} />
+              <TipPicker design={design} pxPerMm={pxPerMm} onChange={set} onShapesChange={() => setShapes(allShapes())} />
             )}
             {hasSet(design) && <AccentPicker design={design} onChange={set} />}
             <div className="seg wrap">

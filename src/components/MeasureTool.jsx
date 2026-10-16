@@ -1,21 +1,30 @@
 import { useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 import Grid from './Grid.jsx'
+import { capsulePath } from '../lib/shapes.js'
 
 const round = (v) => Math.round(v * 2) / 2 // au demi-millimètre
 
 /**
  * Règle à l'écran (taille réelle grâce au calibrage) : on pose l'ongle ou la capsule sur l'écran
  * et on fait glisser les repères sur ses bords. Renvoie { w, h } en mm.
+ * `withCurve` : en plus, la courbe du bout libre (0 = droit … 100 = demi-cercle) se règle sur la vraie capsule,
+ * avec le contour dessiné par-dessus ; renvoie alors aussi `curve`.
  */
-export default function MeasureTool({ pxPerMm, title, initial = { w: 14, h: 20 }, withLength = true, onDone, onCancel }) {
+export default function MeasureTool({
+  pxPerMm, title, initial = { w: 14, h: 20 }, withLength = true, withCurve = false, onDone, onCancel,
+}) {
   const area = useRef(null)
   // positions des repères en mm, relatives au centre de la zone
   const [m, setM] = useState({ l: -initial.w / 2, r: initial.w / 2, t: -initial.h / 2, b: initial.h / 2 })
   const drag = useRef(null)
+  const [curve, setCurve] = useState(initial.curve ?? 50)
+  const nudgeCurve = (dv) => setCurve((c) => Math.max(0, Math.min(100, c + dv)))
 
   const w = round(m.r - m.l)
   const h = round(m.b - m.t)
+  const result = withCurve ? { w, h, curve } : { w, h }
+  const valueText = `${w} mm${withLength ? ` × ${h} mm` : ''}${withCurve ? ` · courbe ${curve} %` : ''}`
 
   function down(key) {
     return (e) => {
@@ -51,16 +60,36 @@ export default function MeasureTool({ pxPerMm, title, initial = { w: 14, h: 20 }
         <button className="ghost dark" onClick={onCancel}>Annuler</button>
         <div className="measure-value">
           <span className="eyebrow gold">{title}</span>
-          <b>{w} mm{withLength ? ` × ${h} mm` : ''}</b>
+          <b>{valueText}</b>
         </div>
-        <button className="pink" onClick={() => onDone({ w, h })}>Valider</button>
+        <button className="pink" onClick={() => onDone(result)}>Valider</button>
       </header>
       <p className="muted pad">
         Pose l'ongle (ou la capsule) au centre et fais glisser les repères roses sur ses bords
         {withLength ? ' : largeur au point le plus large, longueur de la cuticule au bord libre.' : ' au point le plus large.'}
+        {withCurve && ' Puis règle la courbe du bout pour que le contour rose suive celui de la capsule.'}
       </p>
+      {withCurve && (
+        <div className="curve-row pad">
+          <span className="muted">Courbe du bout</span>
+          <button className="chip mini" onClick={() => nudgeCurve(-5)} aria-label="Courbe : moins">−</button>
+          <input type="range" min={0} max={100} step={1} value={curve} onChange={(e) => setCurve(+e.target.value)} aria-label="Courbe du bout" />
+          <button className="chip mini" onClick={() => nudgeCurve(5)} aria-label="Courbe : plus">+</button>
+          <small className="muted">{curve === 0 ? 'droit' : curve >= 95 ? 'rond' : `${curve} %`}</small>
+        </div>
+      )}
       <div ref={area} className="measure-area" onPointerMove={move} onPointerUp={up} onPointerCancel={up}>
         <Grid pxPerMm={pxPerMm} className="measure-grid" />
+        {withCurve && (
+          // contour de la capsule à taille réelle, calé sur les repères
+          <svg
+            className="capsule-outline"
+            style={{ left: px(m.l), top: px(m.t), width: (m.r - m.l) * pxPerMm, height: (m.b - m.t) * pxPerMm }}
+            viewBox={`0 0 ${m.r - m.l} ${m.b - m.t}`}
+          >
+            <path d={capsulePath(m.r - m.l, m.b - m.t, curve)} fill="rgba(232, 160, 180, 0.12)" stroke="var(--pink)" strokeWidth={0.3} />
+          </svg>
+        )}
         <div className="guide v" style={{ left: px(m.l) }} />
         <div className="guide v" style={{ left: px(m.r) }} />
         <button className="handle v" style={{ left: px(m.l), top: '88%' }} onPointerDown={down('l')} aria-label="Bord gauche" />
@@ -76,7 +105,7 @@ export default function MeasureTool({ pxPerMm, title, initial = { w: 14, h: 20 }
       </div>
       <footer className="tool-footer">
         <button className="ghost dark" onClick={onCancel}>Annuler</button>
-        <button className="pink big" onClick={() => onDone({ w, h })}>✓ Valider {w} mm{withLength ? ` × ${h} mm` : ''}</button>
+        <button className="pink big" onClick={() => onDone(result)}>✓ Valider {valueText}</button>
       </footer>
     </div>,
     document.body,

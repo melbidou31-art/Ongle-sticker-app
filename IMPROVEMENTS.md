@@ -797,3 +797,21 @@ arrière (le geste repartait d'une position périmée).
 
 **Limites** : zoomé (×2 à ×4), la zone défile au doigt : c'est alors l'ongle lui-même qu'il faut faire glisser
 (ou les curseurs) ; gomme et crayon gardent leur fonctionnement.
+## feat/56-mesure-capsule-longueur-courbe — 16/10/2026 (demande de l'utilisatrice)
+
+**Modifié** : Ongle → Press-on → une marque → **📏 Mesurer la capsule** mesure maintenant :
+- la **largeur** (repères verticaux, comme avant : mémorisée pour la marque et la taille) ;
+- la **longueur** (repères horizontaux « Cuticule » et « Bord libre ») ;
+- la **courbe du bout** : curseur « Courbe du bout » (avec − / +) de 0 % (bout droit, comme un carré) à 100 %
+  (demi-cercle, comme un rond). Le **contour rose** de la capsule est dessiné à taille réelle par-dessus : on règle
+  jusqu'à ce qu'il suive la vraie capsule posée sur l'écran.
+
+En validant, l'ongle prend ces dimensions et une **forme « ✍ <marque> <taille> »** (flancs droits + cette courbe),
+visible dans la liste des formes. Re-mesurer la même taille met cette forme à jour (pas de doublon) et l'outil
+repart de la courbe enregistrée.
+
+**Tester** : un design → Ongle → Press-on → choisir une marque → 📏 Mesurer la capsule → poser la capsule, régler
+les 4 repères puis la courbe → ✓ Valider.
+
+**Limites** : les flancs sont droits (pour une forme très particulière : « Dessiner ma capsule ») ; changer ensuite de
+longueur XS–XXL recalcule la longueur ; la forme mesurée est enregistrée par taille, pas pour toute la marque.

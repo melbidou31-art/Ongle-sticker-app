@@ -23,6 +23,22 @@ export function allShapes() {
   return out
 }
 
+/**
+ * Capsule mesurée à l'écran : flancs droits, cuticule arrondie et bout dont la courbe se règle,
+ * de 0 (bout droit, comme un carré) à 100 (bout en demi-cercle, comme un rond).
+ */
+export function capsulePath(w, h, curve) {
+  const c = w * 0.32
+  const top = `M 0 ${c} C 0 ${-c * 0.2}, ${w} ${-c * 0.2}, ${w} ${c}`
+  // profondeur de la courbe du bout, sans dépasser la place laissée par la cuticule
+  const d = Math.min(Math.max(0, h - c - 1), (Math.max(0, Math.min(100, curve)) / 100) * (w / 2))
+  if (d < 0.4) {
+    const r = 0.4
+    return `${top} L ${w} ${h - r} Q ${w} ${h}, ${w - r} ${h} L ${r} ${h} Q 0 ${h}, 0 ${h - r} Z`
+  }
+  return `${top} L ${w} ${h - d} A ${w / 2} ${d} 0 0 1 0 ${h - d} Z`
+}
+
 export function nailPath(shape, w, h) {
   if (isCustomShape(shape)) {
     const custom = findCustomShape(shape)
