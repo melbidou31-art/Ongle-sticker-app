@@ -742,3 +742,16 @@ capsule posée dessus ne fait rien) et se masque d'un nouvel appui sur 📝.
 
 **Limites** : encart masqué par défaut à chaque ouverture du traçage ; une note très longue est coupée (30 % de la
 hauteur de l'écran au maximum).
+## feat/52-palette-couleurs-motif — 16/10/2026
+
+**Ajouté** : **🎨 Palette de couleurs du motif** (onglet Motif, au-dessus des notes) : l'app analyse l'image
+d'origine et affiche ses **6 couleurs dominantes** avec leur code (#C8102E…) et leur part de l'image, pour choisir
+les vernis qui correspondent. Toucher une couleur l'**ajoute aux 📝 notes du design** (« Couleurs : #C8102E ·
+#1E3A8A ») ; elle est alors marquée « ✓ noté » et n'est pas ajoutée deux fois. L'analyse est faite à la demande,
+en quelques millisecondes, sur l'image recadrée si elle l'a été.
+
+**Tester** : un design importé en couleur → Motif → « 🎨 Palette de couleurs du motif » → toucher une couleur : elle
+apparaît dans les notes.
+
+**Limites** : les couleurs viennent de l'image, pas d'un nuancier de vernis (aucune référence de marque proposée) ;
+le fond (souvent blanc) compte parmi les couleurs ; les nuances très proches sont regroupées.

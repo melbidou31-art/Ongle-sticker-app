@@ -16,6 +16,7 @@ import { motifFromDesign } from '../lib/mymotifs.js'
 import { DEFAULT_TEXT, FONTS } from '../lib/fonts.js'
 import useHistory from '../lib/useHistory.js'
 import AccentPicker from '../components/AccentPicker.jsx'
+import PalettePanel from '../components/PalettePanel.jsx'
 import { hasSet } from '../lib/fingerset.js'
 import { tipLength } from '../lib/tips.js'
 import { resizeNail } from '../lib/clients.js'
@@ -267,6 +268,11 @@ export default function Editor({ design, pxPerMm, onChange, onTrace, onBack, onM
             {colors.on && (
               <Slider label="Intensité des couleurs" unit=" %" value={Math.round(colors.opacity * 100)} min={10} max={100} step={5} onChange={(v) => setColors({ opacity: v / 100 })} />
             )}
+            <PalettePanel
+              src={design.cropOriginal || design.colorSrc || design.original}
+              notes={design.notes}
+              onAddToNotes={(hex) => set({ notes: design.notes?.trim() ? `${design.notes.trimEnd()} · ${hex}` : `Couleurs : ${hex}` })}
+            />
             <label className="field">
               <span>📝 Notes du design (vernis et références, couleurs, technique, temps de pose…)</span>
               <textarea
