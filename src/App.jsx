@@ -124,7 +124,14 @@ export default function App() {
   if (screen === 'guide') return <Guide onBack={() => setScreen('library')} onCalibrate={() => setScreen('calibrate')} />
 
   if (screen === 'clients')
-    return <Clients pxPerMm={pxPerMm} onBack={() => setScreen(clientsBack)} />
+    return (
+      <Clients
+        pxPerMm={pxPerMm}
+        onBack={() => setScreen(clientsBack)}
+        // design ouvert depuis la fiche d'une cliente (la sauvegarde en attente a été faite en ouvrant les clientes)
+        onOpenDesign={(d, next) => openDesign(d, next)}
+      />
+    )
 
   if (screen === 'editor' && design)
     return (

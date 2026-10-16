@@ -25,7 +25,7 @@ function NumberField({ value, onChange }) {
   )
 }
 
-export default function Clients({ pxPerMm, onBack }) {
+export default function Clients({ pxPerMm, onBack, onOpenDesign }) {
   const [clients, setClients] = useState(listClients)
   const [edit, setEdit] = useState(null)
   const [measuring, setMeasuring] = useState(null) // index du doigt en cours de mesure
@@ -34,7 +34,19 @@ export default function Clients({ pxPerMm, onBack }) {
   useEffect(() => {
     listDesigns().then(setAllDesigns).catch(() => {})
   }, [])
-  const designs = edit ? allDesigns.filter((d) => d.mode === 'direct' && d.client?.id === edit.id) : []
+  const designs = edit
+    ? allDesigns
+        .filter((d) => d.mode === 'direct' && d.client?.id === edit.id)
+        .sort((a, b) => (b.updatedAt || b.createdAt || 0) - (a.updatedAt || a.createdAt || 0))
+    : []
+
+  // ouvrir un de ses designs : on ne perd pas sans prévenir une fiche modifiée et pas enregistrée
+  function open(d, screen) {
+    const saved = clients.find((c) => c.id === edit.id)
+    const dirty = JSON.stringify(saved) !== JSON.stringify(edit)
+    if (dirty && !confirm('Les modifications de la fiche ne sont pas enregistrées. Ouvrir le design quand même ?')) return
+    onOpenDesign(d, screen)
+  }
 
   function update(patch) {
     setEdit((c) => ({ ...c, ...patch }))
@@ -138,9 +150,25 @@ export default function Clients({ pxPerMm, onBack }) {
             />
           </label>
           {designs.length > 0 && (
-            <p className="muted">
-              Designs en ongle direct pour elle ({designs.length}) : {designs.map((d) => d.name).join(' · ')}
-            </p>
+            <div className="client-designs">
+              <span className="muted">Ses designs en ongle direct ({designs.length}), du plus récent au plus ancien</span>
+              {designs.map((d) => (
+                <div key={d.id} className="client-design">
+                  <button className="thumb mini-thumb" onClick={() => open(d, 'editor')} aria-label={`Éditer ${d.name}`}>
+                    <img src={d.lineart} alt="" />
+                  </button>
+                  <div className="client-design-info">
+                    <b>{d.name}</b>
+                    <span className="muted">
+                      {FINGERS[d.client.finger] || ''}
+                      {d.updatedAt ? ` · modifié le ${new Date(d.updatedAt).toLocaleDateString('fr-FR')}` : ''}
+                    </span>
+                  </div>
+                  <button className="chip mini" onClick={() => open(d, 'editor')}>Éditer</button>
+                  <button className="chip mini gold" onClick={() => open(d, 'trace')}>Tracer</button>
+                </div>
+              ))}
+            </div>
           )}
         </div>
         {sizing.mode !== 'brand' && (

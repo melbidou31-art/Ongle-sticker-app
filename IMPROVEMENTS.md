@@ -683,3 +683,15 @@ puis un design → Ongle → Ongle direct → choisir cette cliente : la note s'
 
 **Limites** : la liste des designs de la cliente est en lecture seule (pas de bouton pour les ouvrir depuis la fiche)
 et ne compte que les designs en « Ongle direct » (un design press-on n'est pas rattaché à une cliente).
+## feat/47-ouvrir-designs-depuis-cliente — 16/10/2026
+
+**Ajouté** : dans la fiche d'une cliente (👤 Clientes → une cliente), ses **designs en ongle direct** s'affichent
+maintenant avec leur miniature, le doigt et la date de dernière modification, **du plus récent au plus ancien**
+(un historique de ses poses), et s'ouvrent d'un geste : **Éditer** ou **Tracer** (le traçage démarre sur le bon doigt).
+Si la fiche a été modifiée sans être enregistrée, l'app demande confirmation avant de l'abandonner.
+
+**Tester** : créer une cliente, un design en Ongle → Ongle direct avec cette cliente, puis 👤 Clientes → la cliente →
+« Tracer » sur le design.
+
+**Limites** : seuls les designs en « Ongle direct » sont rattachés à une cliente (pas les press-on) ; le retour depuis
+le design ramène à l'éditeur puis à la bibliothèque, pas à la fiche.
