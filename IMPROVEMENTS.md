@@ -772,3 +772,14 @@ est difficile sur un petit ongle (15 mm) — d'où les « bugs » de modificatio
 
 **Limites** : dans l'onglet Motif, les curseurs règlent toujours l'image principale (pour un calque, passer par
 l'onglet Calques) ; positions limitées à ± 30 mm du centre.
+## feat/54-enfant-longueur-par-doigt — 16/10/2026 (demande de l'utilisatrice)
+
+**Modifié** : fiche cliente en « Largeur / longueur (mm) » avec **👧 Mode enfant** : la **longueur se règle doigt par
+doigt**, comme en mode adulte (colonne « Longueur » de nouveau affichée). Le champ du haut devient un raccourci
+**« Même longueur pour les 10 doigts »** qui remplit les 10 longueurs d'un coup, chacune restant modifiable ensuite.
+Le 📏 mesure à nouveau largeur **et** longueur en mode enfant.
+
+**Tester** : 👤 Clientes → + Cliente → cocher 👧 Mode enfant → « Même longueur » 10 mm → changer la longueur du
+pouce → Enregistrer → rouvrir : chaque longueur est conservée.
+
+**Limites** : en saisie « Marque + numéro », la longueur reste commune aux 10 doigts (comme pour les adultes).

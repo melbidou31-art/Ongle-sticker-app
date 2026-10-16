@@ -84,7 +84,8 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign, onApplyDesign }
   }
   const computed = sizing.mode === 'brand' && brand ? nailsFromSizing(sizing, edit.shape || 'oval') : null
 
-  // Mode enfant en saisie mm : une longueur commune (saisie à la main) appliquée aux 10 doigts
+  // Mode enfant en saisie mm : petites longueurs, une par doigt ; `kidLength` sert de raccourci « même longueur
+  // pour les 10 doigts » (le tableau garde la longueur de chaque doigt)
   const kidMm = sizing.mode !== 'brand' ? sizing.kidLength : null
   function setKidLength(mm) {
     setEdit((c) => ({
@@ -202,9 +203,15 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign, onApplyDesign }
           <div className="pad client-shape">
             <label className="check kid-toggle">
               <input type="checkbox" checked={!!kidMm} onChange={(e) => toggleKid(e.target.checked)} />
-              👧 Mode enfant (longueur saisie à la main, la même pour les 10 doigts)
+              👧 Mode enfant (petites longueurs, réglables doigt par doigt)
             </label>
-            {kidMm && <MmInput label="Longueur" value={kidMm} onChange={setKidLength} />}
+            {kidMm && (
+              <>
+                {/* raccourci : règle d'un coup les 10 longueurs, chacune reste modifiable dans le tableau */}
+                <MmInput label="Même longueur pour les 10 doigts" value={kidMm} onChange={setKidLength} />
+                <p className="muted">Puis ajuste la longueur de chaque doigt dans le tableau si besoin.</p>
+              </>
+            )}
           </div>
         )}
         {sizing.mode === 'brand' && (
@@ -255,7 +262,7 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign, onApplyDesign }
               <thead>
                 <tr>
                   <th>{start ? 'Main droite' : 'Main gauche'}</th><th>Largeur</th>
-                  {!kidMm && <th>Longueur</th>}
+                  <th>Longueur</th>
                   <th />
                 </tr>
               </thead>
@@ -264,8 +271,8 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign, onApplyDesign }
                   <tr key={k}>
                     <td>{FINGERS[start + k].replace(/ [GD]$/, '')}</td>
                     <td><NumberField value={n.w} onChange={(w) => setNail(start + k, { w })} /></td>
-                    {/* mode enfant : longueur commune saisie au-dessus */}
-                    {!kidMm && <td><NumberField value={n.h} onChange={(h) => setNail(start + k, { h })} /></td>}
+                    {/* aussi en mode enfant : chaque doigt a sa longueur */}
+                    <td><NumberField value={n.h} onChange={(h) => setNail(start + k, { h })} /></td>
                     <td>
                       <button className="chip mini" onClick={() => setMeasuring(start + k)} title="Mesurer à l'écran">📏</button>
                     </td>
@@ -280,11 +287,9 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign, onApplyDesign }
             pxPerMm={pxPerMm}
             title={FINGERS[measuring].toUpperCase()}
             initial={edit.nails[measuring]}
-            withLength={!kidMm}
             onCancel={() => setMeasuring(null)}
             onDone={(v) => {
-              // mode enfant : seule la largeur est mesurée, la longueur reste la longueur commune
-              setNail(measuring, kidMm ? { w: v.w } : v)
+              setNail(measuring, v)
               setMeasuring(null)
             }}
           />
