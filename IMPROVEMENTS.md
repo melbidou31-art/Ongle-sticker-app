@@ -607,3 +607,17 @@ d'une pose.
 **Tester** : ouvrir un design avec un set ou une cliente → Export → 📋 Fiche de tailles → ouvrir le PDF.
 
 **Limites** : texte en image dans le PDF (pas sélectionnable) ; une seule page.
+
+## feat/42-calibrage-telephone-marque-supprimee — 16/10/2026 (passe de tests 3)
+
+**Corrigé** :
+- **Calibrage impossible sur téléphone** : le cadre de la carte bancaire était dessiné à l'horizontale
+  (85,6 mm ≈ 540 px), plus large que l'écran d'un téléphone (≈ 375 px). Sur un écran étroit, la carte se pose
+  maintenant **à la verticale** (54 × 85,6 mm), et le curseur est placé au-dessus du cadre pour rester accessible.
+- **Marque perso supprimée** alors qu'un design l'utilise : la liste affichait « Réglage manuel » sans explication ;
+  un message l'indique maintenant (les dimensions du design sont conservées).
+
+Vérifié aussi en passe 3 (aucun problème) : image invalide refusée proprement, sauvegardes corrompues / d'une
+version future / partiellement invalides refusées ou ignorées sans rien écraser, cliente / marque / design
+d'accent supprimés sans plantage, mode immersif, création depuis un motif intégré, pas de débordement
+horizontal sur téléphone.

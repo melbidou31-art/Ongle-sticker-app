@@ -73,6 +73,13 @@ export default function TipPicker({ design, pxPerMm, onChange }) {
         </select>
       </label>
 
+      {tip.brand && !brand && !editing && (
+        // la marque perso de ce design a été supprimée : on le dit au lieu d'afficher « Réglage manuel » sans raison
+        <p className="approx">
+          La marque de capsules de ce design a été supprimée : les dimensions actuelles sont conservées. Choisis une autre
+          marque pour retrouver les tailles.
+        </p>
+      )}
       {brand?.custom && !editing && (
         <button className="chip mini" onClick={() => setEditing(brand)}>✎ Modifier « {brand.name} »</button>
       )}
