@@ -86,8 +86,10 @@ export default function App() {
     else refresh()
   }
 
-  function openClients(from) {
+  async function openClients(from) {
     setClientsBack(from)
+    // la fiche cliente liste ses designs : enregistrer d'abord la modification en attente
+    if (design && design !== opened.current) await persist(design)
     setScreen('clients')
   }
 

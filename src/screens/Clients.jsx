@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { listDesigns } from '../lib/db.js'
 import {
   FINGERS, deleteClient, isDefaultAdult, kidWidths, listClients, nailsFromSizing, newClient, saveClient,
 } from '../lib/clients.js'
@@ -28,6 +29,12 @@ export default function Clients({ pxPerMm, onBack }) {
   const [clients, setClients] = useState(listClients)
   const [edit, setEdit] = useState(null)
   const [measuring, setMeasuring] = useState(null) // index du doigt en cours de mesure
+  // designs « ongle direct » réalisés pour la cliente ouverte (lecture seule, depuis la bibliothèque)
+  const [allDesigns, setAllDesigns] = useState([])
+  useEffect(() => {
+    listDesigns().then(setAllDesigns).catch(() => {})
+  }, [])
+  const designs = edit ? allDesigns.filter((d) => d.mode === 'direct' && d.client?.id === edit.id) : []
 
   function update(patch) {
     setEdit((c) => ({ ...c, ...patch }))
@@ -117,6 +124,24 @@ export default function Clients({ pxPerMm, onBack }) {
                 </button>
               ))}
           </div>
+        </div>
+        <div className="pad client-shape">
+          <label className="field">
+            <span>📝 Notes (allergies, préférences, état des ongles…)</span>
+            <textarea
+              className="client-notes"
+              rows={3}
+              maxLength={1000}
+              placeholder="Ex. : allergique au HEMA, ongles fins et cassants, aime les tons nude…"
+              value={edit.notes || ''}
+              onChange={(e) => update({ notes: e.target.value })}
+            />
+          </label>
+          {designs.length > 0 && (
+            <p className="muted">
+              Designs en ongle direct pour elle ({designs.length}) : {designs.map((d) => d.name).join(' · ')}
+            </p>
+          )}
         </div>
         {sizing.mode !== 'brand' && (
           <div className="pad client-shape">
@@ -233,6 +258,7 @@ export default function Clients({ pxPerMm, onBack }) {
                 <span className="muted">
                   {allShapes()[c.shape || 'oval'] || 'Ovale'} · {c.nails.map((n) => n.w).join(' · ')} mm
                 </span>
+                {c.notes?.trim() && <span className="client-note">📝 {c.notes.trim()}</span>}
               </button>
               <button
                 className="chip danger"

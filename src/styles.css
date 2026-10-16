@@ -245,6 +245,16 @@ input[type='range'] { width: 100%; accent-color: var(--gold); }
   flex: 1; display: grid; gap: 2px; text-align: left; color: inherit;
   background: var(--bg-2); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px;
 }
+.client-notes {
+  background: var(--bg); color: #eee9df; border: 1px solid var(--line); border-radius: 10px; padding: 9px 10px;
+  font: inherit; font-size: 14px; resize: vertical; width: 100%; box-sizing: border-box;
+}
+/* rappel des notes : 2 lignes max dans la liste */
+.client-note {
+  font-size: 12px; color: var(--pink); white-space: pre-line; margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.tip-picker .client-note { -webkit-line-clamp: unset; display: block; }
 .hands { display: grid; gap: 16px; padding: 0 16px 24px; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); }
 .nails-table { width: 100%; border-collapse: collapse; font-size: 14px; }
 .nails-table th { text-align: left; color: var(--gold); font-weight: 600; font-size: 12px; padding: 6px 4px; }

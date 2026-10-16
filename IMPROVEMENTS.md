@@ -663,3 +663,23 @@ accents ni ordre des mots, sauvegarde .json complète, fiche cliente marque + nu
 cliente, motifs, guide, calibrage.
 
 **Bilan des 6 passes** : 12 défauts trouvés et corrigés (branches feat/38, feat/40, feat/42 à feat/45).
+## feat/46-notes-cliente — 16/10/2026
+
+**Ajouté** : **📝 Notes sur la fiche cliente** (allergies — HEMA, acrylates… —, état des ongles, préférences de
+couleurs, contre-indications). Les notes :
+- se saisissent dans la fiche cliente (👤 Clientes → une cliente) ;
+- apparaissent en rose sous son nom dans la liste des clientes (2 lignes maximum) ;
+- s'affichent en rappel dans l'éditeur quand on la choisit en « Ongle direct », au moment de préparer la pose ;
+- sont incluses dans la 💾 sauvegarde comme le reste de la fiche.
+
+La fiche liste aussi les **designs en ongle direct réalisés pour elle**.
+
+**Corrigé au passage** : ouvrir « Gérer les clientes » depuis l'éditeur juste après une modification pouvait
+afficher le design dans son état précédent (la sauvegarde automatique attendait 0,4 s) : elle est maintenant faite
+avant d'ouvrir les clientes.
+
+**Tester** : 👤 Clientes → + Cliente → remplir « 📝 Notes » → Enregistrer (la note apparaît dans la liste) ;
+puis un design → Ongle → Ongle direct → choisir cette cliente : la note s'affiche sous les mesures.
+
+**Limites** : la liste des designs de la cliente est en lecture seule (pas de bouton pour les ouvrir depuis la fiche)
+et ne compte que les designs en « Ongle direct » (un design press-on n'est pas rattaché à une cliente).

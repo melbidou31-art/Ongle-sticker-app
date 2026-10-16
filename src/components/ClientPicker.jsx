@@ -62,6 +62,8 @@ export default function ClientPicker({ design, onChange, onManageClients }) {
             habituelle : {(allShapes()[client.shape || 'oval'] || 'ovale').toLowerCase()} · le motif est mis à l'échelle
             automatiquement.
           </p>
+          {/* rappel des notes de la fiche (allergies…) au moment de préparer la pose */}
+          {client.notes?.trim() && <p className="client-note">📝 {client.notes.trim()}</p>}
         </>
       )}
       <button className="chip" onClick={onManageClients}>Gérer les clientes</button>
