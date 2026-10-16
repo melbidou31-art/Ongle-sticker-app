@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { listDesigns } from '../lib/db.js'
+import { matches, norm } from '../lib/search.js'
 import {
   FINGERS, deleteClient, isDefaultAdult, kidWidths, listClients, nailsFromSizing, newClient, saveClient,
 } from '../lib/clients.js'
@@ -29,6 +30,10 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign }) {
   const [clients, setClients] = useState(listClients)
   const [edit, setEdit] = useState(null)
   const [measuring, setMeasuring] = useState(null) // index du doigt en cours de mesure
+  // recherche par nom ou dans les notes (retrouver vite une cliente, ou toutes celles allergiques au HEMA)
+  const [query, setQuery] = useState('')
+  const q = norm(query.trim())
+  const shown = q ? clients.filter((c) => matches(norm(`${c.name} ${c.notes || ''}`), q)) : clients
   // designs « ongle direct » réalisés pour la cliente ouverte (lecture seule, depuis la bibliothèque)
   const [allDesigns, setAllDesigns] = useState([])
   useEffect(() => {
@@ -272,6 +277,18 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign }) {
         <b>Clientes</b>
         <button className="pink" onClick={() => setEdit(newClient())}>+ Cliente</button>
       </header>
+      {clients.length > 0 && (
+        <div className="lib-tools">
+          <input
+            className="text-input search"
+            type="search"
+            placeholder="🔍 Rechercher une cliente (nom ou note : « HEMA »…)"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </div>
+      )}
+      {clients.length > 0 && shown.length === 0 && <p className="empty">Aucune cliente ne correspond à « {query.trim()} ».</p>}
       {clients.length === 0 ? (
         <p className="empty">
           Aucune cliente. Ajoute ses mesures d'ongles une fois : en mode « Ongle direct », le motif s'adaptera tout seul à
@@ -279,7 +296,7 @@ export default function Clients({ pxPerMm, onBack, onOpenDesign }) {
         </p>
       ) : (
         <ul className="client-list">
-          {clients.map((c) => (
+          {shown.map((c) => (
             <li key={c.id}>
               <button className="client-row" onClick={() => setEdit(c)}>
                 <b>{c.name}</b>

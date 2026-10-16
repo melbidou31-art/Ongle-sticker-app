@@ -695,3 +695,13 @@ Si la fiche a été modifiée sans être enregistrée, l'app demande confirmatio
 
 **Limites** : seuls les designs en « Ongle direct » sont rattachés à une cliente (pas les press-on) ; le retour depuis
 le design ramène à l'éditeur puis à la bibliothèque, pas à la fiche.
+## feat/48-recherche-clientes — 16/10/2026
+
+**Ajouté** : **🔍 recherche dans la liste des clientes**, par nom **ou dans les notes** : « lea » retrouve « Léa »,
+« martin lea » fonctionne dans n'importe quel ordre, et « hema » liste toutes les clientes dont la fiche mentionne
+cette allergie. Même recherche que la bibliothèque (sans accents, majuscules ni ponctuation), désormais partagée
+dans `src/lib/search.js`.
+
+**Tester** : 👤 Clientes (avec quelques clientes) → taper un prénom, ou un mot d'une note.
+
+**Limites** : la recherche ne porte pas sur les mesures ni sur la marque de capsules.

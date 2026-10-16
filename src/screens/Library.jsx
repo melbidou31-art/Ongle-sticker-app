@@ -3,17 +3,7 @@ import BackupPanel from '../components/BackupPanel.jsx'
 import MotifPicker from '../components/MotifPicker.jsx'
 import { findBrand, lengthLabel } from '../lib/tips.js'
 import { listClients } from '../lib/clients.js'
-
-// recherche insensible à la casse, aux accents et à la ponctuation (« p2 test » trouve « P2-test »)
-const norm = (s) =>
-  (s || '')
-    .normalize('NFD')
-    .replace(/[̀-ͯ]/g, '')
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, ' ')
-    .trim()
-// tous les mots tapés doivent se retrouver dans le texte, dans n'importe quel ordre
-const matches = (text, q) => q.split(' ').every((w) => text.includes(w))
+import { matches, norm } from '../lib/search.js'
 
 /** Étiquette courte : à quoi sert ce design (capsule, cliente, motif seul…) */
 function designTag(d, clients) {
